@@ -104,6 +104,15 @@ public class Connection
     /// </summary>
     /// <example>false</example>
     public bool DeleteSource { get; set; }
+    
+    /// <summary>
+    /// Whether to gather AWS SDK debug log.
+    /// Please note that AWS SDK logging is not thread-safe and can pollute log output for tasks that run in parallel.
+    /// It is recommended to disable debug logging in production.
+    /// </summary>
+    /// <example>false</example>
+    [DefaultValue(false)]
+    public bool GatherDebugLog { get; set; }
 
     /// <summary>
     /// Throw error if there are no object(s) in the path matching the filemask.

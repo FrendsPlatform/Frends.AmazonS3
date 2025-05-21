@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using dotenv.net;
 
 namespace Frends.AmazonS3.UploadObject.Tests;
 
@@ -15,19 +16,27 @@ namespace Frends.AmazonS3.UploadObject.Tests;
 public class AWSCredsUnitTestsMultipart
 {
     public TestContext? TestContext { get; set; }
-    private readonly string? _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
-    private readonly string? _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
-    private readonly string? _bucketName = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_BucketName");
+    private readonly string? _accessKey;
+    private readonly string? _secretAccessKey;
+    private readonly string? _bucketName;
     private readonly string _dir = Path.Combine(Environment.CurrentDirectory);
     private Connection _connection = new();
     private Input _input = new();
 
+    public AWSCredsUnitTestsMultipart()
+    {
+        DotEnv.Load();
+        _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
+        _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
+        _bucketName = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_BucketName");
+    }
+    
     [TestInitialize]
     public void Initialize()
     {
-        _input = new Input()
+        _input = new Input
         {
-            FilePath = $@"{_dir}\AWS",
+            FilePath = Path.Combine(_dir, "AWS"),
             ACL = default,
             FileMask = null,
             UseACL = false,
@@ -35,7 +44,7 @@ public class AWSCredsUnitTestsMultipart
             PartSize = 100
         };
 
-        _connection = new Connection()
+        _connection = new Connection
         {
             AuthenticationMethod = AuthenticationMethod.AWSCredentials,
             PreSignedURL = null,
@@ -50,11 +59,16 @@ public class AWSCredsUnitTestsMultipart
             DeleteSource = false,
             ThrowErrorIfNoMatch = false,
             UseMultipartUpload = true,
+            GatherDebugLog = true
         };
 
-        Directory.CreateDirectory($@"{_dir}\AWS");
+        Directory.CreateDirectory(Path.Combine(_dir, "AWS"));
 
-        var fileList = new List<string>() { $@"{_dir}\AWS\test1.txt", $@"{_dir}\AWS\test2" };
+        var fileList = new List<string>
+        {
+            Path.Combine(_dir, "AWS", "test1.txt"),
+            Path.Combine(_dir, "AWS", "test2")
+        };
         long targetSizeInBytes = 6L * 1024L * 1024L * 1024L; // 6 GB in bytes
 
         foreach (var file in fileList)
@@ -73,6 +87,7 @@ public class AWSCredsUnitTestsMultipart
         var response = await client.ListObjectsAsync(listObjectRequest);
         var objects = response.S3Objects;
 
+        if (objects == null) return;
         foreach (var obj in objects)
         {
             var deleteObjectRequest = new DeleteObjectRequest
@@ -103,7 +118,7 @@ public class AWSCredsUnitTestsMultipart
 
         var result = await AmazonS3.UploadObject(connection, _input, default);
         Assert.AreEqual(0, result.UploadedObjects.Count);
-        Assert.IsFalse(result.Success);
+        Assert.IsFalse(result.Success, result.DebugLog);
         Assert.IsTrue(result.DebugLog.Contains("Please authenticate"));
     }
 
