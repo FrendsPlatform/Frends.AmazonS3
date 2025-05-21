@@ -204,18 +204,6 @@ public class AmazonS3
         return result;
     }
 
-    private AmazonS3Client GetClient(Connection connection)
-    {
-        var config = new AmazonS3Config
-        {
-            RegionEndpoint = RegionSelection(connection.Region),
-            LogMetrics = true,
-            LogResponse = true,
-        };
-
-        return new AmazonS3Client(connection.AwsAccessKeyId, connection.AwsSecretAccessKey, config);
-    }
-
     private static async Task UploadMultipart(FileInfo file, Connection connection, long partSize, string path, CancellationToken cancellationToken)
     {
         var uploadResponses = new List<UploadPartResponse>();
