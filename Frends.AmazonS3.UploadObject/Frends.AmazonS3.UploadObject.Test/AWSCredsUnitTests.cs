@@ -468,7 +468,7 @@ public class AWSCredsUnitTests
             };
 
             var result = await AmazonS3.UploadObject(_connection, _input, default);
-            Assert.AreEqual(5, result.UploadedObjects.Count, acl + Environment.NewLine + result.DebugLog);;
+            Assert.AreEqual(5, result.UploadedObjects.Count, acl + Environment.NewLine + result.DebugLog);
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.DebugLog);
             Assert.IsTrue(result.UploadedObjects.Any(x => x.Contains("deletethis_awscreds.txt")));
