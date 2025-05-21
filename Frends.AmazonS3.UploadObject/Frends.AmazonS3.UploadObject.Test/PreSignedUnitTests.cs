@@ -7,33 +7,41 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using dotenv.net;
 
 namespace Frends.AmazonS3.UploadObject.Tests;
 
 [TestClass]
 public class PreSignedUnitTests
 {
-    public TestContext? TestContext { get; set; }
-    private readonly string? _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
-    private readonly string? _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
-    private readonly string? _bucketName = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_BucketName");
+    private readonly string? _accessKey;
+    private readonly string? _secretAccessKey;
+    private readonly string? _bucketName;
     private readonly string _dir = Path.Combine(Environment.CurrentDirectory);
 
     Connection? _connection;
     Input? _input;
 
+    public PreSignedUnitTests()
+    {
+        DotEnv.Load();
+        _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
+        _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
+        _bucketName = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_BucketName");
+    }
+
     [TestInitialize]
     public void Initialize()
     {
-        Directory.CreateDirectory($@"{_dir}\AWS");
-        File.AppendAllText($@"{_dir}\AWS\deletethis_presign.txt", "Resource file deleted. (Presign)");
+        Directory.CreateDirectory(Path.Combine(_dir, "AWS"));
+        File.AppendAllText(Path.Combine(_dir, "AWS", "deletethis_presign.txt"), "Resource file deleted. (Presign)");
     }
 
     [TestCleanup]
     public void CleanUp()
     {
-        if (Directory.Exists($@"{_dir}\AWS"))
-            Directory.Delete($@"{_dir}\AWS", true);
+        if (Directory.Exists(Path.Combine(_dir, "AWS")))
+            Directory.Delete(Path.Combine(_dir, "AWS"), true);
 
         using var sw = new StringWriter();
         using var client = new AmazonS3Client(_accessKey, _secretAccessKey, RegionEndpoint.EUCentral1);
@@ -49,11 +57,11 @@ public class PreSignedUnitTests
     [TestMethod]
     public async Task PreSignedUnitTest_UploadObject()
     {
-        var setS3Key = $"Upload2023/PreSigned/UploadTest.txt";
+        var setS3Key = Path.Combine("Upload2023", "PreSigned", "UploadTest.txt").Replace("\\", "/");
 
         _input = new Input
         {
-            FilePath = $@"{_dir}\AWS",
+            FilePath = Path.Combine(_dir, "AWS"),
             ACL = default,
             FileMask = null,
             UseACL = false,
@@ -74,12 +82,13 @@ public class PreSignedUnitTests
             DeleteSource = false,
             ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
+            GatherDebugLog = false
         };
 
         var result = await AmazonS3.UploadObject(_connection, _input, default);
         Assert.AreEqual(1, result.UploadedObjects.Count);
         Assert.IsTrue(result.Success);
-        Assert.AreEqual(string.Empty, result.DebugLog);
+        Assert.IsNull(result.DebugLog);
         Assert.IsTrue(result.UploadedObjects.Any(x => x.Contains("deletethis_presign.txt")));
     }
 
@@ -88,7 +97,7 @@ public class PreSignedUnitTests
     {
         _input = new Input
         {
-            FilePath = $@"{_dir}\AWS",
+            FilePath = Path.Combine(_dir, "AWS"),
             ACL = default,
             FileMask = null,
             UseACL = false,
@@ -123,7 +132,7 @@ public class PreSignedUnitTests
     {
         _input = new Input
         {
-            FilePath = $@"{_dir}\AWS",
+            FilePath = Path.Combine(_dir, "AWS"),
             ACL = default,
             FileMask = null,
             UseACL = false,

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using dotenv.net;
 
 namespace Frends.AmazonS3.UploadObject.Tests;
 
@@ -15,32 +16,40 @@ namespace Frends.AmazonS3.UploadObject.Tests;
 public class AWSCredsUnitTests
 {
     public TestContext? TestContext { get; set; }
-    private readonly string? _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
-    private readonly string? _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
-    private readonly string? _bucketName = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_BucketName");
+    private readonly string? _accessKey;
+    private readonly string? _secretAccessKey;
+    private readonly string? _bucketName;
     private readonly string _dir = Path.Combine(Environment.CurrentDirectory);
     Connection? _connection;
     Input? _input;
 
+    public AWSCredsUnitTests()
+    {
+        DotEnv.Load();
+        _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
+        _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
+        _bucketName = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_BucketName");
+    }
+
     [TestInitialize]
     public void Initialize()
     {
-        Directory.CreateDirectory($@"{_dir}\AWS");
-        Directory.CreateDirectory($@"{_dir}\AWS\Subfolder");
-        Directory.CreateDirectory($@"{_dir}\AWS\EmptyFolder");
+        Directory.CreateDirectory(Path.Combine(_dir, "AWS"));
+        Directory.CreateDirectory(Path.Combine(_dir, "AWS", "Subfolder"));
+        Directory.CreateDirectory(Path.Combine(_dir, "AWS", "EmptyFolder"));
 
-        File.AppendAllText($@"{_dir}\AWS\test1.txt", "test1");
-        File.AppendAllText($@"{_dir}\AWS\Subfolder\subfile.txt", "From subfolder.");
-        File.AppendAllText($@"{_dir}\AWS\deletethis_awscreds.txt", "Resource file deleted. (AWS Creds)");
-        File.AppendAllText($@"{_dir}\AWS\overwrite_presign.txt", "Not overwriten. (Presign)");
-        File.AppendAllText($@"{_dir}\AWS\overwrite_awscreds.txt", "Not overwriten. (AWS creds)");
+        File.AppendAllText(Path.Combine(_dir, "AWS", "test1.txt"), "test1");
+        File.AppendAllText(Path.Combine(_dir, "AWS", "Subfolder", "subfile.txt"), "From subfolder.");
+        File.AppendAllText(Path.Combine(_dir, "AWS", "deletethis_awscreds.txt"), "Resource file deleted. (AWS Creds)");
+        File.AppendAllText(Path.Combine(_dir, "AWS", "overwrite_presign.txt"), "Not overwriten. (Presign)");
+        File.AppendAllText(Path.Combine(_dir, "AWS", "overwrite_awscreds.txt"), "Not overwriten. (AWS creds)");
     }
 
     [TestCleanup]
     public async Task CleanUp()
     {
-        if (Directory.Exists($@"{_dir}\AWS"))
-            Directory.Delete($@"{_dir}\AWS", true);
+        if (Directory.Exists(Path.Combine(_dir, "AWS")))
+            Directory.Delete(Path.Combine(_dir, "AWS"), true);
 
         using var client = new AmazonS3Client(_accessKey, _secretAccessKey, RegionEndpoint.EUCentral1);
 
@@ -52,6 +61,7 @@ public class AWSCredsUnitTests
         var response = await client.ListObjectsAsync(listObjectRequest);
         var objects = response.S3Objects;
 
+        if (objects == null) return;
         foreach (var obj in objects)
         {
             var deleteObjectRequest = new DeleteObjectRequest
@@ -68,7 +78,7 @@ public class AWSCredsUnitTests
     {
         _input = new Input
         {
-            FilePath = $@"{_dir}\AWS",
+            FilePath = Path.Combine(_dir, "AWS"),
             ACL = default,
             FileMask = null,
             UseACL = false,
@@ -89,6 +99,7 @@ public class AWSCredsUnitTests
             DeleteSource = false,
             ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
+            GatherDebugLog = true
         };
 
         var result = await AmazonS3.UploadObject(_connection, _input, default);
@@ -99,11 +110,47 @@ public class AWSCredsUnitTests
     }
 
     [TestMethod]
+    public async Task AWSCreds_Upload_GatherDebugLog_False()
+    {
+        _input = new Input
+        {
+            FilePath = Path.Combine(_dir, "AWS"),
+            ACL = default,
+            FileMask = null,
+            UseACL = false,
+            S3Directory = "Upload2023/",
+        };
+        _connection = new Connection
+        {
+            AuthenticationMethod = AuthenticationMethod.AWSCredentials,
+            PreSignedURL = null,
+            AwsAccessKeyId = _accessKey,
+            AwsSecretAccessKey = _secretAccessKey,
+            BucketName = _bucketName,
+            Region = Region.EuCentral1,
+            UploadFromCurrentDirectoryOnly = false,
+            Overwrite = false,
+            PreserveFolderStructure = false,
+            ReturnListOfObjectKeys = false,
+            DeleteSource = false,
+            ThrowErrorIfNoMatch = false,
+            UseMultipartUpload = false,
+            GatherDebugLog = false,
+        };
+
+        var result = await AmazonS3.UploadObject(_connection, _input, default);
+        Assert.AreEqual(5, result.UploadedObjects.Count);
+        Assert.IsTrue(result.Success);
+        Assert.IsNull(result.DebugLog);
+        Assert.IsTrue(result.UploadedObjects.Any(x => x.Contains("deletethis_awscreds.txt")));
+    }
+
+    [TestMethod]
     public async Task AWSCreds_Missing_ThrowExceptionOnErrorResponse_False()
     {
         _input = new Input
         {
-            FilePath = $@"{_dir}\AWS",
+            FilePath = Path.Combine(_dir, "AWS"),
             ACL = default,
             FileMask = null,
             UseACL = false,
@@ -125,6 +172,7 @@ public class AWSCredsUnitTests
             ThrowErrorIfNoMatch = false,
             ThrowExceptionOnErrorResponse = false,
             UseMultipartUpload = false,
+            GatherDebugLog = true,
         };
 
         var result = await AmazonS3.UploadObject(_connection, _input, default);
@@ -138,7 +186,7 @@ public class AWSCredsUnitTests
     {
         _input = new Input
         {
-            FilePath = $@"{_dir}\AWS",
+            FilePath = Path.Combine(_dir, "AWS"),
             ACL = default,
             FileMask = null,
             UseACL = false,
@@ -160,6 +208,7 @@ public class AWSCredsUnitTests
             ThrowErrorIfNoMatch = false,
             ThrowExceptionOnErrorResponse = true,
             UseMultipartUpload = false,
+            GatherDebugLog = true,
         };
 
         var ex = await Assert.ThrowsExceptionAsync<UploadException>(async () => await AmazonS3.UploadObject(_connection, _input, default));
@@ -171,7 +220,7 @@ public class AWSCredsUnitTests
     {
         _input = new Input
         {
-            FilePath = $@"{_dir}\AWS",
+            FilePath = Path.Combine(_dir, "AWS"),
             ACL = default,
             FileMask = null,
             UseACL = false,
@@ -192,6 +241,7 @@ public class AWSCredsUnitTests
             DeleteSource = false,
             ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
+            GatherDebugLog = true,
         };
 
         var result = await AmazonS3.UploadObject(_connection, _input, default);
@@ -206,7 +256,7 @@ public class AWSCredsUnitTests
     {
         _input = new Input
         {
-            FilePath = $@"{_dir}\AWS",
+            FilePath = Path.Combine(_dir, "AWS"),
             ACL = default,
             FileMask = null,
             UseACL = false,
@@ -227,6 +277,7 @@ public class AWSCredsUnitTests
             DeleteSource = false,
             ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
+            GatherDebugLog = true,
         };
 
         var result = await AmazonS3.UploadObject(_connection, _input, default);
@@ -241,7 +292,7 @@ public class AWSCredsUnitTests
     {
         _input = new Input
         {
-            FilePath = $@"{_dir}\AWS",
+            FilePath = Path.Combine(_dir, "AWS"),
             ACL = default,
             FileMask = null,
             UseACL = false,
@@ -262,6 +313,7 @@ public class AWSCredsUnitTests
             DeleteSource = false,
             ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
+            GatherDebugLog = true,
         };
 
         var result = await AmazonS3.UploadObject(_connection, _input, default);
@@ -276,7 +328,7 @@ public class AWSCredsUnitTests
     {
         _input = new Input
         {
-            FilePath = $@"{_dir}\AWS",
+            FilePath = Path.Combine(_dir, "AWS"),
             ACL = default,
             FileMask = null,
             UseACL = false,
@@ -297,6 +349,7 @@ public class AWSCredsUnitTests
             DeleteSource = false,
             ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
+            GatherDebugLog = true,
         };
 
         var result = await AmazonS3.UploadObject(_connection, _input, default);
@@ -313,7 +366,7 @@ public class AWSCredsUnitTests
         var fileName = "deletethis_awscreds.txt";
         _input = new Input
         {
-            FilePath = $@"{_dir}\AWS",
+            FilePath = Path.Combine(_dir, "AWS"),
             ACL = default,
             FileMask = fileName,
             UseACL = false,
@@ -334,6 +387,7 @@ public class AWSCredsUnitTests
             UploadFromCurrentDirectoryOnly = false,
             ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
+            GatherDebugLog = true,
         };
 
         var result = await AmazonS3.UploadObject(_connection, _input, default);
@@ -341,7 +395,7 @@ public class AWSCredsUnitTests
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
         Assert.IsTrue(result.UploadedObjects.Any(x => x.Contains("deletethis_awscreds.txt")));
-        Assert.IsFalse(File.Exists($@"{_dir}\AWS\{fileName}"));
+        Assert.IsFalse(File.Exists(Path.Combine(_dir, "AWS", fileName)));
     }
 
     [TestMethod]
@@ -349,7 +403,7 @@ public class AWSCredsUnitTests
     {
         _input = new Input
         {
-            FilePath = $@"{_dir}\AWS",
+            FilePath = Path.Combine(_dir, "AWS"),
             ACL = default,
             FileMask = "notafile*",
             UseACL = false,
@@ -380,7 +434,9 @@ public class AWSCredsUnitTests
     [TestMethod]
     public async Task AWSCreds_ACLs()
     {
-        var acls = new List<ACLs>() { ACLs.Private, ACLs.PublicRead, ACLs.PublicReadWrite, ACLs.AuthenticatedRead, ACLs.BucketOwnerRead, ACLs.BucketOwnerFullControl, ACLs.LogDeliveryWrite };
+        // Public ACLs like PublicRead, PublicReadWrite and AuthenticatedRead are
+        // excluded from automated unit tests due to security
+        var acls = new List<ACLs> { ACLs.Private, ACLs.BucketOwnerRead, ACLs.BucketOwnerFullControl, ACLs.LogDeliveryWrite };
 
         _connection = new Connection
         {
@@ -397,13 +453,14 @@ public class AWSCredsUnitTests
             DeleteSource = false,
             ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
+            GatherDebugLog = true
         };
 
         foreach (var acl in acls)
         {
             _input = new Input
             {
-                FilePath = $@"{_dir}\AWS",
+                FilePath = Path.Combine(_dir, "AWS"),
                 ACL = acl,
                 FileMask = null,
                 UseACL = true,
@@ -411,7 +468,7 @@ public class AWSCredsUnitTests
             };
 
             var result = await AmazonS3.UploadObject(_connection, _input, default);
-            Assert.AreEqual(5, result.UploadedObjects.Count);
+            Assert.AreEqual(5, result.UploadedObjects.Count, acl + Environment.NewLine + result.DebugLog);
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.DebugLog);
             Assert.IsTrue(result.UploadedObjects.Any(x => x.Contains("deletethis_awscreds.txt")));
@@ -426,7 +483,7 @@ public class AWSCredsUnitTests
     {
         _input = new Input
         {
-            FilePath = $@"{_dir}\AWS\EmptyFolder",
+            FilePath = Path.Combine(_dir, "AWS", "EmptyFolder"),
             ACL = default,
             FileMask = null,
             UseACL = false,
@@ -447,6 +504,7 @@ public class AWSCredsUnitTests
             DeleteSource = false,
             ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
+            GatherDebugLog = true,
         };
 
         var result = await AmazonS3.UploadObject(_connection, _input, default);
@@ -460,7 +518,7 @@ public class AWSCredsUnitTests
     {
         _input = new Input
         {
-            FilePath = $@"{_dir}\AWS\EmptyFolder",
+            FilePath = Path.Combine(_dir, "AWS", "EmptyFolder"),
             ACL = default,
             FileMask = null,
             UseACL = false,
@@ -486,4 +544,5 @@ public class AWSCredsUnitTests
         var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.UploadObject(_connection, _input, default));
         Assert.IsTrue(ex.Message.Contains($"No files match the filemask '*' within supplied path."));
     }
+
 }

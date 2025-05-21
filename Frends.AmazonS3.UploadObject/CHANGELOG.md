@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.0.0] - 2025-05-21
+### Changed
+- Updated AWS SDK to version 4.0.0.5
+- Changed the logging logic to use custom logger
+### Added
+- [Breaking]Added GatherDebugLog option to allow disabling the DebugLog, `false` by default
+  - By default, the gathering debug log is now disabled.
+  - To replicate the previous task behaviour set GatherDebugLog parameter to `true`
+
 ## [1.3.0] - 2025-03-13
 ### Fixed
 - Fixed issue where ThrowErrorIfNoMatch was not correctly handled. Now, no error is thrown if set to false, and an error is thrown if set to true when no files match."

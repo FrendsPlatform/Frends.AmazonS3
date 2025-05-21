@@ -7,10 +7,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Frends.AmazonS3.UploadObject;
 
@@ -29,7 +29,6 @@ public class AmazonS3
     /// <returns>Object { bool success, List&lt;string&gt; uploadedObjects, string debugLog } </returns>
     public static async Task<Result> UploadObject([PropertyTab] Connection connection, [PropertyTab] Input input, CancellationToken cancellationToken)
     {
-
         if (!Directory.Exists(input.FilePath)) throw new ArgumentException(@"Source directory not found. ", input.FilePath);
 
         var localRoot = new DirectoryInfo(input.FilePath);
@@ -43,20 +42,30 @@ public class AmazonS3
             throw new Exception($"No files match the filemask '{input.FileMask ?? "*"}' within supplied path.");
 
         var result = new List<string>();
-        var sw = new StringWriter();
+        StringWriter sw = null;
+        ILoggerFactory lf = null;
+        var currentLoggingOption = AWSConfigs.LoggingConfig.LogTo;
+        if (connection.GatherDebugLog)
+        {
+            sw = new StringWriter();
+            lf = ConfigureAWSSDKLogging(sw);
+        }
+        else
+        {
+            AWSConfigs.LoggingConfig.LogTo = LoggingOptions.None;
+        }
 
         try
         {
-            AWSConfigs.LoggingConfig.LogTo = LoggingOptions.Console;
-            Console.SetOut(sw);
-
             foreach (var file in filesToCopy)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                if (file.FullName.Split(Path.DirectorySeparatorChar).Length > input.FilePath.Split(Path.DirectorySeparatorChar).Length && connection.PreserveFolderStructure)
+                if (file.FullName.Split(Path.DirectorySeparatorChar).Length >
+                    input.FilePath.Split(Path.DirectorySeparatorChar).Length && connection.PreserveFolderStructure)
                 {
-                    var subfolders = file.FullName.Replace(file.Name, "").Replace(input.FilePath.Replace(file.Name, ""), "").Replace(Path.DirectorySeparatorChar, '/');
+                    var subfolders = file.FullName.Replace(file.Name, "")
+                        .Replace(input.FilePath.Replace(file.Name, ""), "").Replace(Path.DirectorySeparatorChar, '/');
 
                     if (subfolders.StartsWith("/"))
                         subfolders = subfolders.Remove(0, 1);
@@ -82,9 +91,11 @@ public class AmazonS3
                     else
                     {
                         if (connection.UseMultipartUpload)
-                            await UploadMultipart(file, connection, input.PartSize, input.S3Directory + file.Name, cancellationToken);
+                            await UploadMultipart(file, connection, input.PartSize, input.S3Directory + file.Name,
+                                cancellationToken);
                         else
-                            await UploadFileToS3(file, connection, input.S3Directory + file.Name, input, cancellationToken);
+                            await UploadFileToS3(file, connection, input.S3Directory + file.Name, input,
+                                cancellationToken);
                     }
 
                     result.Add(connection.ReturnListOfObjectKeys ? input.S3Directory + file.Name : file.FullName);
@@ -96,38 +107,61 @@ public class AmazonS3
                 if (connection.AuthenticationMethod == AuthenticationMethod.PreSignedURL) break;
             }
 
-            return new Result(true, result, sw.ToString());
+            return new Result(true, result, sw?.ToString());
         }
         catch (AmazonS3Exception ex)
         {
             if (connection.ThrowExceptionOnErrorResponse)
-                throw new UploadException(sw.ToString(), ex.Message, ex.InnerException);
+                throw new UploadException(sw?.ToString(), ex.Message, ex.InnerException);
 
             return new Result(
                 false,
                 result,
-                connection.AuthenticationMethod is AuthenticationMethod.AWSCredentials ? sw.ToString() : $"Exception: {ex.Message}, InnerException: {ex.InnerException}"
-                );
+                connection.AuthenticationMethod is AuthenticationMethod.AWSCredentials
+                    ? sw?.ToString()
+                    : $"Exception: {ex.Message}, InnerException: {ex.InnerException}"
+            );
         }
         catch (Exception ex)
         {
             if (connection.ThrowExceptionOnErrorResponse)
-                throw new UploadException(sw.ToString(), ex.Message, ex.InnerException);
+                throw new UploadException(sw?.ToString(), ex.Message, ex.InnerException);
 
             return new Result(
                 false,
                 result,
-                connection.AuthenticationMethod is AuthenticationMethod.AWSCredentials ? sw.ToString() : $"Exception: {ex.Message}, InnerException: {ex.InnerException}"
-                );
+                connection.AuthenticationMethod is AuthenticationMethod.AWSCredentials
+                    ? sw?.ToString()
+                    : $"Exception: {ex.Message}, InnerException: {ex.InnerException}"
+            );
         }
         finally
         {
-            // Back to defaults so that unit tests won't fail.
-            AWSConfigs.LoggingConfig.LogTo = default;
+            if (connection.GatherDebugLog)
+            {
+                UnconfigureAWSSDKLogging();
+            }
 
-            sw.Close();
-            sw.Dispose();
+            sw?.Dispose();
+            lf?.Dispose();
+
+            AWSConfigs.LoggingConfig.LogTo = currentLoggingOption;
         }
+    }
+
+    private static ILoggerFactory ConfigureAWSSDKLogging(StringWriter sw)
+    {
+        var lf = LoggerFactory.Create(builder =>
+        {
+            builder.AddProvider(new StringWriterLoggerProvider(sw));
+        });
+        lf.ConfigureAWSSDKLogging();
+        return lf;
+    }
+
+    private static void UnconfigureAWSSDKLogging()
+    {
+        Amazon.Runtime.Logging.AdaptorLoggerFactoryRegistry.DeregisterAdaptorLoggerFactory("ILogger");
     }
 
     private static async Task UploadFilePreSignedUrl(Connection connection, string path, CancellationToken cancellationToken)
@@ -140,34 +174,32 @@ public class AmazonS3
     private static async Task<PutObjectResponse> UploadFileToS3(FileInfo file, Connection connection, string path, Input input, CancellationToken cancellationToken)
     {
         PutObjectResponse result;
-        using (var client = new AmazonS3Client(connection.AwsAccessKeyId, connection.AwsSecretAccessKey, RegionSelection(connection.Region)))
+        using var client = new AmazonS3Client(connection.AwsAccessKeyId, connection.AwsSecretAccessKey, RegionSelection(connection.Region));
+        if (!connection.Overwrite)
         {
-            if (!connection.Overwrite)
+            try
             {
-                try
+                var request = new GetObjectRequest
                 {
-                    var request = new GetObjectRequest
-                    {
-                        BucketName = connection.BucketName,
-                        Key = path,
-                    };
-                    await client.GetObjectAsync(request, cancellationToken);
-                    throw new ArgumentException($"Object {file.Name} already exists in S3 at {request.Key}. Set Overwrite-option to true to overwrite the existing file.");
-                }
-                //Move on if AmazonS3Exception is thrown.
-                catch (AmazonS3Exception) { }
+                    BucketName = connection.BucketName,
+                    Key = path,
+                };
+                await client.GetObjectAsync(request, cancellationToken);
+                throw new ArgumentException($"Object {file.Name} already exists in S3 at {request.Key}. Set Overwrite-option to true to overwrite the existing file.");
             }
+            //Move on if AmazonS3Exception is thrown.
+            catch (AmazonS3Exception) { }
+        }
 
-            var putObjectRequest = new PutObjectRequest
-            {
-                BucketName = connection.BucketName,
-                Key = path,
-                FilePath = file.FullName,
-                CannedACL = (input.UseACL) ? GetS3CannedACL(input.ACL) : S3CannedACL.NoACL,
-            };
-
-            result = await client.PutObjectAsync(putObjectRequest, cancellationToken);
+        var putObjectRequest = new PutObjectRequest
+        {
+            BucketName = connection.BucketName,
+            Key = path,
+            FilePath = file.FullName,
+            CannedACL = (input.UseACL) ? GetS3CannedACL(input.ACL) : S3CannedACL.NoACL,
         };
+
+        result = await client.PutObjectAsync(putObjectRequest, cancellationToken);
 
         return result;
     }
