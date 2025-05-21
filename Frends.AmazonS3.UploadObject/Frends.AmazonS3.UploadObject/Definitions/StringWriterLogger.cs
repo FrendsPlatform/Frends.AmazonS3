@@ -8,6 +8,7 @@ internal class StringWriterLogger : ILogger
 {
     private readonly TextWriter _writer;
     private readonly string _category;
+    private readonly object _syncRoot = new();
 
     public StringWriterLogger(TextWriter writer, string category)
     {
@@ -27,11 +28,11 @@ internal class StringWriterLogger : ILogger
         Func<TState, Exception, string> formatter)
     {
         var message = formatter(state, exception);
-        _writer.WriteLine($"[{logLevel}] {_category}: {message}");
-
-        if (exception != null)
+        lock (_syncRoot)
         {
-            _writer.WriteLine(exception);
+            _writer.WriteLine($"[{logLevel}] {_category}: {message}");
+            if (exception != null)
+                _writer.WriteLine(exception);
         }
     }
 }

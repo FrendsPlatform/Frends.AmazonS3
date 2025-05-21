@@ -29,8 +29,8 @@ public class Connection
 
     /// <summary>
     /// Use Multipart upload?
-    /// This is a method used to asynchronously initiate a multipart upload for a large object (file size over 5 GB) to Amazon S3. 
-    /// Multipart upload breaks the object into smaller parts, which are uploaded independently in parallel. 
+    /// This is a method used to asynchronously initiate a multipart upload for a large object (file size over 5 GB) to Amazon S3.
+    /// Multipart upload breaks the object into smaller parts, which are uploaded independently in parallel.
     /// </summary>
     /// <example>true</example>
     [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AWSCredentials)]
@@ -104,7 +104,7 @@ public class Connection
     /// </summary>
     /// <example>false</example>
     public bool DeleteSource { get; set; }
-    
+
     /// <summary>
     /// Whether to gather AWS SDK debug log.
     /// Please note that AWS SDK logging is not thread-safe and can pollute log output for tasks that run in parallel.

@@ -141,10 +141,10 @@ public class AmazonS3
             {
                 UnconfigureAWSSDKLogging();
             }
-            
+
             sw?.Dispose();
             lf?.Dispose();
-            
+
             AWSConfigs.LoggingConfig.LogTo = currentLoggingOption;
         }
     }
@@ -200,7 +200,7 @@ public class AmazonS3
         };
 
         result = await client.PutObjectAsync(putObjectRequest, cancellationToken);
-        
+
         return result;
     }
 

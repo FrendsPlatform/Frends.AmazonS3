@@ -30,7 +30,7 @@ public class AWSCredsUnitTestsMultipart
         _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
         _bucketName = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_BucketName");
     }
-    
+
     [TestInitialize]
     public void Initialize()
     {
@@ -69,7 +69,7 @@ public class AWSCredsUnitTestsMultipart
             Path.Combine(_dir, "AWS", "test1.txt"),
             Path.Combine(_dir, "AWS", "test2")
         };
-        long targetSizeInBytes = 6L * 1024L * 1024L * 1024L; // 6 GB in bytes
+        long targetSizeInBytes = 6L * 1024L * 1024L; // 6 GB in bytes
 
         foreach (var file in fileList)
             if (!File.Exists(file))

@@ -17,5 +17,9 @@ internal class StringWriterLoggerProvider : ILoggerProvider
         return new StringWriterLogger(_writer, categoryName);
     }
 
-    public void Dispose() { }
+    public void Dispose()
+    {
+        // Note: We should NOT dispose _writer here as it may be used elsewhere
+        // The caller who created the TextWriter should be responsible for disposing it
+    }
 }

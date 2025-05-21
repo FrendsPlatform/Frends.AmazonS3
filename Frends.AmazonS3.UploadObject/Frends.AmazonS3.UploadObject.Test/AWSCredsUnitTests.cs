@@ -35,7 +35,7 @@ public class AWSCredsUnitTests
     public void Initialize()
     {
         Directory.CreateDirectory(Path.Combine(_dir, "AWS"));
-        Directory.CreateDirectory(Path.Combine(_dir, "AWS", "Subfolder")); 
+        Directory.CreateDirectory(Path.Combine(_dir, "AWS", "Subfolder"));
         Directory.CreateDirectory(Path.Combine(_dir, "AWS", "EmptyFolder"));
 
         File.AppendAllText(Path.Combine(_dir, "AWS", "test1.txt"), "test1");
@@ -108,7 +108,7 @@ public class AWSCredsUnitTests
         Assert.IsNotNull(result.DebugLog);
         Assert.IsTrue(result.UploadedObjects.Any(x => x.Contains("deletethis_awscreds.txt")));
     }
-    
+
     [TestMethod]
     public async Task AWSCreds_Upload_GatherDebugLog_False()
     {
@@ -544,5 +544,5 @@ public class AWSCredsUnitTests
         var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.UploadObject(_connection, _input, default));
         Assert.IsTrue(ex.Message.Contains($"No files match the filemask '*' within supplied path."));
     }
-    
+
 }

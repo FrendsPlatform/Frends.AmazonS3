@@ -29,7 +29,7 @@ public class PreSignedUnitTests
         _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
         _bucketName = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_BucketName");
     }
-    
+
     [TestInitialize]
     public void Initialize()
     {
@@ -82,12 +82,13 @@ public class PreSignedUnitTests
             DeleteSource = false,
             ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
+            GatherDebugLog = false
         };
 
         var result = await AmazonS3.UploadObject(_connection, _input, default);
         Assert.AreEqual(1, result.UploadedObjects.Count);
         Assert.IsTrue(result.Success);
-        Assert.AreEqual(string.Empty, result.DebugLog);
+        Assert.IsNull(result.DebugLog);
         Assert.IsTrue(result.UploadedObjects.Any(x => x.Contains("deletethis_presign.txt")));
     }
 
