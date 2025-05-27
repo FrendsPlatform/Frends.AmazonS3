@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.3.0] - 2025-05-27
+### Changed
+- Updated AWS SDK to version 4.0.0.5
+
 ## [2.2.0] - 2024-12-11
 ### Updated
 - Listing updated to newer version.
