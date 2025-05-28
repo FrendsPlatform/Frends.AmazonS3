@@ -42,7 +42,7 @@ namespace Frends.AmazonS3.ListObjects
                 var request = GetListObjectsV2Request(source, options);
                 var response = new ListObjectsV2Response();
 
-                while (request != null && !response.IsTruncated)
+                while (request != null && !(response.IsTruncated ?? false))
                 {
                     response = await client.ListObjectsV2Async(request, cancellationToken);
 
@@ -56,10 +56,9 @@ namespace Frends.AmazonS3.ListObjects
                             Size = item.Size,
                             Etag = item.ETag,
                             LastModified = item.LastModified
-
                         });
                     }
-                    if (response.IsTruncated)
+                    if ((response.IsTruncated ?? false))
                         request.ContinuationToken = response.NextContinuationToken;
                     else
                         request = null;
