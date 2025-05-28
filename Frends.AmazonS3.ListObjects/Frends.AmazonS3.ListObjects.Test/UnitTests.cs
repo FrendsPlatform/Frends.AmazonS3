@@ -184,6 +184,10 @@ namespace Frends.AmazonS3.ListObjects.Test
             };
 
             var ex = Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.ListObjects(invalidSource, _options, default)).Result;
+            
+            Console.WriteLine("Exception Type: " + ex.GetType().FullName);
+            Console.WriteLine("Message: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
 
             Assert.IsTrue(ex.Message.Contains("The specified bucket does not exist"));
         }
