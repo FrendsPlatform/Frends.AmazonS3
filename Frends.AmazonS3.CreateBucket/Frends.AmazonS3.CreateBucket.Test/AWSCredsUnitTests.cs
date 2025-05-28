@@ -96,6 +96,6 @@ public class AWSCredsUnitTests
 
         var ex = await Assert.ThrowsExceptionAsync<AmazonS3Exception>(() => AmazonS3.CreateBucket(_connection, default));
         Assert.IsNotNull(ex.InnerException);
-        Assert.AreEqual("Access Denied", ex.InnerException.Message);
+        StringAssert.Contains(ex.InnerException.Message, "Anonymous users");
     }
 }
