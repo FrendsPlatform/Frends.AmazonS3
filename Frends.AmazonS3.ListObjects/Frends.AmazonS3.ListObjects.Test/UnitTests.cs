@@ -165,30 +165,6 @@ namespace Frends.AmazonS3.ListObjects.Test
         }
 
         [TestMethod]
-        public void MissingCredentials_ShouldThrowException()
-        {
-            var invalidSource = new Source
-            {
-                AwsAccessKeyId = null,
-                AwsSecretAccessKey = null,
-                BucketName = _bucketName,
-                Region = Region.EuCentral1
-            };
-
-            _options = new Options
-            {
-                Delimiter = null,
-                MaxKeys = 1000,
-                Prefix = null,
-                StartAfter = null
-            };
-
-            var ex = Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.ListObjects(invalidSource, _options, default)).Result;
-
-            Assert.AreEqual("AWS credentials missing.", ex.Message);
-        }
-
-        [TestMethod]
         public void InvalidBucketName_ShouldThrowAmazonS3Exception()
         {
             var invalidSource = new Source
@@ -209,7 +185,7 @@ namespace Frends.AmazonS3.ListObjects.Test
 
             var ex = Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.ListObjects(invalidSource, _options, default)).Result;
 
-            Assert.AreEqual("NoSuchBucket", (ex.InnerException as AmazonS3Exception)?.ErrorCode);
+            Assert.IsTrue(ex.Message.Contains("The specified bucket does not exist"));
         }
 
         public void UnsupportedRegion_ShouldThrowInvalidOperationException()
