@@ -1,6 +1,10 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using Frends.AmazonS3.ListObjects.Definitions;
+using Amazon.S3;
+using Amazon.S3.Model;
+using Amazon;
+using System.Threading.Tasks;
 
 namespace Frends.AmazonS3.ListObjects.Test
 {
@@ -13,6 +17,47 @@ namespace Frends.AmazonS3.ListObjects.Test
 
         Source? _source = null;
         Options? _options = null;
+
+        private AmazonS3Client _client = null!;
+
+        [TestInitialize]
+        public async Task Setup()
+        {
+            _client = new AmazonS3Client(_accessKey, _secretAccessKey, RegionEndpoint.EUCentral1);
+
+            await _client.PutObjectAsync(new PutObjectRequest
+            {
+                BucketName = _bucketName,
+                Key = "testfolder/subfolder/20220402.txt",
+                ContentBody = "Test file for StartAfter"
+            });
+
+            await _client.PutObjectAsync(new PutObjectRequest
+            {
+                BucketName = _bucketName,
+                Key = "2020/11/23/testfile.txt",
+                ContentBody = "Test file for Prefix"
+            });
+        }
+
+        [TestCleanup]
+        public async Task Cleanup()
+        {
+            var keysToDelete = new[]
+            {
+                "testfolder/subfolder/20220402.txt",
+                "2020/11/23/testfile.txt"
+            };
+
+            foreach (var key in keysToDelete)
+            {
+                await _client.DeleteObjectAsync(new DeleteObjectRequest
+                {
+                    BucketName = _bucketName,
+                    Key = key
+                });
+            }
+        }
 
 
         /// <summary>
