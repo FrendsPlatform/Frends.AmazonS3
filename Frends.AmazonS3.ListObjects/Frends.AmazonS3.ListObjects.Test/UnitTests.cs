@@ -171,7 +171,7 @@ namespace Frends.AmazonS3.ListObjects.Test
             {
                 AwsAccessKeyId = _accessKey,
                 AwsSecretAccessKey = _secretAccessKey,
-                BucketName = "nonexistent-bucket",
+                BucketName = "invalid-bucket-name",
                 Region = Region.EuCentral1
             };
 
