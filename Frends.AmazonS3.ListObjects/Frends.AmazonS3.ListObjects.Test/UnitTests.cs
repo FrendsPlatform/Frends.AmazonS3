@@ -163,5 +163,53 @@ namespace Frends.AmazonS3.ListObjects.Test
             var ex = Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.ListObjects(_source, _options, default)).Result;
             Assert.IsTrue(ex.Message.Contains("AWS credentials missing."));
         }
+
+        [TestMethod]
+        public void MissingCredentials_ShouldThrowException()
+        {
+            var invalidSource = new Source
+            {
+                AwsAccessKeyId = null,
+                AwsSecretAccessKey = null,
+                BucketName = _bucketName,
+                Region = Region.EuCentral1
+            };
+
+            var ex = Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.ListObjects(_source, _options, default)).Result;
+
+            Assert.AreEqual("AWS credentials missing.", ex.Message);
+        }
+
+        [TestMethod]
+        public void InvalidBucketName_ShouldThrowAmazonS3Exception()
+        {
+            var invalidSource = new Source
+            {
+                AwsAccessKeyId = _accessKey,
+                AwsSecretAccessKey = _secretAccessKey,
+                BucketName = "nonexistent-bucket",
+                Region = Region.EuCentral1
+            };
+
+            var ex = Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.ListObjects(_source, _options, default)).Result;
+
+            Assert.AreEqual("NoSuchBucket", (ex.InnerException as AmazonS3Exception)?.ErrorCode);
+        }
+
+        public void UnsupportedRegion_ShouldThrowInvalidOperationException()
+        {
+            var invalidSource = new Source
+            {
+                AwsAccessKeyId = _accessKey,
+                AwsSecretAccessKey = _secretAccessKey,
+                BucketName = _bucketName,
+                Region = (Region)999 
+            };
+
+            var exception = Assert.ThrowsException<AggregateException>(() =>
+                AmazonS3.ListObjects(invalidSource, _options, default).Result);
+
+            Assert.IsInstanceOfType(exception.InnerException, typeof(InvalidOperationException));
+        }
     }
 }
