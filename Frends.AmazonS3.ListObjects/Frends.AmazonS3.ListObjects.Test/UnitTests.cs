@@ -175,7 +175,15 @@ namespace Frends.AmazonS3.ListObjects.Test
                 Region = Region.EuCentral1
             };
 
-            var ex = Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.ListObjects(_source, _options, default)).Result;
+            _options = new Options
+            {
+                Delimiter = null,
+                MaxKeys = 1000,
+                Prefix = null,
+                StartAfter = null
+            };
+
+            var ex = Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.ListObjects(invalidSource, _options, default)).Result;
 
             Assert.AreEqual("AWS credentials missing.", ex.Message);
         }
@@ -191,7 +199,15 @@ namespace Frends.AmazonS3.ListObjects.Test
                 Region = Region.EuCentral1
             };
 
-            var ex = Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.ListObjects(_source, _options, default)).Result;
+            _options = new Options
+            {
+                Delimiter = null,
+                MaxKeys = 1000,
+                Prefix = null,
+                StartAfter = null
+            };
+
+            var ex = Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.ListObjects(invalidSource, _options, default)).Result;
 
             Assert.AreEqual("NoSuchBucket", (ex.InnerException as AmazonS3Exception)?.ErrorCode);
         }
@@ -204,6 +220,14 @@ namespace Frends.AmazonS3.ListObjects.Test
                 AwsSecretAccessKey = _secretAccessKey,
                 BucketName = _bucketName,
                 Region = (Region)999 
+            };
+
+            _options = new Options
+            {
+                Delimiter = null,
+                MaxKeys = 1000,
+                Prefix = null,
+                StartAfter = null
             };
 
             var exception = Assert.ThrowsException<AggregateException>(() =>
