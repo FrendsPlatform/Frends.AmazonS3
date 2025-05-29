@@ -189,7 +189,7 @@ namespace Frends.AmazonS3.ListObjects.Test
             Console.WriteLine("Message: " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
 
-            Assert.IsTrue(ex.Message.Contains("An error occurred (NoSuchBucket)"));
+            Assert.IsTrue(ex.Message.Contains("The bucket you are attempting to access must be addressed using the specified endpoint."));
         }
 
         public void UnsupportedRegion_ShouldThrowInvalidOperationException()
