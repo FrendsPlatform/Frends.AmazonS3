@@ -319,9 +319,8 @@ namespace Frends.AmazonS3.ListObjects.Test
             var ex = await Assert.ThrowsExceptionAsync<Exception>(async () =>
                 await AmazonS3.ListObjects(source, options, cts.Token));
 
-            // Assert the exception is TaskCanceledException or OperationCanceledException
             Assert.IsTrue(
-                ex is OperationCanceledException);
+                ex.Message.Contains("A task was canceled"));
         }
 
         [TestMethod]
