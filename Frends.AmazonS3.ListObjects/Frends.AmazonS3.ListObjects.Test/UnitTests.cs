@@ -224,7 +224,7 @@ namespace Frends.AmazonS3.ListObjects.Test
                 AwsAccessKeyId = _accessKey,
                 AwsSecretAccessKey = _secretAccessKey,
                 BucketName = _bucketName,
-                Region = (Region)999 
+                Region = (Region)999
             };
 
             _options = new Options
@@ -316,8 +316,12 @@ namespace Frends.AmazonS3.ListObjects.Test
             var cts = new CancellationTokenSource();
             cts.Cancel();
 
-            await Assert.ThrowsExceptionAsync<OperationCanceledException>(async () =>
+            var ex = await Assert.ThrowsExceptionAsync<Exception>(async () =>
                 await AmazonS3.ListObjects(source, options, cts.Token));
+
+            // Assert the exception is TaskCanceledException or OperationCanceledException
+            Assert.IsTrue(
+                ex is OperationCanceledException);
         }
 
         [TestMethod]
@@ -343,6 +347,5 @@ namespace Frends.AmazonS3.ListObjects.Test
 
             Assert.IsNotNull(result.ObjectList);
         }
-
     }
 }
