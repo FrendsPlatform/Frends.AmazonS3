@@ -5,6 +5,7 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace Frends.AmazonS3.ListObjects.Test
 {
@@ -291,6 +292,56 @@ namespace Frends.AmazonS3.ListObjects.Test
             {
                 Assert.IsTrue(obj.Key.StartsWith("pagetest/"));
             }
+        }
+
+        [TestMethod]
+        public async Task ShouldThrowOperationCanceledException_WhenCancelled()
+        {
+            var source = new Source
+            {
+                AwsAccessKeyId = _accessKey,
+                AwsSecretAccessKey = _secretAccessKey,
+                BucketName = _bucketName,
+                Region = Region.EuCentral1
+            };
+
+            var options = new Options
+            {
+                Delimiter = null,
+                MaxKeys = 100,
+                Prefix = null,
+                StartAfter = null
+            };
+
+            var cts = new CancellationTokenSource();
+            cts.Cancel()
+
+            await Assert.ThrowsExceptionAsync<OperationCanceledException>(async () =>
+                await AmazonS3.ListObjects(source, options, cts.Token));
+        }
+
+        [TestMethod]
+        public async Task ShouldTreatEmptyOrWhitespaceOptionsAsNull()
+        {
+            var source = new Source
+            {
+                AwsAccessKeyId = _accessKey,
+                AwsSecretAccessKey = _secretAccessKey,
+                BucketName = _bucketName,
+                Region = Region.EuCentral1
+            };
+
+            var options = new Options
+            {
+                Delimiter = "   ",
+                MaxKeys = 10,
+                Prefix = "",
+                StartAfter = "   "
+            };
+
+            var result = await AmazonS3.ListObjects(source, options, default);
+
+            Assert.IsNotNull(result.ObjectList);
         }
 
     }
