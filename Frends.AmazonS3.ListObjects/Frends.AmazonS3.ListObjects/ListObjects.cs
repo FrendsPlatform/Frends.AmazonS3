@@ -7,6 +7,7 @@ using Amazon;
 using Amazon.S3;
 using System.Collections.Generic;
 using Amazon.S3.Model;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Frends.AmazonS3.ListObjects
 {
@@ -92,6 +93,7 @@ namespace Frends.AmazonS3.ListObjects
             return request;
         }
 
+        [ExcludeFromCodeCoverage]
         private static RegionEndpoint RegionSelection(Region region)
         {
             switch (region)

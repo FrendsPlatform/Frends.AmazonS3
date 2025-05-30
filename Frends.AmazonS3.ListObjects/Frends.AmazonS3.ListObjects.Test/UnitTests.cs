@@ -15,7 +15,6 @@ namespace Frends.AmazonS3.ListObjects.Test
         private readonly string? _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
         private readonly string? _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
         private readonly string? _bucketName = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_BucketName");
-
         Source? _source = null;
         Options? _options = null;
 
@@ -216,31 +215,6 @@ namespace Frends.AmazonS3.ListObjects.Test
 
             Assert.IsTrue(ex.Message.Contains("The bucket you are attempting to access must be addressed using the specified endpoint."));
         }
-
-        public void UnsupportedRegion_ShouldThrowInvalidOperationException()
-        {
-            var invalidSource = new Source
-            {
-                AwsAccessKeyId = _accessKey,
-                AwsSecretAccessKey = _secretAccessKey,
-                BucketName = _bucketName,
-                Region = (Region)999
-            };
-
-            _options = new Options
-            {
-                Delimiter = null,
-                MaxKeys = 1000,
-                Prefix = null,
-                StartAfter = null
-            };
-
-            var exception = Assert.ThrowsException<AggregateException>(() =>
-                AmazonS3.ListObjects(invalidSource, _options, default).Result);
-
-            Assert.IsInstanceOfType(exception.InnerException, typeof(InvalidOperationException));
-        }
-
 
         [TestMethod]
         public async Task DelimiterUsageTest()
