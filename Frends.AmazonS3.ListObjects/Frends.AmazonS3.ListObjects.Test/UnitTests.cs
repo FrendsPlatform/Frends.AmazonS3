@@ -38,6 +38,26 @@ namespace Frends.AmazonS3.ListObjects.Test
                 Key = "2020/11/23/testfile.txt",
                 ContentBody = "Test file for Prefix"
             });
+
+            for (int i = 0; i < 5; i++)
+            {
+                await _client.PutObjectAsync(new PutObjectRequest
+                {
+                    BucketName = _bucketName,
+                    Key = $"pagetest/file_{i}.txt",
+                    ContentBody = $"Pagination test file {i}"
+                });
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                await _client.PutObjectAsync(new PutObjectRequest
+                {
+                    BucketName = _bucketName,
+                    Key = $"testfolder/file_{i}.txt",
+                    ContentBody = $"Delimiter test file {i}"
+                });
+            }
         }
 
         [TestCleanup]
@@ -46,7 +66,15 @@ namespace Frends.AmazonS3.ListObjects.Test
             var keysToDelete = new[]
             {
                 "testfolder/subfolder/20220402.txt",
-                "2020/11/23/testfile.txt"
+                "2020/11/23/testfile.txt",
+                "testfolder/file_0.txt",
+                "testfolder/file_1.txt",
+                "testfolder/file_2.txt",
+                "pagetest/file_0.txt",
+                "pagetest/file_1.txt",
+                "pagetest/file_2.txt",
+                "pagetest/file_3.txt",
+                "pagetest/file_4.txt"
             };
 
             foreach (var key in keysToDelete)
@@ -211,5 +239,59 @@ namespace Frends.AmazonS3.ListObjects.Test
 
             Assert.IsInstanceOfType(exception.InnerException, typeof(InvalidOperationException));
         }
+
+
+        [TestMethod]
+        public async Task DelimiterUsageTest()
+        {
+            _source = new Source
+            {
+                AwsAccessKeyId = _accessKey,
+                AwsSecretAccessKey = _secretAccessKey,
+                BucketName = _bucketName,
+                Region = Region.EuCentral1
+            };
+
+            _options = new Options
+            {
+                Delimiter = "/",
+                MaxKeys = 100,
+                Prefix = "testfolder/",
+                StartAfter = null
+            };
+
+            var result = await AmazonS3.ListObjects(_source, _options, default);
+            Assert.IsTrue(result.ObjectList.Count > 0);
+        }
+
+        [TestMethod]
+        public void PaginationTest_ShouldRespectMaxKeys()
+        {
+            _source = new Source
+            {
+                AwsAccessKeyId = _accessKey,
+                AwsSecretAccessKey = _secretAccessKey,
+                BucketName = _bucketName,
+                Region = Region.EuCentral1
+            };
+
+            _options = new Options
+            {
+                Delimiter = null,
+                MaxKeys = 3,
+                Prefix = "pagetest/",
+                StartAfter = null
+            };
+
+            var result = AmazonS3.ListObjects(_source, _options, default).Result;
+
+            Assert.AreEqual(3, result.ObjectList.Count);
+
+            foreach (var obj in result.ObjectList)
+            {
+                Assert.IsTrue(obj.Key.StartsWith("pagetest/"));
+            }
+        }
+
     }
 }
