@@ -314,7 +314,7 @@ namespace Frends.AmazonS3.ListObjects.Test
             };
 
             var cts = new CancellationTokenSource();
-            cts.Cancel()
+            cts.Cancel();
 
             await Assert.ThrowsExceptionAsync<OperationCanceledException>(async () =>
                 await AmazonS3.ListObjects(source, options, cts.Token));
