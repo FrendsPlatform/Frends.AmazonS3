@@ -16,6 +16,8 @@ public class AWSCredsUnitTests
     private readonly string? _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
     private readonly string? _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
     private Connection _connection = new();
+    private Options _options = new();
+    private Input _input = new();
     private string? _bucketName;
 
     [TestInitialize]
@@ -26,7 +28,11 @@ public class AWSCredsUnitTests
             AwsAccessKeyId = _accessKey,
             AwsSecretAccessKey = _secretAccessKey,
             Region = Region.EuCentral1,
-            ObjectLockEnabledForBucket = false
+        };
+
+        _options = new Options
+        {
+            ObjectLockEnabled = false
         };
     }
 
@@ -61,10 +67,10 @@ public class AWSCredsUnitTests
     {
         var acl = Acls.Private;
         _bucketName = $"ritteambuckettest{acl.ToString().ToLower()}";
-        _connection.BucketName = _bucketName;
+        _input.BucketName = _bucketName;
         _connection.Acl = acl;
 
-        var result = await AmazonS3.CreateBucket(_connection, default);
+        var result = await AmazonS3.CreateBucket(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.AreEqual("eu-central-1", result.BucketLocation);
     }
@@ -74,14 +80,14 @@ public class AWSCredsUnitTests
     {
         var acl = Acls.Private;
         _bucketName = $"ritteambuckettest{acl.ToString().ToLower()}";
-        _connection.BucketName = _bucketName;
+        _input.BucketName = _bucketName;
         _connection.Acl = acl;
 
-        var result = await AmazonS3.CreateBucket(_connection, default);
+        var result = await AmazonS3.CreateBucket(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.AreEqual("eu-central-1", result.BucketLocation);
 
-        var result2 = await AmazonS3.CreateBucket(_connection, default);
+        var result2 = await AmazonS3.CreateBucket(_input, _connection, _options, default);
         Assert.IsTrue(result2.Success);
         Assert.AreEqual("Bucket already exists.", result2.BucketLocation);
     }
@@ -91,10 +97,10 @@ public class AWSCredsUnitTests
     {
         var acl = Acls.PublicRead;
         _bucketName = $"ritteambuckettest{acl.ToString().ToLower()}";
-        _connection.BucketName = _bucketName;
+        _input.BucketName = _bucketName;
         _connection.Acl = acl;
 
-        var ex = await Assert.ThrowsExceptionAsync<AmazonS3Exception>(() => AmazonS3.CreateBucket(_connection, default));
+        var ex = await Assert.ThrowsExceptionAsync<AmazonS3Exception>(() => AmazonS3.CreateBucket(_input, _connection, _options, default));
         Assert.IsNotNull(ex.InnerException);
         Assert.AreEqual("Access Denied", ex.InnerException.Message);
     }
