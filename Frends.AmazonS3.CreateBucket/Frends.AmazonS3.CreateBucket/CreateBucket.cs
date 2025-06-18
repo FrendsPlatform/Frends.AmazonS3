@@ -35,7 +35,7 @@ public class AmazonS3
                 {
                     BucketName = bucketName,
                     UseClientRegion = true,
-                    CannedACL = GetS3CannedACL(connection.Acl),
+                    CannedACL = GetS3CannedAcl(connection.Acl),
                     ObjectLockEnabledForBucket = connection.ObjectLockEnabledForBucket,
                 };
 
@@ -96,7 +96,7 @@ public class AmazonS3
     }
 
     [ExcludeFromCodeCoverage(Justification = "can only test S3CannedACL.Private")]
-    private static S3CannedACL GetS3CannedACL(Acls acl)
+    private static S3CannedACL GetS3CannedAcl(Acls acl)
     {
         return acl switch
         {
