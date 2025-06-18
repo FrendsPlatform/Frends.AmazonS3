@@ -22,5 +22,14 @@ namespace Frends.AmazonS3.CreateBucket.Definitions
         /// <example>true</example>
         [DefaultValue(true)]
         public bool ThrowErrorOnFailure { get; set; }
+
+        /// <summary>
+        /// Gets or sets a custom error message that will be used when an error occurs and ThrowErrorOnFailure is true.
+        /// When ThrowErrorOnFailure is false, this message will be combined with the task's own error message.
+        /// </summary>
+        /// <example>Custom error message for bucket creation failure.</example>
+        [DisplayFormat(DataFormatString = "Text")]
+        [DefaultValue("Failed to create Amazon S3 bucket.")]
+        public string ErrorMessageOnFailure { get; set; } = "Failed to create Amazon S3 bucket.";
     }
 }

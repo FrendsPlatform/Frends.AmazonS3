@@ -1,0 +1,33 @@
+[
+  {
+    "Task": "Frends.AmazonS3.CreateBucket",
+    "Migrations": [
+      {
+        "Version": "1.0.0",
+        "Description": "Harmonization version",
+        "Migration": [
+          {
+            "Type": "Copy",
+            "Target": "Input.BucketName",
+            "Source": "Connection.BucketName"
+          },
+          {
+            "Type": "Set",
+            "Target": "Options.ThrowOnErrorFailure",
+            "Value": "True"
+          },
+          {
+            "Type": "Copy",
+            "Target": "Options.ObjectLockEnabled",
+            "Source": "Connection.ObjectLockEnabledForBucket"
+          },
+          {
+            "Type": "Set",
+            "Target": "Options.ObjectLockEnabled",
+            "Value": "False"
+          }
+        ]
+      }
+    ]
+  }
+]
