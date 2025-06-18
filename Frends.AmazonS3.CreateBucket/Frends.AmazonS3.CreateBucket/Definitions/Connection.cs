@@ -36,11 +36,4 @@ public class Connection
     /// <example>Acl.Private</example>
     [DefaultValue(Acls.Private)]
     public Acls Acl { get; set; }
-
-    /// <summary>
-    /// Specifies whether you want S3 Object Lock to be enabled for the new bucket.
-    /// </summary>
-    /// <example>false</example>
-    [DefaultValue(false)]
-    public bool ObjectLockEnabledForBucket { get; set; }
 }
