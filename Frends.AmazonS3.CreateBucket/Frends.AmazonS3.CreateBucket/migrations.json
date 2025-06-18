@@ -12,14 +12,19 @@
             "Source": "Connection.BucketName"
           },
           {
-            "Type": "Set",
-            "Target": "Options.ThrowOnErrorFailure",
-            "Value": "True"
+            "Type": "Copy",
+            "Target": "Acl",
+            "Value": "ACL"
           },
           {
             "Type": "Copy",
             "Target": "Options.ObjectLockEnabled",
             "Source": "Connection.ObjectLockEnabledForBucket"
+          },
+          {
+            "Type": "Set",
+            "Target": "Options.ThrowOnErrorFailure",
+            "Value": "True"
           },
           {
             "Type": "Set",
