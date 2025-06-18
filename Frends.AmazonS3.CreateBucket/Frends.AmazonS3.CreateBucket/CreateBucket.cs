@@ -35,7 +35,7 @@ public class AmazonS3
                 {
                     BucketName = bucketName,
                     UseClientRegion = true,
-                    CannedACL = GetS3CannedACL(connection.ACL),
+                    CannedACL = GetS3CannedACL(connection.Acl),
                     ObjectLockEnabledForBucket = connection.ObjectLockEnabledForBucket,
                 };
 
@@ -96,17 +96,17 @@ public class AmazonS3
     }
 
     [ExcludeFromCodeCoverage(Justification = "can only test S3CannedACL.Private")]
-    private static S3CannedACL GetS3CannedACL(ACLs acl)
+    private static S3CannedACL GetS3CannedACL(Acls acl)
     {
         return acl switch
         {
-            ACLs.Private => S3CannedACL.Private,
-            ACLs.PublicRead => S3CannedACL.PublicRead,
-            ACLs.PublicReadWrite => S3CannedACL.PublicReadWrite,
-            ACLs.AuthenticatedRead => S3CannedACL.AuthenticatedRead,
-            ACLs.BucketOwnerRead => S3CannedACL.BucketOwnerRead,
-            ACLs.BucketOwnerFullControl => S3CannedACL.BucketOwnerFullControl,
-            ACLs.LogDeliveryWrite => S3CannedACL.LogDeliveryWrite,
+            Acls.Private => S3CannedACL.Private,
+            Acls.PublicRead => S3CannedACL.PublicRead,
+            Acls.PublicReadWrite => S3CannedACL.PublicReadWrite,
+            Acls.AuthenticatedRead => S3CannedACL.AuthenticatedRead,
+            Acls.BucketOwnerRead => S3CannedACL.BucketOwnerRead,
+            Acls.BucketOwnerFullControl => S3CannedACL.BucketOwnerFullControl,
+            Acls.LogDeliveryWrite => S3CannedACL.LogDeliveryWrite,
             _ => S3CannedACL.NoACL,
         };
     }

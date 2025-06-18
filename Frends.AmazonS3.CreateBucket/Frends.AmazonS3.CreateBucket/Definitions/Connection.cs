@@ -41,9 +41,9 @@ public class Connection
     /// <summary>
     /// Access control list.
     /// </summary>
-    /// <example>ACL.Private</example>
-    [DefaultValue(ACLs.Private)]
-    public ACLs ACL { get; set; }
+    /// <example>Acl.Private</example>
+    [DefaultValue(Acls.Private)]
+    public Acls Acl { get; set; }
 
     /// <summary>
     /// Specifies whether you want S3 Object Lock to be enabled for the new bucket.

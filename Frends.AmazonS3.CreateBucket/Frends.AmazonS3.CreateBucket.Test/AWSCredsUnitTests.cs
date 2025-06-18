@@ -59,10 +59,10 @@ public class AWSCredsUnitTests
     [TestMethod]
     public async Task CreateBucket_SuccessTest()
     {
-        var acl = ACLs.Private;
+        var acl = Acls.Private;
         _bucketName = $"ritteambuckettest{acl.ToString().ToLower()}";
         _connection.BucketName = _bucketName;
-        _connection.ACL = acl;
+        _connection.Acl = acl;
 
         var result = await AmazonS3.CreateBucket(_connection, default);
         Assert.IsTrue(result.Success);
@@ -72,10 +72,10 @@ public class AWSCredsUnitTests
     [TestMethod]
     public async Task CreateBucket_BucketAlreadyExistsTest()
     {
-        var acl = ACLs.Private;
+        var acl = Acls.Private;
         _bucketName = $"ritteambuckettest{acl.ToString().ToLower()}";
         _connection.BucketName = _bucketName;
-        _connection.ACL = acl;
+        _connection.Acl = acl;
 
         var result = await AmazonS3.CreateBucket(_connection, default);
         Assert.IsTrue(result.Success);
@@ -89,10 +89,10 @@ public class AWSCredsUnitTests
     [TestMethod]
     public async Task CreateBucket_ExceptionHandlingTest()
     {
-        var acl = ACLs.PublicRead;
+        var acl = Acls.PublicRead;
         _bucketName = $"ritteambuckettest{acl.ToString().ToLower()}";
         _connection.BucketName = _bucketName;
-        _connection.ACL = acl;
+        _connection.Acl = acl;
 
         var ex = await Assert.ThrowsExceptionAsync<AmazonS3Exception>(() => AmazonS3.CreateBucket(_connection, default));
         Assert.IsNotNull(ex.InnerException);

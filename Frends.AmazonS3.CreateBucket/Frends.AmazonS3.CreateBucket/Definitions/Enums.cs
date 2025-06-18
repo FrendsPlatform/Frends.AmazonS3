@@ -35,7 +35,7 @@ public enum Region
 /// <summary>
 /// Access control list.
 /// </summary>
-public enum ACLs
+public enum Acls
 {
     /// <summary>
     /// Owner gets FULL_CONTROL. No one else has access rights (default).
@@ -63,7 +63,7 @@ public enum ACLs
     BucketOwnerRead,
 
     /// <summary>
-    /// Both the object owner and the bucket owner get FULL_CONTROL over the object. If you specify this canned ACL when creating a bucket, Amazon S3 ignores it.
+    /// Both the object owner and the bucket owner get FULL_CONTROL over the object. If you specify this canned Acl when creating a bucket, Amazon S3 ignores it.
     /// </summary>
     BucketOwnerFullControl,
 
