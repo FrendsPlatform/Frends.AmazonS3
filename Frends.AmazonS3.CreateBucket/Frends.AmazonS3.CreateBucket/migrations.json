@@ -14,7 +14,7 @@
           {
             "Type": "Copy",
             "Target": "Acl",
-            "Value": "ACL"
+            "Source": "ACL"
           },
           {
             "Type": "Copy",
@@ -23,13 +23,31 @@
           },
           {
             "Type": "Set",
+            "Target": "Options.ObjectLockEnabled",
+            "Value": "False"
+          },
+          {
+            "Type": "Set",
             "Target": "Options.ThrowOnErrorFailure",
             "Value": "True"
           },
           {
             "Type": "Set",
-            "Target": "Options.ObjectLockEnabled",
-            "Value": "False"
+            "Target": "Options.ErrorMessageOnFailure",
+            "Value": ""
+          },
+          {
+            "Type": "Set",
+            "Target": "Result.BucketName",
+            "Value": ""
+          },
+          {
+            "Type": "Set",
+            "Target": "Result.Error",
+            "Value": {
+              "Message": "",
+              "AdditionalInfo": null
+            }
           }
         ]
       }
