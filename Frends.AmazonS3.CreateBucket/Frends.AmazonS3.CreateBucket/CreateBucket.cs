@@ -17,6 +17,26 @@ namespace Frends.AmazonS3.CreateBucket;
 public class AmazonS3
 {
     /// <summary>
+    /// Error handling
+    /// </summary>
+    private static class ErrorHandler
+    {
+        internal static Result Handle(Exception ex, bool throwError, string customMessage)
+        {
+            var error = new Error
+            {
+                Message = $"{customMessage} {ex.Message}",
+                AdditionalInfo = ex
+            };
+
+            if (throwError)
+                throw new Exception(error.Message, ex);
+
+            return new Result(false, null, null, error);
+        }
+    }
+
+    /// <summary>
     /// Create AWS S3 Bucket.
     /// [Documentation](https://tasks.frends.com/tasks/frends-tasks/Frends.AmazonS3.CreateBucket)
     /// </summary>
@@ -57,11 +77,11 @@ public class AmazonS3
         }
         catch (AmazonS3Exception e)
         {
-            throw new AmazonS3Exception("Failed to create the bucket.", e);
+            return ErrorHandler.Handle(e, options.ThrowErrorOnFailure, options.ErrorMessageOnFailure);
         }
         catch (Exception e)
         {
-            throw new Exception("Unexpected error occurred while creating the bucket.", e);
+            return ErrorHandler.Handle(e, options.ThrowErrorOnFailure, options.ErrorMessageOnFailure);
         }
     }
 
