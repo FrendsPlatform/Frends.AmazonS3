@@ -30,7 +30,10 @@ public class AmazonS3
             };
 
             if (throwError)
-                throw new Exception(error.Message, ex);
+                if (ex is AmazonS3Exception amazonEx)
+                    throw new AmazonS3Exception(error.Message, amazonEx);
+                else
+                    throw new Exception(error.Message, ex);
 
             return new Result(false, null, null, error);
         }
