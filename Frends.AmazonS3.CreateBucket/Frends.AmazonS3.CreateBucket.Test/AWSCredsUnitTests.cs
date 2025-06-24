@@ -32,9 +32,7 @@ public class AWSCredsUnitTests
 
         _options = new Options
         {
-            ObjectLockEnabled = false, 
-            ThrowErrorOnFailure = true,
-            ErrorMessageOnFailure = "Access Denied.",
+            ObjectLockEnabled = false
         };
     }
 
