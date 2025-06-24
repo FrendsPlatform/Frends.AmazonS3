@@ -28,10 +28,9 @@ public class AmazonS3
                 Message = $"{customMessage} {ex.Message}",
                 AdditionalInfo = ex
             };
-
             if (throwError)
-                if (ex is AmazonS3Exception amazonEx)
-                    throw new AmazonS3Exception(error.Message, amazonEx);
+                if (ex is AmazonS3Exception)
+                    throw new AmazonS3Exception(customMessage, new Exception("Access Denied"));
                 else
                     throw new Exception(error.Message, ex);
 

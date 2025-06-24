@@ -32,7 +32,8 @@ public class AWSCredsUnitTests
 
         _options = new Options
         {
-            ObjectLockEnabled = false
+            ObjectLockEnabled = false,
+            ThrowErrorOnFailure = true,
         };
     }
 
