@@ -32,7 +32,9 @@ public class AWSCredsUnitTests
 
         _options = new Options
         {
-            ObjectLockEnabled = false
+            ObjectLockEnabled = false, 
+            ThrowErrorOnFailure = true,
+            ErrorMessageOnFailure = "Failed to create Amazon S3 bucket."
         };
     }
 
