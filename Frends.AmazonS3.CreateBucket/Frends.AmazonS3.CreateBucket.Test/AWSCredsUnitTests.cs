@@ -34,7 +34,7 @@ public class AWSCredsUnitTests
         {
             ObjectLockEnabled = false, 
             ThrowErrorOnFailure = true,
-            ErrorMessageOnFailure = "Failed to create Amazon S3 bucket."
+            ErrorMessageOnFailure = "Access Denied.",
         };
     }
 
