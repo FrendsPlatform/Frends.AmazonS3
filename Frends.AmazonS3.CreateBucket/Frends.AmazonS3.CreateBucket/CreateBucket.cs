@@ -72,7 +72,7 @@ public class AmazonS3
             }
             else
             {
-                return new Result(true, $"Bucket already exists.", bucketName);
+                return ErrorHandler.Handle(new AmazonS3Exception($"Bucket '{bucketName}' already exists."), options.ThrowErrorOnFailure, options.ErrorMessageOnFailure);
             }
         }
         catch (AmazonS3Exception e)
