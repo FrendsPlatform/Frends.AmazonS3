@@ -29,8 +29,8 @@ public class AmazonS3
                 AdditionalInfo = ex
             };
             if (throwError)
-                if (ex is AmazonS3Exception)
-                    throw new AmazonS3Exception(customMessage, new Exception("Access Denied"));
+                if (ex is AmazonS3Exception amazonEx)
+                    throw new AmazonS3Exception(error.Message, amazonEx);
                 else
                     throw new Exception(error.Message, ex);
 
