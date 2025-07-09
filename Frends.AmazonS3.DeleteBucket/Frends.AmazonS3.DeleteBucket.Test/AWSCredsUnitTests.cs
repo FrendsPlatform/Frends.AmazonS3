@@ -80,14 +80,20 @@ public class AWSCredsUnitTests
     }
 
     [TestMethod]
-    public async Task DeleteBucket_BucketAlreadyExistsTest()
+    public async Task DeleteBucket_BucketDoesNotExistTest()
     {
         var result = await AmazonS3.DeleteBucket(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNull(result.Error);
 
-        var result2 = await AmazonS3.DeleteBucket(_input, _connection, _options, default);
-        Assert.IsTrue(result2.Success);
+        var options = new Options
+        {
+            ThrowErrorOnFailure = false
+        };
+
+        var result2 = await AmazonS3.DeleteBucket(_input, _connection, options, default);
+        Assert.IsFalse(result2.Success);
+        Assert.IsNotNull(result2.Error);
         Assert.AreEqual("Bucket to be deleted, does not exist.", result2.Error.Message);
     }
 
@@ -160,5 +166,38 @@ public class AWSCredsUnitTests
         var ex = await Assert.ThrowsExceptionAsync<AmazonS3Exception>(() => AmazonS3.DeleteBucket(input, connection, options, default));
         Assert.AreEqual("Custom error message for bucket deletion", ex.Message);
         Assert.IsNotNull(ex.InnerException);
+    }
+
+    [TestMethod]
+    public async Task DeleteBucket_BucketDoesNotExistThrowErrorTest()
+    {
+        // First delete the bucket
+        var result = await AmazonS3.DeleteBucket(_input, _connection, _options, default);
+        Assert.IsTrue(result.Success);
+
+        var options = new Options
+        {
+            ThrowErrorOnFailure = true,
+            ErrorMessageOnFailure = "Custom bucket not found error"
+        };
+
+        var ex = await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => AmazonS3.DeleteBucket(_input, _connection, options, default));
+        Assert.AreEqual("Custom bucket not found error", ex.Message);
+    }
+
+    [TestMethod]
+    public async Task DeleteBucket_BucketDoesNotExistDefaultErrorMessageTest()
+    {
+        // First delete the bucket
+        var result = await AmazonS3.DeleteBucket(_input, _connection, _options, default);
+        Assert.IsTrue(result.Success);
+
+        var options = new Options
+        {
+            ThrowErrorOnFailure = true
+        };
+
+        var ex = await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => AmazonS3.DeleteBucket(_input, _connection, options, default));
+        Assert.AreEqual("Bucket to be deleted, does not exist.", ex.Message);
     }
 }

@@ -43,7 +43,14 @@ public class AmazonS3
             }
             else
             {
-                return new Result(true, new Error("Bucket to be deleted, does not exist."));
+                if (options.ThrowErrorOnFailure)
+                {
+                    var errorMessage = !string.IsNullOrEmpty(options.ErrorMessageOnFailure) 
+                        ? options.ErrorMessageOnFailure 
+                        : "Bucket to be deleted, does not exist.";
+                    throw new InvalidOperationException(errorMessage);
+                }
+                return new Result(false, new Error("Bucket to be deleted, does not exist."));
             }
         }
         catch (AmazonS3Exception e)
