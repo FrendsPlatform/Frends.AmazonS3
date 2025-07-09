@@ -276,14 +276,14 @@ public class AWSCredsUnitTests
     {
         // Create a bucket with objects to test deletion behavior
         var bucketWithObjects = "test-bucket-with-objects-12345";
-        
+
         using IAmazonS3 s3Client = new AmazonS3Client(_accessKey, _secretAccessKey, RegionEndpoint.EUCentral1);
-        
+
         try
         {
             // Create bucket
             await s3Client.PutBucketAsync(bucketWithObjects);
-            
+
             // Add an object to the bucket
             await s3Client.PutObjectAsync(new PutObjectRequest
             {
@@ -303,7 +303,7 @@ public class AWSCredsUnitTests
             };
 
             var result = await AmazonS3.DeleteBucket(input, _connection, options, default);
-            
+
             // Should fail because bucket is not empty
             Assert.IsFalse(result.Success);
             Assert.IsNotNull(result.Error);
@@ -336,7 +336,7 @@ public class AWSCredsUnitTests
         };
 
         var result = await AmazonS3.DeleteBucket(_input, _connection, options, cts.Token);
-        
+
         // Should handle cancellation gracefully
         Assert.IsFalse(result.Success);
         Assert.IsNotNull(result.Error);
@@ -346,15 +346,15 @@ public class AWSCredsUnitTests
     public async Task DeleteBucket_ParameterValidationTest()
     {
         // Test with null input
-        var ex1 = await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => 
+        var ex1 = await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
             AmazonS3.DeleteBucket(null, _connection, _options, default));
-        
+
         // Test with null connection
-        var ex2 = await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => 
+        var ex2 = await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
             AmazonS3.DeleteBucket(_input, null, _options, default));
-        
+
         // Test with null options
-        var ex3 = await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => 
+        var ex3 = await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
             AmazonS3.DeleteBucket(_input, _connection, null, default));
     }
 }

@@ -1,4 +1,4 @@
-﻿using Amazon;
+using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Util;
@@ -31,10 +31,10 @@ public class AmazonS3
     /// <returns>A Result object containing success status and any error information.</returns>
     /// <example>
     /// var input = new Input { BucketName = "my-bucket-to-delete" };
-    /// var connection = new Connection { 
-    ///     AwsAccessKeyId = "AKIAIOSFODNN7EXAMPLE", 
+    /// var connection = new Connection {
+    ///     AwsAccessKeyId = "AKIAIOSFODNN7EXAMPLE",
     ///     AwsSecretAccessKey = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-    ///     Region = Region.UsEast1 
+    ///     Region = Region.UsEast1
     /// };
     /// var options = new Options { ThrowErrorOnFailure = true };
     /// var result = await AmazonS3.DeleteBucket(input, connection, options, cancellationToken);
@@ -62,10 +62,10 @@ public class AmazonS3
         }
         catch (AmazonS3Exception e)
         {
-            var errorMessage = !string.IsNullOrEmpty(options.ErrorMessageOnFailure) 
-                ? options.ErrorMessageOnFailure 
+            var errorMessage = !string.IsNullOrEmpty(options.ErrorMessageOnFailure)
+                ? options.ErrorMessageOnFailure
                 : e.Message;
-            
+
             if (options.ThrowErrorOnFailure)
             {
                 throw new AmazonS3Exception(errorMessage, e);
@@ -74,10 +74,10 @@ public class AmazonS3
         }
         catch (Exception e)
         {
-            var errorMessage = !string.IsNullOrEmpty(options.ErrorMessageOnFailure) 
-                ? options.ErrorMessageOnFailure 
+            var errorMessage = !string.IsNullOrEmpty(options.ErrorMessageOnFailure)
+                ? options.ErrorMessageOnFailure
                 : e.Message;
-            
+
             if (options.ThrowErrorOnFailure)
             {
                 throw new Exception(errorMessage, e);
