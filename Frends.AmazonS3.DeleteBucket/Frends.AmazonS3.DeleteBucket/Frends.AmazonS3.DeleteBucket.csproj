@@ -14,13 +14,11 @@
 	<PackageProjectUrl>https://frends.com/</PackageProjectUrl>
 	<RepositoryUrl>https://github.com/FrendsPlatform/Frends.AmazonS3</RepositoryUrl>
   </PropertyGroup>
-	
   <ItemGroup>
 	  <None Include="FrendsTaskMetadata.json" Pack="true" PackagePath="/">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
   </ItemGroup>
-  
   <ItemGroup>
     <PackageReference Include="AWSSDK.Core" Version="3.7.200.5" />
     <PackageReference Include="AWSSDK.S3" Version="3.7.201.3" />
