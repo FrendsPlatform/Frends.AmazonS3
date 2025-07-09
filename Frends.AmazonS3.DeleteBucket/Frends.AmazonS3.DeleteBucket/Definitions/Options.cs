@@ -24,5 +24,5 @@ public class Options
     /// <example>Custom error message for bucket deletion failure</example>
     [DisplayName("Custom Error Message")]
     [DefaultValue("")]
-    public string? ErrorMessageOnFailure { get; set; } = "";
+    public string ErrorMessageOnFailure { get; set; } = "";
 }
