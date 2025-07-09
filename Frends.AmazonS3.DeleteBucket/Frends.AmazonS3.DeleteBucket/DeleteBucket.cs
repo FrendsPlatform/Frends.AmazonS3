@@ -39,11 +39,11 @@ public class AmazonS3
                 };
 
                 await s3Client.DeleteBucketAsync(request, cancellationToken);
-                return new Result(true, null);
+                return new Result(true);
             }
             else
             {
-                return new Result(true, $"Bucket to be deleted, does not exist.");
+                return new Result(true, new Error(null, "Bucket to be deleted, does not exist."));
             }
         }
         catch (AmazonS3Exception e)
@@ -56,8 +56,8 @@ public class AmazonS3
             {
                 var errorMessage = !string.IsNullOrEmpty(options.ErrorMessageOnFailure) 
                     ? options.ErrorMessageOnFailure 
-                    : $"Failed to delete the bucket: {e.Message}";
-                return new Result(false, errorMessage);
+                    : "Failed to delete the bucket";
+                return new Result(false, new Error(errorMessage, e.Message));
             }
         }
         catch (Exception e)
@@ -70,8 +70,8 @@ public class AmazonS3
             {
                 var errorMessage = !string.IsNullOrEmpty(options.ErrorMessageOnFailure) 
                     ? options.ErrorMessageOnFailure 
-                    : $"Unexpected error occurred while deleting the bucket: {e.Message}";
-                return new Result(false, errorMessage);
+                    : "Unexpected error occurred while deleting the bucket";
+                return new Result(false, new Error(errorMessage, e.Message));
             }
         }
     }
