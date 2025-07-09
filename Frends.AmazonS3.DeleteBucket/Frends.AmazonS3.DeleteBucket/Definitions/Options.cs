@@ -23,6 +23,5 @@ public class Options
     /// This allows for more user-friendly error messages in the application.
     /// </summary>
     /// <example>Failed to delete the specified S3 bucket</example>
-    [DefaultValue(null)]
-    public string? ErrorMessageOnFailure { get; set; } = null;
+    public string? ErrorMessageOnFailure { get; set; }
 }
