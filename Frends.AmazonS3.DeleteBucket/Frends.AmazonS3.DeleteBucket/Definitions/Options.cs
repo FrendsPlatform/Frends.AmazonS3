@@ -25,5 +25,5 @@ public class Options
     /// <example>Failed to delete the specified S3 bucket</example>
     [DisplayFormat(DataFormatString = "Text")]
     [DefaultValue(null)]
-    public string? ErrorMessageOnFailure { get; set; }
+    public string ErrorMessageOnFailure { get; set; }
 }
