@@ -1,0 +1,28 @@
+﻿[
+  {
+    "Task": "Frends.AmazonS3.DeleteBucket",
+    "Migrations": [
+      {
+        "Version": "2.0.0",
+        "Description": "Restructured task to use new parameter structure with Input, Connection, and Options tabs. Updated result structure to include proper error handling.",
+        "Migration": [
+          {
+            "Type": "Copy",
+            "Target": "Input.BucketName",
+            "Source": "Connection.BucketName"
+          },
+          {
+            "Type": "Set",
+            "Target": "Options.ThrowErrorOnFailure",
+            "Value": "True"
+          },
+          {
+            "Type": "Set",
+            "Target": "Options.ErrorMessageOnFailure",
+            "Value": "\"\""
+          }
+        ]
+      }
+    ]
+  }
+]
