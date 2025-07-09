@@ -4,12 +4,14 @@ using System.ComponentModel.DataAnnotations;
 namespace Frends.AmazonS3.DeleteBucket.Definitions;
 
 /// <summary>
-/// Options for the DeleteBucket task.
+/// Options for configuring the behavior of the DeleteBucket task.
 /// </summary>
 public class Options
 {
     /// <summary>
-    /// Determines whether to throw an error on failure.
+    /// Determines whether to throw an exception when the bucket deletion fails.
+    /// When set to true, exceptions will be thrown on failure.
+    /// When set to false, errors will be returned in the Result object instead.
     /// </summary>
     /// <example>true</example>
     [DefaultValue(true)]
@@ -17,8 +19,10 @@ public class Options
 
     /// <summary>
     /// Custom error message to use when ThrowErrorOnFailure is false and an error occurs.
-    /// If not provided, the original error message will be used.
+    /// If not provided or null, a default error message will be used based on the type of error.
+    /// This allows for more user-friendly error messages in the application.
     /// </summary>
-    /// <example>Custom error message</example>
-    public string? ErrorMessageOnFailure { get; set; }
+    /// <example>Failed to delete the specified S3 bucket</example>
+    [DefaultValue(null)]
+    public string? ErrorMessageOnFailure { get; set; } = null;
 }
