@@ -147,4 +147,26 @@ public class AWSCredsUnitTests
         Assert.AreEqual("Custom error message for bucket deletion", ex.Message);
         Assert.IsNotNull(ex.InnerException);
     }
+
+    [TestMethod]
+    public async Task DeleteBucket_CustomErrorMessageInResultTest()
+    {
+        var connection = new Connection
+        {
+            AwsSecretAccessKey = "foobar",
+            AwsAccessKeyId = "foobar",
+            Region = Region.EuCentral1,
+        };
+
+        var options = new Options
+        {
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = "Custom error message for bucket deletion"
+        };
+
+        var result = await AmazonS3.DeleteBucket(_input, connection, options, default);
+        Assert.IsFalse(result.Success);
+        Assert.IsNotNull(result.Error);
+        Assert.AreEqual("Custom error message for bucket deletion", result.Error.Message);
+    }
 }

@@ -48,25 +48,27 @@ public class AmazonS3
         }
         catch (AmazonS3Exception e)
         {
+            var errorMessage = !string.IsNullOrEmpty(options.ErrorMessageOnFailure) 
+                ? options.ErrorMessageOnFailure 
+                : e.Message;
+            
             if (options.ThrowErrorOnFailure)
             {
-                var errorMessage = !string.IsNullOrEmpty(options.ErrorMessageOnFailure) 
-                    ? options.ErrorMessageOnFailure 
-                    : "Failed to delete the bucket.";
                 throw new AmazonS3Exception(errorMessage, e);
             }
-            return new Result(false, new Error(e.Message));
+            return new Result(false, new Error(errorMessage));
         }
         catch (Exception e)
         {
+            var errorMessage = !string.IsNullOrEmpty(options.ErrorMessageOnFailure) 
+                ? options.ErrorMessageOnFailure 
+                : e.Message;
+            
             if (options.ThrowErrorOnFailure)
             {
-                var errorMessage = !string.IsNullOrEmpty(options.ErrorMessageOnFailure) 
-                    ? options.ErrorMessageOnFailure 
-                    : "Unexpected error occurred while deleting the bucket.";
                 throw new Exception(errorMessage, e);
             }
-            return new Result(false, new Error(e.Message));
+            return new Result(false, new Error(errorMessage));
         }
     }
 
