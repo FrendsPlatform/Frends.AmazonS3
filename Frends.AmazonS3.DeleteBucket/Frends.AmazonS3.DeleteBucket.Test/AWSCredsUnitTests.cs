@@ -5,6 +5,7 @@ using Amazon.S3.Util;
 using Frends.AmazonS3.DeleteBucket.Definitions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Frends.AmazonS3.DeleteBucket.Tests;
@@ -105,6 +106,115 @@ public class AWSCredsUnitTests
 
         var ex = await Assert.ThrowsExceptionAsync<AmazonS3Exception>(() => AmazonS3.DeleteBucket(_input, connection, _options, default));
         Assert.IsNotNull(ex.InnerException);
+    }
+
+    [TestMethod]
+    public async Task DeleteBucket_InvalidRegionTest()
+    {
+        var connection = new Connection
+        {
+            AwsAccessKeyId = _accessKey,
+            AwsSecretAccessKey = _secretAccessKey,
+            Region = (Region)999, // Invalid region
+        };
+
+        var options = new Options
+        {
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = null
+        };
+
+        var result = await AmazonS3.DeleteBucket(_input, connection, options, default);
+        Assert.IsFalse(result.Success);
+        Assert.IsNotNull(result.Error);
+    }
+
+    [TestMethod]
+    public async Task DeleteBucket_EmptyBucketNameTest()
+    {
+        var input = new Input
+        {
+            BucketName = string.Empty,
+        };
+
+        var options = new Options
+        {
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = null
+        };
+
+        var result = await AmazonS3.DeleteBucket(input, _connection, options, default);
+        Assert.IsFalse(result.Success);
+        Assert.IsNotNull(result.Error);
+    }
+
+    [TestMethod]
+    public async Task DeleteBucket_NullBucketNameTest()
+    {
+        var input = new Input
+        {
+            BucketName = null,
+        };
+
+        var options = new Options
+        {
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = null
+        };
+
+        var result = await AmazonS3.DeleteBucket(input, _connection, options, default);
+        Assert.IsFalse(result.Success);
+        Assert.IsNotNull(result.Error);
+    }
+
+    [TestMethod]
+    public async Task DeleteBucket_InvalidBucketNameTest()
+    {
+        var input = new Input
+        {
+            BucketName = "Invalid_Bucket_Name_With_Underscores_And_Too_Long_Name_That_Exceeds_Limits",
+        };
+
+        var options = new Options
+        {
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = null
+        };
+
+        var result = await AmazonS3.DeleteBucket(input, _connection, options, default);
+        Assert.IsFalse(result.Success);
+        Assert.IsNotNull(result.Error);
+    }
+
+    [TestMethod]
+    public async Task DeleteBucket_NullConnectionTest()
+    {
+        var options = new Options
+        {
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = null
+        };
+
+        var ex = await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => AmazonS3.DeleteBucket(_input, null, options, default));
+        Assert.IsNotNull(ex);
+    }
+
+    [TestMethod]
+    public async Task DeleteBucket_NullOptionsTest()
+    {
+        var result = await AmazonS3.DeleteBucket(_input, _connection, null, default);
+        // Should handle null options gracefully
+        Assert.IsNotNull(result);
+    }
+
+    [TestMethod]
+    public async Task DeleteBucket_CancellationTokenTest()
+    {
+        using var cts = new System.Threading.CancellationTokenSource();
+        cts.Cancel();
+
+        var ex = await Assert.ThrowsExceptionAsync<OperationCanceledException>(() => AmazonS3.DeleteBucket(_input, _connection, _options, cts.Token));
+        Assert.IsNotNull(ex);
     }
 
     [TestMethod]
