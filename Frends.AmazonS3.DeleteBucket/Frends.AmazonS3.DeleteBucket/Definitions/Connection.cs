@@ -25,14 +25,6 @@ public class Connection
     public string AwsSecretAccessKey { get; set; }
 
     /// <summary>
-    /// AWS S3 bucket's name.
-    /// See https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-s3-bucket-naming-requirements.html
-    /// </summary>
-    /// <example>bucket</example>
-    [DisplayFormat(DataFormatString = "Text")]
-    public string BucketName { get; set; }
-
-    /// <summary>
     /// AWS S3 bucket's region.
     /// </summary>
     /// <example>EuCentral1</example>
