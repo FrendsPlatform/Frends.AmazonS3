@@ -15,6 +15,7 @@ public class Connection
     /// <example>AKIAQWERTY7NJ5Q7NZ6Q</example>
     [DisplayFormat(DataFormatString = "Text")]
     [PasswordPropertyText]
+    [Required]
     public string AwsAccessKeyId { get; set; }
 
     /// <summary>
@@ -24,6 +25,7 @@ public class Connection
     /// <example>TVh5hgd3uGY/2CqH+Kkrrg3dadbXLsYe0jC3h+WD</example>
     [DisplayFormat(DataFormatString = "Text")]
     [PasswordPropertyText]
+    [Required]
     public string AwsSecretAccessKey { get; set; }
 
     /// <summary>
