@@ -1,4 +1,4 @@
-using Amazon;
+﻿using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Util;
@@ -48,20 +48,18 @@ public class AmazonS3
         {
             using IAmazonS3 s3Client = new AmazonS3Client(connection.AwsAccessKeyId, connection.AwsSecretAccessKey, RegionSelection(connection.Region));
             var bucketName = input.BucketName;
-            if (await AmazonS3Util.DoesS3BucketExistV2Async(s3Client, bucketName))
-            {
-                var request = new DeleteBucketRequest
-                {
-                    BucketName = bucketName,
-                };
 
-                await s3Client.DeleteBucketAsync(request, cancellationToken);
-                return new Result(true);
-            }
-            else
+            if (!await AmazonS3Util.DoesS3BucketExistV2Async(s3Client, bucketName))
+                return new Result(true, new Error("Bucket to be deleted does not exist."));
+
+            var request = new DeleteBucketRequest
             {
-                return new Result(true, new Error("Bucket to be deleted, does not exist."));
-            }
+                BucketName = bucketName,
+            };
+
+            await s3Client.DeleteBucketAsync(request, cancellationToken);
+            return new Result(true);
+
         }
         catch (AmazonS3Exception e)
         {

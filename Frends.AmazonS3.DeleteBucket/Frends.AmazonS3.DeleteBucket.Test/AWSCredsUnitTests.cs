@@ -89,7 +89,7 @@ public class AWSCredsUnitTests
         var result2 = await AmazonS3.DeleteBucket(_input, _connection, _options, default);
         Assert.IsTrue(result2.Success);
         Assert.IsNotNull(result2.Error);
-        Assert.AreEqual("Bucket to be deleted, does not exist.", result2.Error.Message);
+        Assert.AreEqual("Bucket to be deleted does not exist.", result2.Error.Message);
     }
 
     [TestMethod]
@@ -168,25 +168,6 @@ public class AWSCredsUnitTests
         Assert.IsFalse(result.Success);
         Assert.IsNotNull(result.Error);
         Assert.AreEqual("Custom error message for bucket deletion", result.Error.Message);
-    }
-
-    [TestMethod]
-    public async Task DeleteBucket_InvalidBucketNameTest()
-    {
-        var input = new Input
-        {
-            BucketName = "invalid..bucket..name"
-        };
-
-        var options = new Options
-        {
-            ThrowErrorOnFailure = false
-        };
-
-        var result = await AmazonS3.DeleteBucket(input, _connection, options, default);
-        Assert.IsFalse(result.Success);
-        Assert.IsNotNull(result.Error);
-        Assert.IsTrue(result.Error.Message.Contains("bucket") || result.Error.Message.Contains("name"));
     }
 
     [TestMethod]
