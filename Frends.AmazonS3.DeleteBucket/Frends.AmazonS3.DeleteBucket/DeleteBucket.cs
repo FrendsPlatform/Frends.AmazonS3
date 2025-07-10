@@ -41,9 +41,9 @@ public class AmazonS3
     /// </example>
     public static async Task<Result> DeleteBucket([PropertyTab] Input input, [PropertyTab] Connection connection, [PropertyTab] Options options, CancellationToken cancellationToken)
     {
-        if (input == null) throw new ArgumentNullException(nameof(input));
-        if (connection == null) throw new ArgumentNullException(nameof(connection));
-        if (options == null) throw new ArgumentNullException(nameof(options));
+        ArgumentNullException.ThrowIfNull(input);
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(options);
         try
         {
             using IAmazonS3 s3Client = new AmazonS3Client(connection.AwsAccessKeyId, connection.AwsSecretAccessKey, RegionSelection(connection.Region));
