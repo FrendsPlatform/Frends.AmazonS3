@@ -1,4 +1,4 @@
-﻿using Amazon;
+using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Util;
@@ -50,8 +50,8 @@ public class AmazonS3
         {
             if (options.ThrowErrorOnFailure)
             {
-                var errorMessage = string.IsNullOrEmpty(options.ErrorMessageOnFailure) 
-                    ? "Failed to delete the bucket." 
+                var errorMessage = string.IsNullOrEmpty(options.ErrorMessageOnFailure)
+                    ? "Failed to delete the bucket."
                     : options.ErrorMessageOnFailure;
                 throw new AmazonS3Exception(errorMessage, e);
             }
@@ -61,8 +61,8 @@ public class AmazonS3
         {
             if (options.ThrowErrorOnFailure)
             {
-                var errorMessage = string.IsNullOrEmpty(options.ErrorMessageOnFailure) 
-                    ? "Unexpected error occurred while deleting the bucket." 
+                var errorMessage = string.IsNullOrEmpty(options.ErrorMessageOnFailure)
+                    ? "Unexpected error occurred while deleting the bucket."
                     : options.ErrorMessageOnFailure;
                 throw new Exception(errorMessage, e);
             }
