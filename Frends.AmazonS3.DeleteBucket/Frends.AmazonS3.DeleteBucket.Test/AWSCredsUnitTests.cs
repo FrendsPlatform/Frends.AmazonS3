@@ -166,4 +166,54 @@ public class AWSCredsUnitTests
         var ex = await Assert.ThrowsExceptionAsync<AmazonS3Exception>(() => AmazonS3.DeleteBucket(input, connection, options, default));
         Assert.AreEqual("Custom error message for bucket deletion failure", ex.Message);
     }
+
+    [TestMethod]
+    public async Task DeleteBucket_CustomErrorMessageForGeneralExceptionTest()
+    {
+        var connection = new Connection
+        {
+            AwsSecretAccessKey = null, // This will cause a general exception
+            AwsAccessKeyId = null,
+            Region = Region.EuCentral1,
+        };
+
+        var input = new Input
+        {
+            BucketName = _bucketName,
+        };
+
+        var options = new Options
+        {
+            ThrowErrorOnFailure = true,
+            ErrorMessageOnFailure = "Custom error message for general failure"
+        };
+
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => AmazonS3.DeleteBucket(input, connection, options, default));
+        Assert.AreEqual("Custom error message for general failure", ex.Message);
+    }
+
+    [TestMethod]
+    public async Task DeleteBucket_DefaultErrorMessageTest()
+    {
+        var connection = new Connection
+        {
+            AwsSecretAccessKey = "foobar",
+            AwsAccessKeyId = "foobar",
+            Region = Region.EuCentral1,
+        };
+
+        var input = new Input
+        {
+            BucketName = _bucketName,
+        };
+
+        var options = new Options
+        {
+            ThrowErrorOnFailure = true,
+            ErrorMessageOnFailure = "" // Empty string should use default message
+        };
+
+        var ex = await Assert.ThrowsExceptionAsync<AmazonS3Exception>(() => AmazonS3.DeleteBucket(input, connection, options, default));
+        Assert.AreEqual("Failed to delete the bucket.", ex.Message);
+    }
 }
