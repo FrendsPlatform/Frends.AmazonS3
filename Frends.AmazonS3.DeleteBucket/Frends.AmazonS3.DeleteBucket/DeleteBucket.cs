@@ -48,35 +48,17 @@ public class AmazonS3
         }
         catch (AmazonS3Exception e)
         {
-            if (options.ThrowErrorOnFailure)
-            {
-                var errorMessage = string.IsNullOrEmpty(options.ErrorMessageOnFailure) 
-                    ? "Failed to delete the bucket." 
-                    : options.ErrorMessageOnFailure;
-                throw new AmazonS3Exception(errorMessage, e);
-            }
-            var error = new Error 
-            { 
-                Message = e.Message, 
-                AdditionalInfo = new { ErrorCode = e.ErrorCode, RequestId = e.RequestId, StatusCode = e.StatusCode } 
-            };
-            return new Result(false, error);
+            var errorMessage = string.IsNullOrEmpty(options.ErrorMessageOnFailure) 
+                ? "Failed to delete the bucket." 
+                : options.ErrorMessageOnFailure;
+            return ErrorHandler.Handle(e, options.ThrowErrorOnFailure, errorMessage);
         }
         catch (Exception e)
         {
-            if (options.ThrowErrorOnFailure)
-            {
-                var errorMessage = string.IsNullOrEmpty(options.ErrorMessageOnFailure) 
-                    ? "Unexpected error occurred while deleting the bucket." 
-                    : options.ErrorMessageOnFailure;
-                throw new Exception(errorMessage, e);
-            }
-            var error = new Error 
-            { 
-                Message = e.Message, 
-                AdditionalInfo = new { ExceptionType = e.GetType().Name, StackTrace = e.StackTrace } 
-            };
-            return new Result(false, error);
+            var errorMessage = string.IsNullOrEmpty(options.ErrorMessageOnFailure) 
+                ? "Unexpected error occurred while deleting the bucket." 
+                : options.ErrorMessageOnFailure;
+            return ErrorHandler.Handle(e, options.ThrowErrorOnFailure, errorMessage);
         }
     }
 
