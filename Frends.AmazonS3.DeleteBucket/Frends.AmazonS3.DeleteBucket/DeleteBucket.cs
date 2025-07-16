@@ -55,7 +55,12 @@ public class AmazonS3
                     : options.ErrorMessageOnFailure;
                 throw new AmazonS3Exception(errorMessage, e);
             }
-            return new Result(false, e.Message);
+            var error = new Error 
+            { 
+                Message = e.Message, 
+                AdditionalInfo = new { ErrorCode = e.ErrorCode, RequestId = e.RequestId, StatusCode = e.StatusCode } 
+            };
+            return new Result(false, e.Message, error);
         }
         catch (Exception e)
         {
@@ -66,7 +71,12 @@ public class AmazonS3
                     : options.ErrorMessageOnFailure;
                 throw new Exception(errorMessage, e);
             }
-            return new Result(false, e.Message);
+            var error = new Error 
+            { 
+                Message = e.Message, 
+                AdditionalInfo = new { ExceptionType = e.GetType().Name, StackTrace = e.StackTrace } 
+            };
+            return new Result(false, e.Message, error);
         }
     }
 

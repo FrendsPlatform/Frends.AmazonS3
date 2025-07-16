@@ -18,9 +18,22 @@ public class Result
     /// <example>Bucket to be deleted, does not exist</example>
     public string Data { get; private set; }
 
+    /// <summary>
+    /// Error information when the operation fails.
+    /// </summary>
+    public Error Error { get; private set; }
+
     internal Result(bool success, string data)
     {
         Success = success;
         Data = data;
+        Error = null;
+    }
+
+    internal Result(bool success, string data, Error error)
+    {
+        Success = success;
+        Data = data;
+        Error = error;
     }
 }

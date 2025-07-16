@@ -130,6 +130,9 @@ public class AWSCredsUnitTests
         var result = await AmazonS3.DeleteBucket(input, connection, options, default);
         Assert.IsFalse(result.Success);
         Assert.IsNotNull(result.Data);
+        Assert.IsNotNull(result.Error);
+        Assert.IsNotNull(result.Error.Message);
+        Assert.IsNotNull(result.Error.AdditionalInfo);
     }
 
     [TestMethod]
