@@ -80,7 +80,7 @@ public class AWSCredsUnitTests
     }
 
     [TestMethod]
-    public async Task DeleteBucket_BucketAlreadyExistsTest()
+    public async Task DeleteBucket_BucketDoesNotExistTest()
     {
         var result = await AmazonS3.DeleteBucket(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
