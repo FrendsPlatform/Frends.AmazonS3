@@ -151,12 +151,12 @@ public class AWSCredsUnitTests
         };
 
         var customErrorMessage = "Custom error message for bucket deletion failure";
-        var options = new Options 
-        { 
+        var options = new Options
+        {
             ThrowErrorOnFailure = true,
             ErrorMessageOnFailure = customErrorMessage
         };
-        
+
         var ex = await Assert.ThrowsExceptionAsync<AmazonS3Exception>(() => AmazonS3.DeleteBucket(input, connection, options, default));
         Assert.AreEqual(customErrorMessage, ex.Message);
     }
@@ -177,12 +177,12 @@ public class AWSCredsUnitTests
         };
 
         var customErrorMessage = "Custom error message for bucket deletion failure";
-        var options = new Options 
-        { 
+        var options = new Options
+        {
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = customErrorMessage
         };
-        
+
         var result = await AmazonS3.DeleteBucket(input, connection, options, default);
         Assert.IsFalse(result.Success);
         Assert.IsNotNull(result.Error);
@@ -264,7 +264,7 @@ public class AWSCredsUnitTests
         };
 
         var options = new Options { ThrowErrorOnFailure = false };
-        
+
         var ex = await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => AmazonS3.DeleteBucket(input, null, options, default));
         Assert.IsNotNull(ex);
     }
@@ -273,7 +273,7 @@ public class AWSCredsUnitTests
     public async Task DeleteBucket_NullInputTest()
     {
         var options = new Options { ThrowErrorOnFailure = false };
-        
+
         var ex = await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => AmazonS3.DeleteBucket(null, _connection, options, default));
         Assert.IsNotNull(ex);
     }
@@ -285,7 +285,7 @@ public class AWSCredsUnitTests
         {
             BucketName = _bucketName,
         };
-        
+
         var ex = await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => AmazonS3.DeleteBucket(input, _connection, null, default));
         Assert.IsNotNull(ex);
     }
@@ -302,7 +302,7 @@ public class AWSCredsUnitTests
         };
 
         var options = new Options { ThrowErrorOnFailure = false };
-        
+
         var result = await AmazonS3.DeleteBucket(input, _connection, options, cts.Token);
         // The result depends on implementation - it might succeed if cancellation is not checked early,
         // or fail if cancellation is properly handled

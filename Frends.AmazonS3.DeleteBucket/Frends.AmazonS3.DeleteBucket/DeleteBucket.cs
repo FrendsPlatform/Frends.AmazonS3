@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
@@ -49,15 +49,15 @@ public class AmazonS3
         }
         catch (AmazonS3Exception e)
         {
-            var errorMessage = string.IsNullOrEmpty(options.ErrorMessageOnFailure) 
-                ? "Failed to delete the bucket." 
+            var errorMessage = string.IsNullOrEmpty(options.ErrorMessageOnFailure)
+                ? "Failed to delete the bucket."
                 : options.ErrorMessageOnFailure;
             return ErrorHandler.Handle(e, options.ThrowErrorOnFailure, errorMessage);
         }
         catch (Exception e)
         {
-            var errorMessage = string.IsNullOrEmpty(options.ErrorMessageOnFailure) 
-                ? "Unexpected error occurred while deleting the bucket." 
+            var errorMessage = string.IsNullOrEmpty(options.ErrorMessageOnFailure)
+                ? "Unexpected error occurred while deleting the bucket."
                 : options.ErrorMessageOnFailure;
             return ErrorHandler.Handle(e, options.ThrowErrorOnFailure, errorMessage);
         }
