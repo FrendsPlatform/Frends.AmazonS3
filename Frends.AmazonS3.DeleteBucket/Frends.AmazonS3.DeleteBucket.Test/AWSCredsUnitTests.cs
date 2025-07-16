@@ -76,7 +76,7 @@ public class AWSCredsUnitTests
     {
         var result = await AmazonS3.DeleteBucket(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
-        Assert.IsNull(result.Data);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
@@ -84,11 +84,11 @@ public class AWSCredsUnitTests
     {
         var result = await AmazonS3.DeleteBucket(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
-        Assert.IsNull(result.Data);
+        Assert.IsNull(result.Error);
 
         var result2 = await AmazonS3.DeleteBucket(_input, _connection, _options, default);
         Assert.IsTrue(result2.Success);
-        Assert.AreEqual("Bucket to be deleted, does not exist.", result2.Data);
+        Assert.IsNull(result2.Error);
     }
 
     [TestMethod]
@@ -129,7 +129,6 @@ public class AWSCredsUnitTests
         var options = new Options { ThrowErrorOnFailure = false };
         var result = await AmazonS3.DeleteBucket(input, connection, options, default);
         Assert.IsFalse(result.Success);
-        Assert.IsNotNull(result.Data);
         Assert.IsNotNull(result.Error);
         Assert.IsNotNull(result.Error.Message);
         Assert.IsNotNull(result.Error.AdditionalInfo);

@@ -7,33 +7,25 @@ public class Result
 {
     /// <summary>
     /// The operation is complete without errors.
-    /// The operation is considered successful if the bucket to be deleted does not exist. In that case, there will be additional information in Result.Data.
+    /// The operation is considered successful if the bucket to be deleted does not exist.
     /// </summary>
     /// <example>true</example>
     public bool Success { get; private set; }
-
-    /// <summary>
-    /// Additional information, such as the 'Bucket to be deleted, does not exist'.
-    /// </summary>
-    /// <example>Bucket to be deleted, does not exist</example>
-    public string Data { get; private set; }
 
     /// <summary>
     /// Error information when the operation fails.
     /// </summary>
     public Error Error { get; private set; }
 
-    internal Result(bool success, string data)
+    internal Result(bool success)
     {
         Success = success;
-        Data = data;
         Error = null;
     }
 
-    internal Result(bool success, string data, Error error)
+    internal Result(bool success, Error error)
     {
         Success = success;
-        Data = data;
         Error = error;
     }
 }
