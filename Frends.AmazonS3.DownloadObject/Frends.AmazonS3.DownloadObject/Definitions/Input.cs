@@ -52,8 +52,8 @@ public class Connection
     /// <summary>
     /// Authentication method to use when connecting to AWS S3 bucket. 
     /// </summary>
-    /// <example>AWSCredentials</example>
-    [DefaultValue(AuthenticationMethods.AWSCredentials)]
+    /// <example>AwsCredentials</example>
+    [DefaultValue(AuthenticationMethods.AwsCredentials)]
     public AuthenticationMethods AuthenticationMethod { get; set; }
 
     /// <summary>
@@ -61,16 +61,16 @@ public class Connection
     /// </summary>
     /// <example>"https://bucket.s3.region.amazonaws.com/object/file.txt?X...</example>
     [PasswordPropertyText]
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethods.PreSignedURL)]
+    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethods.PreSignedUrl)]
     [DefaultValue(null)]
-    public string PreSignedURL { get; set; }
+    public string PreSignedUrl { get; set; }
 
     /// <summary>
     /// AWS Access Key ID.
     /// </summary>
     /// <example>AKIAQWERTY7NJ5Q7NZ6Q</example>
     [PasswordPropertyText]
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethods.AWSCredentials)]
+    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethods.AwsCredentials)]
     [DefaultValue(null)]
     public string AwsAccessKeyId { get; set; }
 
@@ -79,7 +79,7 @@ public class Connection
     /// </summary>
     /// <example>TVh5hgd3uGY/2CqH</example>
     [PasswordPropertyText]
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethods.AWSCredentials)]
+    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethods.AwsCredentials)]
     [DefaultValue(null)]
     public string AwsSecretAccessKey { get; set; }
 
@@ -88,7 +88,7 @@ public class Connection
     /// AWS S3 bucket's region.
     /// </summary>
     /// <example>EuCentral1</example>
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethods.AWSCredentials)]
+    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethods.AwsCredentials)]
     public Region Region { get; set; }
 
 
@@ -98,7 +98,7 @@ public class Connection
     /// Create subfolders manually to make sure they won't be deleted. 
     /// </summary>
     /// <example>false</example>
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethods.AWSCredentials)]
+    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethods.AwsCredentials)]
     [DefaultValue(false)]
     public bool DeleteSourceObject { get; set; }
 
@@ -106,7 +106,7 @@ public class Connection
     /// Throw an error if there are no objects in the path matching the search pattern.
     /// </summary>
     /// <example>false</example>
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethods.AWSCredentials)]
+    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethods.AwsCredentials)]
     [DefaultValue(true)]
     public bool ThrowErrorIfNoMatch { get; set; }
 

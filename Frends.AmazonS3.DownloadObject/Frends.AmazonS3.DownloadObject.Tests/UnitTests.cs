@@ -28,7 +28,7 @@ public class UnitTests
     {
         _connection = new Connection()
         {
-            AuthenticationMethod = AuthenticationMethods.AWSCredentials,
+            AuthenticationMethod = AuthenticationMethods.AwsCredentials,
             AwsAccessKeyId = _accessKey,
             AwsSecretAccessKey = _secretAccessKey,
             Region = Region.EuCentral1,
@@ -36,7 +36,7 @@ public class UnitTests
             ThrowErrorIfNoMatch = true,
             DestinationFileExistsAction = DestinationFileExistsActions.Overwrite,
             FileLockedRetries = 0,
-            PreSignedURL = null,
+            PreSignedUrl = null,
         };
 
         _input = new Input()
@@ -64,8 +64,8 @@ public class UnitTests
         var setS3Key = $"DownloadTest/Testfile.txt";
 
         var connection = _connection;
-        connection.AuthenticationMethod = AuthenticationMethods.PreSignedURL;
-        connection.PreSignedURL = CreatePreSignedURL(setS3Key);
+        connection.AuthenticationMethod = AuthenticationMethods.PreSignedUrl;
+        connection.PreSignedUrl = CreatePreSignedURL(setS3Key);
 
         var result = await AmazonS3.DownloadObject(_input, connection, default);
         Assert.IsNotNull(result.Data);
@@ -81,8 +81,8 @@ public class UnitTests
         var setS3Key = $"DownloadTest/Testfile.txt";
 
         var connection = _connection;
-        connection.AuthenticationMethod = AuthenticationMethods.PreSignedURL;
-        connection.PreSignedURL = CreatePreSignedURL(setS3Key);
+        connection.AuthenticationMethod = AuthenticationMethods.PreSignedUrl;
+        connection.PreSignedUrl = CreatePreSignedURL(setS3Key);
 
         var result = await AmazonS3.DownloadObject(_input, connection, default);
         Assert.IsNotNull(result.Data);
@@ -98,8 +98,8 @@ public class UnitTests
         var setS3Key = $"DownloadTest/Overwrite.txt";
 
         var connection = _connection;
-        connection.AuthenticationMethod = AuthenticationMethods.PreSignedURL;
-        connection.PreSignedURL = CreatePreSignedURL(setS3Key);
+        connection.AuthenticationMethod = AuthenticationMethods.PreSignedUrl;
+        connection.PreSignedUrl = CreatePreSignedURL(setS3Key);
 
         var result = await AmazonS3.DownloadObject(_input, connection, default);
         Assert.IsNotNull(result.Data);
@@ -116,8 +116,8 @@ public class UnitTests
         var setS3Key = $"DownloadTest/Overwrite.txt";
 
         var connection = _connection;
-        connection.AuthenticationMethod = AuthenticationMethods.PreSignedURL;
-        connection.PreSignedURL = CreatePreSignedURL(setS3Key);
+        connection.AuthenticationMethod = AuthenticationMethods.PreSignedUrl;
+        connection.PreSignedUrl = CreatePreSignedURL(setS3Key);
         connection.DestinationFileExistsAction = DestinationFileExistsActions.Info;
 
         var result = await AmazonS3.DownloadObject(_input, connection, default);
@@ -137,8 +137,8 @@ public class UnitTests
         File.WriteAllText(@$"{_dir}\Download\Testfile.txt", "I exist");
 
         var connection = _connection;
-        connection.AuthenticationMethod = AuthenticationMethods.PreSignedURL;
-        connection.PreSignedURL = CreatePreSignedURL(setS3Key);
+        connection.AuthenticationMethod = AuthenticationMethods.PreSignedUrl;
+        connection.PreSignedUrl = CreatePreSignedURL(setS3Key);
         connection.DestinationFileExistsAction = DestinationFileExistsActions.Error;
 
         var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DownloadObject(_input, connection, default));
@@ -152,8 +152,8 @@ public class UnitTests
         var setS3Key = $"DownloadTest/Testfile.txt";
 
         var connection = _connection;
-        connection.AuthenticationMethod = AuthenticationMethods.PreSignedURL;
-        connection.PreSignedURL = "";
+        connection.AuthenticationMethod = AuthenticationMethods.PreSignedUrl;
+        connection.PreSignedUrl = "";
 
         var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DownloadObject(_input, connection, default));
         Assert.IsTrue(ex.Message.Contains("AWS pre-signed URL required."));

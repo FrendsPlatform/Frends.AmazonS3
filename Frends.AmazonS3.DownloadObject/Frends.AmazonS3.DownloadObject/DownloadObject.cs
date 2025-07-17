@@ -36,7 +36,7 @@ public class AmazonS3
 
         try
         {
-            if (connection.AuthenticationMethod is AuthenticationMethods.AWSCredentials)
+            if (connection.AuthenticationMethod is AuthenticationMethods.AwsCredentials)
             {
                 var mask = new Regex(input.SearchPattern.Replace(".", "[.]").Replace("*", ".*").Replace("?", "."));
                 var targetPath = input.SourceDirectory + input.SearchPattern;
@@ -70,11 +70,11 @@ public class AmazonS3
             }
             else
             {
-                if (string.IsNullOrWhiteSpace(connection.PreSignedURL))
+                if (string.IsNullOrWhiteSpace(connection.PreSignedUrl))
                     throw new Exception("AWS pre-signed URL required.");
 
-                var responseStream = await Client.GetStreamAsync(connection.PreSignedURL, cancellationToken);
-                var nameFromURI = Regex.Match(connection.PreSignedURL, @"[^\/]+(?=\?)");
+                var responseStream = await Client.GetStreamAsync(connection.PreSignedUrl, cancellationToken);
+                var nameFromURI = Regex.Match(connection.PreSignedUrl, @"[^\/]+(?=\?)");
                 var fileName = nameFromURI.Value;
                 var path = Path.Combine(input.TargetDirectory, fileName);
 
