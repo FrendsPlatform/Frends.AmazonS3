@@ -16,9 +16,9 @@ public static class ErrorHandler
     /// <param name="exception">The exception to handle</param>
     /// <param name="throwOnFailure">Whether to throw the exception or return a failed result</param>
     /// <param name="errorMessage">Custom error message to use</param>
-    /// <param name="result">The current result list</param>
+    /// <param name="deletedObjects">The list of successfully deleted objects</param>
     /// <returns>Result object with appropriate success status</returns>
-    public static Result Handle(Exception exception, bool throwOnFailure, string errorMessage, List<SingleResultObject> result)
+    public static Result Handle(Exception exception, bool throwOnFailure, string errorMessage, List<SingleResultObject> deletedObjects)
     {
         if (throwOnFailure)
         {
@@ -32,7 +32,17 @@ public static class ErrorHandler
                 throw new Exception(finalErrorMessage, exception);
         }
         
-        return new Result(false, result);
+        var finalErrorMessage = string.IsNullOrEmpty(errorMessage) 
+            ? GetDefaultErrorMessage(exception) 
+            : errorMessage;
+            
+        var error = new Error
+        {
+            ErrorMessage = finalErrorMessage,
+            AdditionalInfo = new List<SingleResultObject>() // Objects that failed will be added here by caller if needed
+        };
+        
+        return new Result(false, deletedObjects, error);
     }
 
     private static string GetDefaultErrorMessage(Exception exception)
