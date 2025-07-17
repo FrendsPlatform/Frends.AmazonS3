@@ -24,8 +24,8 @@ public class SingleResultObject
     public string VersionId { get; set; }
 
     /// <summary>
-    /// Error message.
+    /// Error information.
     /// </summary>
-    /// <example>Object ExampleKey doesn't exist in ExampleBucket.</example>
-    public string Error { get; set; }
+    /// <example>Error object with Message and AdditionalInfo</example>
+    public Error Error { get; set; }
 }

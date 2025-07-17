@@ -264,7 +264,7 @@ public class UnitTests
                 Assert.IsFalse(result.Data[i].Success);
                 Assert.AreEqual(keys[i], result.Data[i].Key);
                 Assert.IsNull(result.Data[i].VersionId);
-                Assert.IsTrue(result.Data[i].Error.Contains("doesn't exist in"));
+                Assert.IsTrue(result.Data[i].Error.Message.Contains("doesn't exist in"));
                 Assert.IsFalse(FileExistsInS3(keys[i]).Result);
             }
             else

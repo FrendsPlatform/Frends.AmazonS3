@@ -81,7 +81,7 @@ public class AmazonS3
                             result.Add(new SingleResultObject() { Success = true, Key = obj.Key, VersionId = deleted2.VersionId, Error = null });
                         }
                         else
-                            result.Add(new SingleResultObject() { Success = false, Key = obj.Key, VersionId = null, Error = $"Object {obj.Key} doesn't exist in {obj.BucketName}." });
+                            result.Add(new SingleResultObject() { Success = false, Key = obj.Key, VersionId = null, Error = new Error { Message = $"Object {obj.Key} doesn't exist in {obj.BucketName}.", AdditionalInfo = null } });
                         break;
                 }
             }
