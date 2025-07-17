@@ -18,22 +18,34 @@ namespace Frends.AmazonS3.ListObjects.Definitions
         public bool Success { get; private set; }
 
         /// <summary>
-        /// Error message if the operation failed.
+        /// Error information if the operation failed.
         /// </summary>
-        public string ErrorMessage { get; private set; }
+        public Error Error { get; private set; }
+
+        /// <summary>
+        /// Error message if the operation failed (for backward compatibility).
+        /// </summary>
+        public string ErrorMessage => Error?.Message ?? string.Empty;
 
         internal Result(List<BucketObject> bucketObject)
         {
             ObjectList = bucketObject;
             Success = true;
-            ErrorMessage = string.Empty;
+            Error = null;
         }
 
         internal Result(string errorMessage)
         {
             ObjectList = new List<BucketObject>();
             Success = false;
-            ErrorMessage = errorMessage;
+            Error = new Error(errorMessage);
+        }
+
+        internal Result(Error error)
+        {
+            ObjectList = new List<BucketObject>();
+            Success = false;
+            Error = error;
         }
     }
 }

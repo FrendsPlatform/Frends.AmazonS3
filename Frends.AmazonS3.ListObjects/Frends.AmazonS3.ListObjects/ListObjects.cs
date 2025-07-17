@@ -49,7 +49,8 @@ namespace Frends.AmazonS3.ListObjects
                     throw;
                 
                 var errorMessage = string.IsNullOrWhiteSpace(options.ErrorMessageOnFailure) ? ex.Message : options.ErrorMessageOnFailure;
-                return new Result(errorMessage);
+                var error = new Error(errorMessage, new { OriginalException = ex.GetType().Name, StackTrace = ex.StackTrace });
+                return new Result(error);
             }
         }
 
