@@ -425,8 +425,8 @@ namespace Frends.AmazonS3.ListObjects.Test
         [TestMethod]
         public void ErrorHandlerHandleCustomMessageTest()
         {
-            var options = new Options 
-            { 
+            var options = new Options
+            {
                 ThrowErrorOnFailure = false,
                 ErrorMessageOnFailure = "Custom error occurred"
             };
@@ -448,7 +448,7 @@ namespace Frends.AmazonS3.ListObjects.Test
         {
             var options = new Options { ThrowErrorOnFailure = true };
 
-            Assert.ThrowsException<Exception>(() => 
+            Assert.ThrowsException<Exception>(() =>
                 ErrorHandler.HandleCredentialsError("Credentials missing", options));
         }
 
@@ -474,8 +474,8 @@ namespace Frends.AmazonS3.ListObjects.Test
         [TestMethod]
         public void ErrorHandlerCredentialsCustomMessageTest()
         {
-            var options = new Options 
-            { 
+            var options = new Options
+            {
                 ThrowErrorOnFailure = false,
                 ErrorMessageOnFailure = "Authentication failed"
             };
@@ -535,7 +535,7 @@ namespace Frends.AmazonS3.ListObjects.Test
             };
 
             var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
-            
+
             // Should handle the error gracefully when bucket doesn't exist
             Assert.IsFalse(result.Success);
             Assert.IsNotNull(result.Error);
@@ -564,7 +564,7 @@ namespace Frends.AmazonS3.ListObjects.Test
             _options = new Options(); // Use default values
 
             var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
-            
+
             if (_accessKey != null && _secretAccessKey != null && _bucketName != null)
             {
                 Assert.IsTrue(result.Success);

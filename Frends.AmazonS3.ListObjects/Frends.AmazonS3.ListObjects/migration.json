@@ -1,0 +1,53 @@
+﻿[
+    {
+        "Task": "Frends.AmazonS3.ListObjects",
+        "Migrations": [
+            {
+                "Version": "2.0.0",
+                "Description": "Major refactoring: Renamed Source to Input, added Connection and Options classes, updated Result structure with error handling",
+                "Migration": [
+                    {
+                        "Type": "Copy",
+                        "Source": "Source.AwsAccessKeyId",
+                        "Target": "Connection.AwsAccessKeyId"
+                    },
+                    {
+                        "Type": "Copy",
+                        "Source": "Source.AwsSecretAccessKey",
+                        "Target": "Connection.AwsSecretAccessKey"
+                    },
+                    {
+                        "Type": "Copy",
+                        "Source": "Source.Region",
+                        "Target": "Connection.Region"
+                    },
+                    {
+                        "Type": "Copy",
+                        "Source": "Source.BucketName",
+                        "Target": "Input.BucketName"
+                    },
+                    {
+                        "Type": "Copy",
+                        "Source": "Source.Prefix",
+                        "Target": "Input.Prefix"
+                    },
+                    {
+                        "Type": "Copy",
+                        "Source": "Source.MaxKeys",
+                        "Target": "Input.MaxKeys"
+                    },
+                    {
+                        "Type": "Set",
+                        "Target": "Options.ThrowErrorOnFailure",
+                        "Value": "false"
+                    },
+                    {
+                        "Type": "Set",
+                        "Target": "Options.ErrorMessageOnFailure",
+                        "Value": "\"\""
+                    }
+                ]
+            }
+        ]
+    }
+]

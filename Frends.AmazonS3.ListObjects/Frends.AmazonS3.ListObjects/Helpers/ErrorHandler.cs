@@ -19,11 +19,11 @@ namespace Frends.AmazonS3.ListObjects.Helpers
         {
             if (options.ThrowErrorOnFailure)
                 throw exception;
-            
-            var errorMessage = string.IsNullOrWhiteSpace(options.ErrorMessageOnFailure) 
-                ? exception.Message 
+
+            var errorMessage = string.IsNullOrWhiteSpace(options.ErrorMessageOnFailure)
+                ? exception.Message
                 : options.ErrorMessageOnFailure;
-            
+
             var error = new Error(errorMessage, new { OriginalException = exception.GetType().Name, StackTrace = exception.StackTrace });
             return new Result(error);
         }
@@ -39,11 +39,11 @@ namespace Frends.AmazonS3.ListObjects.Helpers
         {
             if (options.ThrowErrorOnFailure)
                 throw new Exception(credentialsError);
-            
-            var errorMessage = string.IsNullOrWhiteSpace(options.ErrorMessageOnFailure) 
-                ? credentialsError 
+
+            var errorMessage = string.IsNullOrWhiteSpace(options.ErrorMessageOnFailure)
+                ? credentialsError
                 : options.ErrorMessageOnFailure;
-            
+
             return new Result(errorMessage);
         }
     }
