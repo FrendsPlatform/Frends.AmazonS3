@@ -45,6 +45,14 @@ namespace Frends.AmazonS3.ListObjects
             }
         }
 
+        /// <summary>
+        /// Asynchronously lists all objects in the specified S3 bucket with pagination support.
+        /// </summary>
+        /// <param name="client">The Amazon S3 client instance</param>
+        /// <param name="input">Input parameters containing bucket information</param>
+        /// <param name="options">Options for filtering and limiting results</param>
+        /// <param name="cancellationToken">Token to cancel the operation</param>
+        /// <returns>A list of BucketObject instances representing the objects in the bucket</returns>
         private static async Task<List<BucketObject>> ListBucketContentsAsync(AmazonS3Client client, Input input, Options options, CancellationToken cancellationToken)
         {
             var data = new List<BucketObject>();
@@ -77,6 +85,12 @@ namespace Frends.AmazonS3.ListObjects
             return data;
         }
 
+        /// <summary>
+        /// Creates and configures a ListObjectsV2Request based on the provided input and options.
+        /// </summary>
+        /// <param name="input">Input parameters containing bucket information</param>
+        /// <param name="options">Options for filtering and limiting results</param>
+        /// <returns>A configured ListObjectsV2Request instance</returns>
         private static ListObjectsV2Request GetListObjectsV2Request(Input input, Options options)
         {
             var request = new ListObjectsV2Request
@@ -93,6 +107,11 @@ namespace Frends.AmazonS3.ListObjects
             return request;
         }
 
+        /// <summary>
+        /// Maps the custom Region enum to the corresponding AWS RegionEndpoint.
+        /// </summary>
+        /// <param name="region">The region enum value to convert</param>
+        /// <returns>The corresponding AWS RegionEndpoint instance</returns>
         private static RegionEndpoint RegionSelection(Region region)
         {
             switch (region)

@@ -20,13 +20,13 @@ namespace Frends.AmazonS3.ListObjects.Definitions
         public string Key { get; set; }
 
         /// <summary>
-        /// Entity tag.
-        /// <example>2b9338cfb801ca193ee45d49acc2ba99</example>
+        /// Entity tag (ETag) - a hash of the object used for change detection.
         /// </summary>
+        /// <example>2b9338cfb801ca193ee45d49acc2ba99</example>
         public string Etag { get; set; }
 
         /// <summary>
-        /// The size of the object.
+        /// The size of the object in bytes.
         /// </summary>
         /// <example>20110</example>
         public long Size { get; set; }

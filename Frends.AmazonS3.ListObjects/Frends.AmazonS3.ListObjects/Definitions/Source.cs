@@ -1,14 +1,14 @@
 namespace Frends.AmazonS3.ListObjects.Definitions
 {
     /// <summary>
-    /// Input values.
+    /// Input parameters required for the S3 ListObjects operation.
     /// </summary>
     public class Input
     {
         /// <summary>
-        /// The name of the bucket containing this object.
+        /// The name of the S3 bucket to list objects from.
         /// </summary>
-        /// <example>ObjectName</example>
+        /// <example>my-s3-bucket</example>
         public string BucketName { get; set; }
     }
 }
