@@ -47,10 +47,14 @@ public class UnitTests
 
             var input = new Input()
             {
+                Objects = objects,
+            };
+
+            var connection = new Connection()
+            {
                 AwsAccessKeyId = _accessKey,
                 AwsSecretAccessKey = _secretAccessKey,
                 Region = Region.EuCentral1,
-                Objects = objects,
             };
 
             var options = new Options()
@@ -59,7 +63,7 @@ public class UnitTests
                 Timeout = 1
             };
 
-            var result = await AmazonS3.DeleteObject(input, options, default);
+            var result = await AmazonS3.DeleteObject(input, connection, options, default);
             Assert.IsTrue(result.Success);
             Assert.AreEqual(objects.Length, result.Data.Count);
             Assert.IsTrue(result.Data[0].Success);
@@ -86,10 +90,14 @@ public class UnitTests
 
             var input = new Input()
             {
+                Objects = objects,
+            };
+
+            var connection = new Connection()
+            {
                 AwsAccessKeyId = _accessKey,
                 AwsSecretAccessKey = _secretAccessKey,
                 Region = region,
-                Objects = objects,
             };
 
             var options = new Options()
@@ -98,7 +106,7 @@ public class UnitTests
                 Timeout = 0
             };
 
-            var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DeleteObject(input, options, default));
+            var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DeleteObject(input, connection, options, default));
             Assert.IsNotNull(ex);
         }
 
@@ -118,10 +126,14 @@ public class UnitTests
 
             var input = new Input()
             {
+                Objects = objects
+            };
+
+            var connection = new Connection()
+            {
                 AwsAccessKeyId = _accessKey,
                 AwsSecretAccessKey = _secretAccessKey,
                 Region = Region.EuCentral1,
-                Objects = objects
             };
 
             var options = new Options()
@@ -130,7 +142,7 @@ public class UnitTests
                 Timeout = 1
             };
 
-            var result = await AmazonS3.DeleteObject(input, options, default);
+            var result = await AmazonS3.DeleteObject(input, connection, options, default);
             Assert.IsTrue(result.Success);
             Assert.AreEqual(objects.Length, result.Data.Count);
             Assert.IsTrue(result.Data[0].Success);
@@ -157,10 +169,14 @@ public class UnitTests
 
             var input = new Input()
             {
+                Objects = objects
+            };
+
+            var connection = new Connection()
+            {
                 AwsAccessKeyId = _accessKey,
                 AwsSecretAccessKey = _secretAccessKey,
                 Region = Region.EuCentral1,
-                Objects = objects
             };
 
             var options = new Options()
@@ -169,7 +185,7 @@ public class UnitTests
                 Timeout = 1
             };
 
-            var result = await AmazonS3.DeleteObject(input, options, default);
+            var result = await AmazonS3.DeleteObject(input, connection, options, default);
             Assert.IsTrue(result.Success);
             Assert.AreEqual(objects.Length, result.Data.Count);
 
@@ -198,18 +214,19 @@ public class UnitTests
 
         var inputSingle = new Input()
         {
-            AwsAccessKeyId = _accessKey,
-            AwsSecretAccessKey = _secretAccessKey,
-            Region = Region.EuCentral1,
             Objects = new[] { new S3ObjectArray { BucketName = _bucketName, Key = keys[0] } }
         };
 
         var input = new Input()
         {
+            Objects = objects
+        };
+
+        var connection = new Connection()
+        {
             AwsAccessKeyId = _accessKey,
             AwsSecretAccessKey = _secretAccessKey,
             Region = Region.EuCentral1,
-            Objects = objects
         };
 
         var options = new Options()
@@ -219,13 +236,13 @@ public class UnitTests
         };
 
         // Delete one of the keys.
-        var deleteSingle = await AmazonS3.DeleteObject(inputSingle, options, default);
+        var deleteSingle = await AmazonS3.DeleteObject(inputSingle, connection, options, default);
         Assert.IsTrue(deleteSingle.Success);
         Assert.AreEqual(1, deleteSingle.Data.Count);
         Assert.IsFalse(FileExistsInS3(keys[0]).Result);
 
         // Now the real test.
-        var result = await AmazonS3.DeleteObject(input, options, default);
+        var result = await AmazonS3.DeleteObject(input, connection, options, default);
         Assert.IsTrue(result.Success);
         Assert.AreEqual(objects.Length, result.Data.Count);
 
@@ -260,10 +277,14 @@ public class UnitTests
 
         var input = new Input()
         {
+            Objects = objects
+        };
+
+        var connection = new Connection()
+        {
             AwsAccessKeyId = _accessKey,
             AwsSecretAccessKey = _secretAccessKey,
             Region = Region.EuCentral1,
-            Objects = objects
         };
 
         var options = new Options()
@@ -272,7 +293,7 @@ public class UnitTests
             Timeout = 1
         };
 
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DeleteObject(input, options, default));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DeleteObject(input, connection, options, default));
         Assert.IsNotNull(ex.InnerException);
         Assert.IsTrue(ex.InnerException.Message.Contains("doesn't exist"));
     }
@@ -285,10 +306,14 @@ public class UnitTests
 
         var input = new Input()
         {
+            Objects = objects
+        };
+
+        var connection = new Connection()
+        {
             AwsAccessKeyId = "",
             AwsSecretAccessKey = _secretAccessKey,
             Region = Region.EuCentral1,
-            Objects = objects
         };
 
         var options = new Options()
@@ -297,7 +322,7 @@ public class UnitTests
             Timeout = 1
         };
 
-        var ex = await Assert.ThrowsExceptionAsync<AmazonS3Exception>(async () => await AmazonS3.DeleteObject(input, options, default));
+        var ex = await Assert.ThrowsExceptionAsync<AmazonS3Exception>(async () => await AmazonS3.DeleteObject(input, connection, options, default));
         Assert.IsNotNull(ex.InnerException);
         Assert.AreEqual("Access Denied", ex.InnerException.Message);
     }
@@ -310,10 +335,14 @@ public class UnitTests
 
         var input = new Input()
         {
+            Objects = objects
+        };
+        
+        var connection = new Connection()
+        {
             AwsAccessKeyId = _accessKey,
             AwsSecretAccessKey = "",
             Region = Region.EuCentral1,
-            Objects = objects
         };
         var options = new Options()
         {
@@ -321,7 +350,7 @@ public class UnitTests
             Timeout = 1
         };
 
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DeleteObject(input, options, default));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DeleteObject(input, connection, options, default));
         Assert.IsNotNull(ex.InnerException);
         Assert.IsTrue(ex.InnerException.Message.Contains("Value cannot be null"));
     }
@@ -331,10 +360,14 @@ public class UnitTests
     {
         var input = new Input()
         {
+            Objects = null
+        };
+
+        var connection = new Connection()
+        {
             AwsAccessKeyId = _accessKey,
             AwsSecretAccessKey = _secretAccessKey,
             Region = Region.EuCentral1,
-            Objects = null
         };
 
         var options = new Options()
@@ -343,7 +376,7 @@ public class UnitTests
             Timeout = 1
         };
 
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DeleteObject(input, options, default));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DeleteObject(input, connection, options, default));
         Assert.IsNotNull(ex);
         Assert.AreEqual("DeleteObject error: Input.Objects cannot be empty.", ex.Message);
     }
