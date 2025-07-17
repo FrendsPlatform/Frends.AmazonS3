@@ -43,7 +43,7 @@ public class AmazonS3
         var deletedObjects = new List<SingleResultObject>();
         var errorObjects = new List<SingleResultObject>();
 
-        if (input.Objects is null || input.Objects.Length < 0)
+        if (input.Objects is null || input.Objects.Length == 0)
             throw new Exception("DeleteObject error: Input.Objects cannot be empty.");
 
         try
@@ -68,7 +68,7 @@ public class AmazonS3
             {
                 try
                 {
-                    var versionId = string.IsNullOrWhiteSpace(obj.VersionId) ? obj.VersionId : null;
+                    var versionId = string.IsNullOrWhiteSpace(obj.VersionId) ? null : obj.VersionId;
 
                     switch (input.ActionOnObjectNotFound)
                     {
@@ -81,7 +81,7 @@ public class AmazonS3
                         case NotExistsHandler.Info:
                             if (await FileExistsInS3(client, obj.BucketName, obj.Key))
                             {
-                                var deleted2 = await DeleteS3Object(client, obj.BucketName, obj.Key, string.IsNullOrWhiteSpace(obj.VersionId) ? obj.VersionId : null, cancellationToken);
+                                var deleted2 = await DeleteS3Object(client, obj.BucketName, obj.Key, versionId, cancellationToken);
                                 deletedObjects.Add(new SingleResultObject() { BucketName = obj.BucketName, Key = obj.Key, VersionId = deleted2.VersionId });
                             }
                             else
@@ -89,7 +89,7 @@ public class AmazonS3
                             break;
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     // Add failed object to error list
                     errorObjects.Add(new SingleResultObject() { BucketName = obj.BucketName, Key = obj.Key, VersionId = obj.VersionId });
@@ -129,7 +129,7 @@ public class AmazonS3
         {
             BucketName = bucketName,
             Key = key,
-            VersionId = string.IsNullOrWhiteSpace(versionId) ? versionId : null,
+            VersionId = versionId,
         };
         return await client.DeleteObjectAsync(deleteObjectRequest, cancellationToken);
     }
