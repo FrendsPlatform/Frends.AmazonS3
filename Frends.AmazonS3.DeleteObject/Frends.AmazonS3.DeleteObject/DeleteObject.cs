@@ -55,7 +55,7 @@ public class AmazonS3
             using AmazonS3Client client = new(connection.AwsAccessKeyId, connection.AwsSecretAccessKey, clientConfig);
 
             // Do existing check here to skip case where some of the objects have been deleted before exception occurs.
-            if (options.NotExistsHandler is NotExistsHandler.Throw)
+            if (input.ActionOnObjectNotFound is NotExistsHandler.Throw)
             {
                 foreach (var obj in input.Objects)
                     if (!await FileExistsInS3(client, obj.BucketName, obj.Key))
@@ -66,7 +66,7 @@ public class AmazonS3
             {
                 var versionId = string.IsNullOrWhiteSpace(obj.VersionId) ? obj.VersionId : null;
 
-                switch (options.NotExistsHandler)
+                switch (input.ActionOnObjectNotFound)
                 {
                     case NotExistsHandler.None:
                     case NotExistsHandler.Throw:

@@ -48,6 +48,7 @@ public class UnitTests
             var input = new Input()
             {
                 Objects = objects,
+                ActionOnObjectNotFound = handler,
             };
 
             var connection = new Connection()
@@ -59,7 +60,6 @@ public class UnitTests
 
             var options = new Options()
             {
-                NotExistsHandler = handler,
                 Timeout = 1
             };
 
@@ -91,6 +91,7 @@ public class UnitTests
             var input = new Input()
             {
                 Objects = objects,
+                ActionOnObjectNotFound = NotExistsHandler.None,
             };
 
             var connection = new Connection()
@@ -102,7 +103,6 @@ public class UnitTests
 
             var options = new Options()
             {
-                NotExistsHandler = NotExistsHandler.None,
                 Timeout = 0
             };
 
@@ -126,7 +126,8 @@ public class UnitTests
 
             var input = new Input()
             {
-                Objects = objects
+                Objects = objects,
+                ActionOnObjectNotFound = handler,
             };
 
             var connection = new Connection()
@@ -138,7 +139,6 @@ public class UnitTests
 
             var options = new Options()
             {
-                NotExistsHandler = handler,
                 Timeout = 1
             };
 
@@ -169,7 +169,8 @@ public class UnitTests
 
             var input = new Input()
             {
-                Objects = objects
+                Objects = objects,
+                ActionOnObjectNotFound = handler,
             };
 
             var connection = new Connection()
@@ -181,7 +182,6 @@ public class UnitTests
 
             var options = new Options()
             {
-                NotExistsHandler = handler,
                 Timeout = 1
             };
 
@@ -214,12 +214,14 @@ public class UnitTests
 
         var inputSingle = new Input()
         {
-            Objects = new[] { new S3ObjectArray { BucketName = _bucketName, Key = keys[0] } }
+            Objects = new[] { new S3ObjectArray { BucketName = _bucketName, Key = keys[0] } },
+            ActionOnObjectNotFound = NotExistsHandler.Info,
         };
 
         var input = new Input()
         {
-            Objects = objects
+            Objects = objects,
+            ActionOnObjectNotFound = NotExistsHandler.Info,
         };
 
         var connection = new Connection()
@@ -231,7 +233,6 @@ public class UnitTests
 
         var options = new Options()
         {
-            NotExistsHandler = NotExistsHandler.Info,
             Timeout = 1
         };
 
@@ -277,7 +278,8 @@ public class UnitTests
 
         var input = new Input()
         {
-            Objects = objects
+            Objects = objects,
+            ActionOnObjectNotFound = NotExistsHandler.Throw,
         };
 
         var connection = new Connection()
@@ -289,7 +291,6 @@ public class UnitTests
 
         var options = new Options()
         {
-            NotExistsHandler = NotExistsHandler.Throw,
             Timeout = 1
         };
 
@@ -306,7 +307,8 @@ public class UnitTests
 
         var input = new Input()
         {
-            Objects = objects
+            Objects = objects,
+            ActionOnObjectNotFound = NotExistsHandler.None,
         };
 
         var connection = new Connection()
@@ -318,7 +320,6 @@ public class UnitTests
 
         var options = new Options()
         {
-            NotExistsHandler = NotExistsHandler.None,
             Timeout = 1
         };
 
@@ -335,7 +336,8 @@ public class UnitTests
 
         var input = new Input()
         {
-            Objects = objects
+            Objects = objects,
+            ActionOnObjectNotFound = NotExistsHandler.None,
         };
         
         var connection = new Connection()
@@ -346,7 +348,6 @@ public class UnitTests
         };
         var options = new Options()
         {
-            NotExistsHandler = NotExistsHandler.None,
             Timeout = 1
         };
 
@@ -360,7 +361,8 @@ public class UnitTests
     {
         var input = new Input()
         {
-            Objects = null
+            Objects = null,
+            ActionOnObjectNotFound = NotExistsHandler.None,
         };
 
         var connection = new Connection()
@@ -372,7 +374,6 @@ public class UnitTests
 
         var options = new Options()
         {
-            NotExistsHandler = NotExistsHandler.None,
             Timeout = 1
         };
 
