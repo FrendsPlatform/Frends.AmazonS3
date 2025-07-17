@@ -39,7 +39,9 @@ namespace Frends.AmazonS3.ListObjects.Test
                 Delimiter = null,
                 MaxKeys = 1000,
                 Prefix = null,
-                StartAfter = null
+                StartAfter = null,
+                ThrowErrorOnFailure = false,
+                ErrorMessageOnFailure = ""
             };
 
             var result = AmazonS3.ListObjects(_connection, _input, _options, default);
@@ -69,7 +71,9 @@ namespace Frends.AmazonS3.ListObjects.Test
                 Delimiter = null,
                 MaxKeys = 100,
                 Prefix = null,
-                StartAfter = "testfolder/subfolder/20220401.txt"
+                StartAfter = "testfolder/subfolder/20220401.txt",
+                ThrowErrorOnFailure = false,
+                ErrorMessageOnFailure = ""
             };
 
             var result = AmazonS3.ListObjects(_connection, _input, _options, default);
@@ -99,7 +103,9 @@ namespace Frends.AmazonS3.ListObjects.Test
                 Delimiter = null,
                 MaxKeys = 100,
                 Prefix = "2020/11/23/",
-                StartAfter = null
+                StartAfter = null,
+                ThrowErrorOnFailure = false,
+                ErrorMessageOnFailure = ""
             };
 
             var result = AmazonS3.ListObjects(_connection, _input, _options, default);
@@ -129,11 +135,83 @@ namespace Frends.AmazonS3.ListObjects.Test
                 Delimiter = null,
                 MaxKeys = 100,
                 Prefix = null,
-                StartAfter = null
+                StartAfter = null,
+                ThrowErrorOnFailure = true,
+                ErrorMessageOnFailure = ""
             };
 
             var ex = Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.ListObjects(_connection, _input, _options, default)).Result;
             Assert.IsTrue(ex.Message.Contains("AWS credentials missing."));
+        }
+
+        /// <summary>
+        /// Missing AwsAccessKeyId with ThrowErrorOnFailure = false. Should return error result instead of throwing.
+        /// </summary>
+        [TestMethod]
+        public void MissingKeyNoThrowTest()
+        {
+            _connection = new Connection
+            {
+                AwsAccessKeyId = null,
+                AwsSecretAccessKey = _secretAccessKey,
+                Region = Region.EuCentral1
+            };
+
+            _input = new Input
+            {
+                BucketName = _bucketName
+            };
+
+            _options = new Options
+            {
+                Delimiter = null,
+                MaxKeys = 100,
+                Prefix = null,
+                StartAfter = null,
+                ThrowErrorOnFailure = false,
+                ErrorMessageOnFailure = ""
+            };
+
+            var result = AmazonS3.ListObjects(_connection, _input, _options, default).Result;
+            Assert.IsFalse(result.Success);
+            Assert.IsTrue(result.ErrorMessage.Contains("AWS credentials missing."));
+            Assert.IsNotNull(result.ObjectList);
+            Assert.AreEqual(0, result.ObjectList.Count);
+        }
+
+        /// <summary>
+        /// Missing AwsAccessKeyId with custom error message. Should return custom error message.
+        /// </summary>
+        [TestMethod]
+        public void MissingKeyCustomErrorMessageTest()
+        {
+            _connection = new Connection
+            {
+                AwsAccessKeyId = null,
+                AwsSecretAccessKey = _secretAccessKey,
+                Region = Region.EuCentral1
+            };
+
+            _input = new Input
+            {
+                BucketName = _bucketName
+            };
+
+            _options = new Options
+            {
+                Delimiter = null,
+                MaxKeys = 100,
+                Prefix = null,
+                StartAfter = null,
+                ThrowErrorOnFailure = false,
+                ErrorMessageOnFailure = "Custom authentication error occurred"
+            };
+
+            var result = AmazonS3.ListObjects(_connection, _input, _options, default).Result;
+            Assert.IsFalse(result.Success);
+            Assert.AreEqual("Custom authentication error occurred", result.ErrorMessage);
+            Assert.IsNotNull(result.ObjectList);
+            Assert.AreEqual(0, result.ObjectList.Count);
         }
     }
 }

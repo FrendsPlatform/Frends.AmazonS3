@@ -26,56 +26,63 @@ namespace Frends.AmazonS3.ListObjects
         /// <returns>List { string BucketName, string Key, string Etag, long Size, DateTime LastModified  }</returns>
         public static async Task<Result> ListObjects([PropertyTab] Connection connection, [PropertyTab] Input input, [PropertyTab] Options options, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(connection.AwsSecretAccessKey) || string.IsNullOrWhiteSpace(connection.AwsAccessKeyId))
-                throw new Exception("AWS credentials missing.");
+            try
+            {
+                if (string.IsNullOrWhiteSpace(connection.AwsSecretAccessKey) || string.IsNullOrWhiteSpace(connection.AwsAccessKeyId))
+                {
+                    var credentialsError = "AWS credentials missing.";
+                    if (options.ThrowErrorOnFailure)
+                        throw new Exception(credentialsError);
+                    
+                    var errorMessage = string.IsNullOrWhiteSpace(options.ErrorMessageOnFailure) ? credentialsError : options.ErrorMessageOnFailure;
+                    return new Result(errorMessage);
+                }
 
-            var region = RegionSelection(connection.Region);
-            var client = new AmazonS3Client(connection.AwsAccessKeyId, connection.AwsSecretAccessKey, region);
-            var response = await ListBucketContentsAsync(client, input, options, cancellationToken);
-            return new Result(response);
+                var region = RegionSelection(connection.Region);
+                var client = new AmazonS3Client(connection.AwsAccessKeyId, connection.AwsSecretAccessKey, region);
+                var response = await ListBucketContentsAsync(client, input, options, cancellationToken);
+                return new Result(response);
+            }
+            catch (Exception ex)
+            {
+                if (options.ThrowErrorOnFailure)
+                    throw;
+                
+                var errorMessage = string.IsNullOrWhiteSpace(options.ErrorMessageOnFailure) ? ex.Message : options.ErrorMessageOnFailure;
+                return new Result(errorMessage);
+            }
         }
 
         private static async Task<List<BucketObject>> ListBucketContentsAsync(AmazonS3Client client, Input input, Options options, CancellationToken cancellationToken)
         {
-            try
-            {
-                var data = new List<BucketObject>();
-                var request = GetListObjectsV2Request(input, options);
-                var response = new ListObjectsV2Response();
+            var data = new List<BucketObject>();
+            var request = GetListObjectsV2Request(input, options);
+            var response = new ListObjectsV2Response();
 
-                while (request != null && !response.IsTruncated)
+            while (request != null && !response.IsTruncated)
+            {
+                response = await client.ListObjectsV2Async(request, cancellationToken);
+
+                foreach (var item in response.S3Objects)
                 {
-                    response = await client.ListObjectsV2Async(request, cancellationToken);
-
-                    foreach (var item in response.S3Objects)
+                    cancellationToken.ThrowIfCancellationRequested();
+                    data.Add(new BucketObject
                     {
-                        cancellationToken.ThrowIfCancellationRequested();
-                        data.Add(new BucketObject
-                        {
-                            BucketName = item.BucketName,
-                            Key = item.Key,
-                            Size = item.Size,
-                            Etag = item.ETag,
-                            LastModified = item.LastModified
+                        BucketName = item.BucketName,
+                        Key = item.Key,
+                        Size = item.Size,
+                        Etag = item.ETag,
+                        LastModified = item.LastModified
 
-                        });
-                    }
-                    if (response.IsTruncated)
-                        request.ContinuationToken = response.NextContinuationToken;
-                    else
-                        request = null;
+                    });
                 }
+                if (response.IsTruncated)
+                    request.ContinuationToken = response.NextContinuationToken;
+                else
+                    request = null;
+            }
 
-                return data;
-            }
-            catch (AmazonS3Exception ex)
-            {
-                throw new Exception($"Error encountered on server. Message:'{ex.Message}' getting list of objects.");
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.ToString());
-            }
+            return data;
         }
 
         private static ListObjectsV2Request GetListObjectsV2Request(Input input, Options options)
