@@ -40,7 +40,8 @@ public class AmazonS3
     /// <returns>Object { bool Success, List { bool Success, string Key, string VersionId, string Error } }</returns>
     public static async Task<Result> DeleteObject([PropertyTab] Input input, [PropertyTab] Connection connection, [PropertyTab] Options options, CancellationToken cancellationToken)
     {
-        var result = new List<SingleResultObject>();
+        var deletedObjects = new List<SingleResultObject>();
+        var errorObjects = new List<SingleResultObject>();
 
         if (input.Objects is null || input.Objects.Length < 0)
             throw new Exception("DeleteObject error: Input.Objects cannot be empty.");
@@ -65,37 +66,60 @@ public class AmazonS3
 
             foreach (var obj in input.Objects)
             {
-                var versionId = string.IsNullOrWhiteSpace(obj.VersionId) ? obj.VersionId : null;
-
-                switch (input.ActionOnObjectNotFound)
+                try
                 {
-                    case NotExistsHandler.None:
-                    case NotExistsHandler.Throw:
-                    default:
-                        var deleted = await DeleteS3Object(client, obj.BucketName, obj.Key, versionId, cancellationToken);
-                        result.Add(new SingleResultObject() { BucketName = obj.BucketName, Key = obj.Key, VersionId = deleted.VersionId });
-                        break;
-                    case NotExistsHandler.Info:
-                        if (await FileExistsInS3(client, obj.BucketName, obj.Key))
-                        {
-                            var deleted2 = await DeleteS3Object(client, obj.BucketName, obj.Key, string.IsNullOrWhiteSpace(obj.VersionId) ? obj.VersionId : null, cancellationToken);
-                            result.Add(new SingleResultObject() { BucketName = obj.BucketName, Key = obj.Key, VersionId = deleted2.VersionId });
-                        }
-                        else
-                            result.Add(new SingleResultObject() { BucketName = obj.BucketName, Key = obj.Key, VersionId = null });
-                        break;
+                    var versionId = string.IsNullOrWhiteSpace(obj.VersionId) ? obj.VersionId : null;
+
+                    switch (input.ActionOnObjectNotFound)
+                    {
+                        case NotExistsHandler.None:
+                        case NotExistsHandler.Throw:
+                        default:
+                            var deleted = await DeleteS3Object(client, obj.BucketName, obj.Key, versionId, cancellationToken);
+                            deletedObjects.Add(new SingleResultObject() { BucketName = obj.BucketName, Key = obj.Key, VersionId = deleted.VersionId });
+                            break;
+                        case NotExistsHandler.Info:
+                            if (await FileExistsInS3(client, obj.BucketName, obj.Key))
+                            {
+                                var deleted2 = await DeleteS3Object(client, obj.BucketName, obj.Key, string.IsNullOrWhiteSpace(obj.VersionId) ? obj.VersionId : null, cancellationToken);
+                                deletedObjects.Add(new SingleResultObject() { BucketName = obj.BucketName, Key = obj.Key, VersionId = deleted2.VersionId });
+                            }
+                            else
+                                deletedObjects.Add(new SingleResultObject() { BucketName = obj.BucketName, Key = obj.Key, VersionId = null });
+                            break;
+                    }
+                }
+                catch (Exception objEx)
+                {
+                    // Add failed object to error list
+                    errorObjects.Add(new SingleResultObject() { BucketName = obj.BucketName, Key = obj.Key, VersionId = obj.VersionId });
+                    
+                    // If we should throw on individual object failure, rethrow
+                    if (options.ThrowErrorOnFailure)
+                        throw;
                 }
             }
 
-            return new Result(true, result);
+            // If we have errors but didn't throw, return result with error info
+            if (errorObjects.Count > 0)
+            {
+                var error = new Error
+                {
+                    ErrorMessage = "Some objects failed to delete",
+                    AdditionalInfo = errorObjects
+                };
+                return new Result(false, deletedObjects, error);
+            }
+
+            return new Result(true, deletedObjects);
         }
         catch (AmazonS3Exception aEx)
         {
-            return ErrorHandler.Handle(aEx, options.ThrowErrorOnFailure, options.ErrorMessageOnFailure, result);
+            return ErrorHandler.Handle(aEx, options.ThrowErrorOnFailure, options.ErrorMessageOnFailure, deletedObjects);
         }
         catch (Exception ex)
         {
-            return ErrorHandler.Handle(ex, options.ThrowErrorOnFailure, options.ErrorMessageOnFailure, result);
+            return ErrorHandler.Handle(ex, options.ThrowErrorOnFailure, options.ErrorMessageOnFailure, deletedObjects);
         }
     }
 

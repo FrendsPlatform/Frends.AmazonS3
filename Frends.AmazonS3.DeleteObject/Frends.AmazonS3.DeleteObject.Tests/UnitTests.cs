@@ -67,10 +67,10 @@ public class UnitTests
 
             var result = await AmazonS3.DeleteObject(input, connection, options, default);
             Assert.IsTrue(result.Success);
-            Assert.AreEqual(objects.Length, result.Data.Count);
-            Assert.AreEqual(_bucketName, result.Data[0].BucketName);
-            Assert.AreEqual(key, result.Data[0].Key);
-            Assert.IsNotNull(result.Data[0].VersionId);
+            Assert.AreEqual(objects.Length, result.DeletedObjects.Count);
+            Assert.AreEqual(_bucketName, result.DeletedObjects[0].BucketName);
+            Assert.AreEqual(key, result.DeletedObjects[0].Key);
+            Assert.IsNotNull(result.DeletedObjects[0].VersionId);
             Assert.IsFalse(FileExistsInS3(key).Result);
             Assert.IsTrue(FileExistsInS3("ExampleFile").Result);
 
@@ -193,13 +193,13 @@ public class UnitTests
 
             var result = await AmazonS3.DeleteObject(input, connection, options, default);
             Assert.IsTrue(result.Success);
-            Assert.AreEqual(objects.Length, result.Data.Count);
+            Assert.AreEqual(objects.Length, result.DeletedObjects.Count);
 
             for (int i = 0; i < objects.Length; i++)
             {
-                Assert.AreEqual(_bucketName, result.Data[i].BucketName);
-                Assert.AreEqual(keys[i], result.Data[i].Key);
-                Assert.IsNotNull(result.Data[i].VersionId);
+                Assert.AreEqual(_bucketName, result.DeletedObjects[i].BucketName);
+                Assert.AreEqual(keys[i], result.DeletedObjects[i].Key);
+                Assert.IsNotNull(result.DeletedObjects[i].VersionId);
                 Assert.IsFalse(FileExistsInS3(keys[i]).Result);
             }
 
@@ -246,25 +246,25 @@ public class UnitTests
         // Delete one of the keys.
         var deleteSingle = await AmazonS3.DeleteObject(inputSingle, connection, options, default);
         Assert.IsTrue(deleteSingle.Success);
-        Assert.AreEqual(1, deleteSingle.Data.Count);
+        Assert.AreEqual(1, deleteSingle.DeletedObjects.Count);
         Assert.IsFalse(FileExistsInS3(keys[0]).Result);
 
         // Now the real test.
         var result = await AmazonS3.DeleteObject(input, connection, options, default);
         Assert.IsTrue(result.Success);
-        Assert.AreEqual(objects.Length, result.Data.Count);
+        Assert.AreEqual(objects.Length, result.DeletedObjects.Count);
 
         for (int i = 0; i < objects.Length; i++)
         {
-            Assert.AreEqual(_bucketName, result.Data[i].BucketName);
-            Assert.AreEqual(keys[i], result.Data[i].Key);
-            if (result.Data[i].Key == keys[0])
+            Assert.AreEqual(_bucketName, result.DeletedObjects[i].BucketName);
+            Assert.AreEqual(keys[i], result.DeletedObjects[i].Key);
+            if (result.DeletedObjects[i].Key == keys[0])
             {
-                Assert.IsNull(result.Data[i].VersionId);
+                Assert.IsNull(result.DeletedObjects[i].VersionId);
             }
             else
             {
-                Assert.IsNotNull(result.Data[i].VersionId);
+                Assert.IsNotNull(result.DeletedObjects[i].VersionId);
             }
             Assert.IsFalse(FileExistsInS3(keys[i]).Result);
         }

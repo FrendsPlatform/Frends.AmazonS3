@@ -14,14 +14,20 @@ public class Result
     public bool Success { get; private set; }
 
     /// <summary>
-    /// List of deleted objects.
+    /// List of successfully deleted objects.
     /// </summary>
-    /// <example>{ true, "Key1.txt", "etZwWf8lJPf_5MuzOyFzepWqA3eS3EIN", "" }, { false, "Key2.txt", "atZwWf8lJPf_5MuzOyFzepWqA3eS3EIN", "Object ExampleKey doesn't exist in ExampleBucket." }</example>
-    public List<SingleResultObject> Data { get; private set; }
+    /// <example>{ "Key1.txt", "etZwWf8lJPf_5MuzOyFzepWqA3eS3EIN" }, { "Key2.txt", "atZwWf8lJPf_5MuzOyFzepWqA3eS3EIN" }</example>
+    public List<SingleResultObject> DeletedObjects { get; private set; }
 
-    internal Result(bool success, List<SingleResultObject> data)
+    /// <summary>
+    /// Error information including objects that encountered errors.
+    /// </summary>
+    public Error Error { get; private set; }
+
+    internal Result(bool success, List<SingleResultObject> deletedObjects, Error error = null)
     {
         Success = success;
-        Data = data;
+        DeletedObjects = deletedObjects;
+        Error = error;
     }
 }
