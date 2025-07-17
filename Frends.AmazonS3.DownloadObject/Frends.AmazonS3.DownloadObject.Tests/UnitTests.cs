@@ -165,8 +165,8 @@ public class UnitTests
         var setS3Key = $"DownloadTest/Testfile.txt";
 
         var connection = _connection;
-        connection.AuthenticationMethod = AuthenticationMethods.PreSignedURL;
-        connection.PreSignedURL = CreatePreSignedURL(setS3Key);
+        connection.AuthenticationMethod = AuthenticationMethods.PreSignedUrl;
+        connection.PreSignedUrl = CreatePreSignedURL(setS3Key);
         
         var input = _input;
         input.TargetDirectory = "";
