@@ -10,7 +10,7 @@ namespace Frends.AmazonS3.ListObjects.Definitions
         /// <summary>
         /// List of objects.
         /// </summary>
-        public List<BucketObject> ObjectList { get; private set; }
+        public List<BucketObject> Objects { get; private set; }
 
         /// <summary>
         /// Indicates whether the operation was successful.
@@ -29,21 +29,21 @@ namespace Frends.AmazonS3.ListObjects.Definitions
 
         internal Result(List<BucketObject> bucketObject)
         {
-            ObjectList = bucketObject;
+            Objects = bucketObject;
             Success = true;
             Error = null;
         }
 
         internal Result(string errorMessage)
         {
-            ObjectList = new List<BucketObject>();
+            Objects = new List<BucketObject>();
             Success = false;
             Error = new Error(errorMessage);
         }
 
         internal Result(Error error)
         {
-            ObjectList = new List<BucketObject>();
+            Objects = new List<BucketObject>();
             Success = false;
             Error = error;
         }

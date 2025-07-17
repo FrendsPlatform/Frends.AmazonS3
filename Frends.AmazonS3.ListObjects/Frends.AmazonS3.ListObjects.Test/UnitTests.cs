@@ -45,7 +45,7 @@ namespace Frends.AmazonS3.ListObjects.Test
             };
 
             var result = AmazonS3.ListObjects(_connection, _input, _options, default);
-            Assert.IsNotNull(result.Result.ObjectList);
+            Assert.IsNotNull(result.Result.Objects);
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Frends.AmazonS3.ListObjects.Test
             };
 
             var result = AmazonS3.ListObjects(_connection, _input, _options, default);
-            Assert.IsNotNull(result.Result.ObjectList);
+            Assert.IsNotNull(result.Result.Objects);
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace Frends.AmazonS3.ListObjects.Test
             };
 
             var result = AmazonS3.ListObjects(_connection, _input, _options, default);
-            Assert.IsNotNull(result.Result.ObjectList);
+            Assert.IsNotNull(result.Result.Objects);
         }
 
         /// <summary>
@@ -175,8 +175,8 @@ namespace Frends.AmazonS3.ListObjects.Test
             var result = AmazonS3.ListObjects(_connection, _input, _options, default).Result;
             Assert.IsFalse(result.Success);
             Assert.IsTrue(result.ErrorMessage.Contains("AWS credentials missing."));
-            Assert.IsNotNull(result.ObjectList);
-            Assert.AreEqual(0, result.ObjectList.Count);
+            Assert.IsNotNull(result.Objects);
+            Assert.AreEqual(0, result.Objects.Count);
         }
 
         /// <summary>
@@ -210,8 +210,8 @@ namespace Frends.AmazonS3.ListObjects.Test
             var result = AmazonS3.ListObjects(_connection, _input, _options, default).Result;
             Assert.IsFalse(result.Success);
             Assert.AreEqual("Custom authentication error occurred", result.ErrorMessage);
-            Assert.IsNotNull(result.ObjectList);
-            Assert.AreEqual(0, result.ObjectList.Count);
+            Assert.IsNotNull(result.Objects);
+            Assert.AreEqual(0, result.Objects.Count);
         }
     }
 }
