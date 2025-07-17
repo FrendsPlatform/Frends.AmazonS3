@@ -90,25 +90,11 @@ public class AmazonS3
         }
         catch (AmazonS3Exception aEx)
         {
-            if (options.ThrowErrorOnFailure)
-            {
-                var errorMessage = string.IsNullOrEmpty(options.ErrorMessageOnFailure) 
-                    ? $"DeleteObject AmazonS3Exception: {aEx.Message}" 
-                    : options.ErrorMessageOnFailure;
-                throw new AmazonS3Exception(errorMessage, aEx);
-            }
-            return new Result(false, result);
+            return ErrorHandler.Handle(aEx, options.ThrowErrorOnFailure, options.ErrorMessageOnFailure, result);
         }
         catch (Exception ex)
         {
-            if (options.ThrowErrorOnFailure)
-            {
-                var errorMessage = string.IsNullOrEmpty(options.ErrorMessageOnFailure) 
-                    ? $"DeleteObject Exception: {ex.Message}" 
-                    : options.ErrorMessageOnFailure;
-                throw new Exception(errorMessage, ex);
-            }
-            return new Result(false, result);
+            return ErrorHandler.Handle(ex, options.ThrowErrorOnFailure, options.ErrorMessageOnFailure, result);
         }
     }
 
