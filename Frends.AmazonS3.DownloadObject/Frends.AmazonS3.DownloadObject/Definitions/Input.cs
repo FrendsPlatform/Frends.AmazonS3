@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Frends.AmazonS3.DownloadObject.Definitions;
@@ -50,7 +50,7 @@ public class Input
 public class Connection
 {
     /// <summary>
-    /// Authentication method to use when connecting to AWS S3 bucket. 
+    /// Authentication method to use when connecting to AWS S3 bucket.
     /// </summary>
     /// <example>AwsCredentials</example>
     [DefaultValue(AuthenticationMethods.AwsCredentials)]

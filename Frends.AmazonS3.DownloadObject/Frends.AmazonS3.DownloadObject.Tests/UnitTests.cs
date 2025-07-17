@@ -144,7 +144,7 @@ public class UnitTests
             AwsSecretAccessKey = _connection.AwsSecretAccessKey,
             Region = _connection.Region
         };
-        
+
         var options = new Options
         {
             ActionOnExistingFile = DestinationFileExistsActions.Info,
@@ -179,7 +179,7 @@ public class UnitTests
             AwsSecretAccessKey = _connection.AwsSecretAccessKey,
             Region = _connection.Region
         };
-        
+
         var options = new Options
         {
             ActionOnExistingFile = DestinationFileExistsActions.Error,
@@ -228,7 +228,7 @@ public class UnitTests
             AwsSecretAccessKey = _connection.AwsSecretAccessKey,
             Region = _connection.Region
         };
-        
+
         var input = new Input
         {
             BucketName = _input.BucketName,
@@ -261,7 +261,7 @@ public class UnitTests
                 Region = _connection.Region,
                 PreSignedUrl = _connection.PreSignedUrl
             };
-            
+
             var options = new Options
             {
                 ActionOnExistingFile = action,
@@ -271,7 +271,7 @@ public class UnitTests
                 ThrowErrorOnFailure = _options.ThrowErrorOnFailure,
                 ErrorMessageOnFailure = _options.ErrorMessageOnFailure
             };
-            
+
             var input = new Input
             {
                 BucketName = _input.BucketName,
@@ -301,7 +301,7 @@ public class UnitTests
             Region = _connection.Region,
             PreSignedUrl = _connection.PreSignedUrl
         };
-        
+
         var options = new Options
         {
             ActionOnExistingFile = DestinationFileExistsActions.Info,
@@ -311,7 +311,7 @@ public class UnitTests
             ThrowErrorOnFailure = _options.ThrowErrorOnFailure,
             ErrorMessageOnFailure = _options.ErrorMessageOnFailure
         };
-        
+
         var input = new Input
         {
             BucketName = _input.BucketName,
@@ -343,7 +343,7 @@ public class UnitTests
             Region = _connection.Region,
             PreSignedUrl = _connection.PreSignedUrl
         };
-        
+
         var options = new Options
         {
             ActionOnExistingFile = DestinationFileExistsActions.Error,
@@ -374,7 +374,7 @@ public class UnitTests
             Region = _connection.Region,
             PreSignedUrl = _connection.PreSignedUrl
         };
-        
+
         var options = new Options
         {
             DeleteSourceObject = true,
@@ -407,7 +407,7 @@ public class UnitTests
             Region = _connection.Region,
             PreSignedUrl = _connection.PreSignedUrl
         };
-        
+
         var input = new Input
         {
             BucketName = _input.BucketName,
@@ -439,7 +439,7 @@ public class UnitTests
             Region = _connection.Region,
             PreSignedUrl = _connection.PreSignedUrl
         };
-        
+
         var input = new Input
         {
             BucketName = _input.BucketName,
@@ -470,7 +470,7 @@ public class UnitTests
             Region = _connection.Region,
             PreSignedUrl = _connection.PreSignedUrl
         };
-        
+
         var input = new Input
         {
             BucketName = _input.BucketName,
@@ -497,7 +497,7 @@ public class UnitTests
             Region = _connection.Region,
             PreSignedUrl = _connection.PreSignedUrl
         };
-        
+
         var options = new Options
         {
             ThrowErrorOnFailure = true,
@@ -530,7 +530,7 @@ public class UnitTests
             Region = _connection.Region,
             PreSignedUrl = _connection.PreSignedUrl
         };
-        
+
         var options = new Options
         {
             ThrowErrorOnFailure = true,
@@ -548,7 +548,7 @@ public class UnitTests
         }
         catch (Exception ex)
         {
-            Assert.IsTrue(ex.Message.Contains("The AWS Access Key Id you provided does not exist") || 
+            Assert.IsTrue(ex.Message.Contains("The AWS Access Key Id you provided does not exist") ||
                          ex.Message.Contains("InvalidAccessKeyId") ||
                          ex.Message.Contains("credentials"));
         }
@@ -565,7 +565,7 @@ public class UnitTests
             Region = _connection.Region,
             PreSignedUrl = _connection.PreSignedUrl
         };
-        
+
         var options = new Options
         {
             ThrowErrorOnFailure = false,
@@ -579,7 +579,7 @@ public class UnitTests
         var result = await AmazonS3.DownloadObject(_input, connection, options, default);
         Assert.IsFalse(result.Success);
         Assert.IsNotNull(result.Error);
-        Assert.IsTrue(result.Error.Message.Contains("The AWS Access Key Id you provided does not exist") || 
+        Assert.IsTrue(result.Error.Message.Contains("The AWS Access Key Id you provided does not exist") ||
                      result.Error.Message.Contains("InvalidAccessKeyId") ||
                      result.Error.Message.Contains("credentials"));
         Assert.IsNotNull(result.Error.AdditionalInfo);

@@ -8,9 +8,9 @@ namespace Frends.AmazonS3.DownloadObject.Definitions;
 public class Options
 {
     /// <summary>
-    /// Delete S3 source object after download. 
-    /// Subfolders will also be deleted if they are part of the object's key and there are no objects left. 
-    /// Create subfolders manually to make sure they won't be deleted. 
+    /// Delete S3 source object after download.
+    /// Subfolders will also be deleted if they are part of the object's key and there are no objects left.
+    /// Create subfolders manually to make sure they won't be deleted.
     /// </summary>
     /// <example>false</example>
     [DefaultValue(false)]

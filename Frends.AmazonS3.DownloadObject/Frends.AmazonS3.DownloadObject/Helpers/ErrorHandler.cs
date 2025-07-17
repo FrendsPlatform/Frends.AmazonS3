@@ -20,8 +20,8 @@ public static class ErrorHandler
     {
         if (options.ThrowErrorOnFailure)
         {
-            var errorMessage = !string.IsNullOrWhiteSpace(options.ErrorMessageOnFailure) 
-                ? options.ErrorMessageOnFailure 
+            var errorMessage = !string.IsNullOrWhiteSpace(options.ErrorMessageOnFailure)
+                ? options.ErrorMessageOnFailure
                 : exception.Message;
             throw new Exception(errorMessage);
         }
