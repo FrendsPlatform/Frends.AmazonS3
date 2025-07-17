@@ -20,21 +20,17 @@ public static class ErrorHandler
     /// <returns>Result object with appropriate success status</returns>
     public static Result Handle(Exception exception, bool throwOnFailure, string errorMessage, List<SingleResultObject> deletedObjects)
     {
+        var finalErrorMessage = string.IsNullOrEmpty(errorMessage) 
+            ? GetDefaultErrorMessage(exception) 
+            : errorMessage;
+
         if (throwOnFailure)
         {
-            var finalErrorMessage = string.IsNullOrEmpty(errorMessage) 
-                ? GetDefaultErrorMessage(exception) 
-                : errorMessage;
-            
             if (exception is AmazonS3Exception)
                 throw new AmazonS3Exception(finalErrorMessage, exception);
             else
                 throw new Exception(finalErrorMessage, exception);
         }
-        
-        var finalErrorMessage = string.IsNullOrEmpty(errorMessage) 
-            ? GetDefaultErrorMessage(exception) 
-            : errorMessage;
             
         var error = new Error
         {
