@@ -1,12 +1,12 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
-using Frends.AmazonS3.ListObjects.Definitions;
 using System.Threading.Tasks;
 using Amazon;
 using Amazon.S3;
-using System.Collections.Generic;
 using Amazon.S3.Model;
+using Frends.AmazonS3.ListObjects.Definitions;
 using Frends.AmazonS3.ListObjects.Helpers;
 
 namespace Frends.AmazonS3.ListObjects
