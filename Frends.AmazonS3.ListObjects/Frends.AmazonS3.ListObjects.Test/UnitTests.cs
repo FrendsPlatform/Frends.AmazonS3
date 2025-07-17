@@ -11,6 +11,7 @@ namespace Frends.AmazonS3.ListObjects.Test
         private readonly string? _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
         private readonly string? _bucketName = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_BucketName");
 
+        Connection? _connection = null;
         Input? _input = null;
         Options? _options = null;
 
@@ -21,12 +22,16 @@ namespace Frends.AmazonS3.ListObjects.Test
         [TestMethod]
         public void ListAllTest()
         {
-            _input = new Input
+            _connection = new Connection
             {
                 AwsAccessKeyId = _accessKey,
                 AwsSecretAccessKey = _secretAccessKey,
-                BucketName = _bucketName,
                 Region = Region.EuCentral1
+            };
+
+            _input = new Input
+            {
+                BucketName = _bucketName
             };
 
             _options = new Options
@@ -37,7 +42,7 @@ namespace Frends.AmazonS3.ListObjects.Test
                 StartAfter = null
             };
 
-            var result = AmazonS3.ListObjects(_input, _options, default);
+            var result = AmazonS3.ListObjects(_connection, _input, _options, default);
             Assert.IsNotNull(result.Result.ObjectList);
         }
 
@@ -47,12 +52,16 @@ namespace Frends.AmazonS3.ListObjects.Test
         [TestMethod]
         public void UsingStartAfterTest()
         {
-            _input = new Input
+            _connection = new Connection
             {
                 AwsAccessKeyId = _accessKey,
                 AwsSecretAccessKey = _secretAccessKey,
-                BucketName = _bucketName,
                 Region = Region.EuCentral1
+            };
+
+            _input = new Input
+            {
+                BucketName = _bucketName
             };
 
             _options = new Options
@@ -63,7 +72,7 @@ namespace Frends.AmazonS3.ListObjects.Test
                 StartAfter = "testfolder/subfolder/20220401.txt"
             };
 
-            var result = AmazonS3.ListObjects(_input, _options, default);
+            var result = AmazonS3.ListObjects(_connection, _input, _options, default);
             Assert.IsNotNull(result.Result.ObjectList);
         }
 
@@ -73,12 +82,16 @@ namespace Frends.AmazonS3.ListObjects.Test
         [TestMethod]
         public void UsingPrefixTest()
         {
-            _input = new Input
+            _connection = new Connection
             {
                 AwsAccessKeyId = _accessKey,
                 AwsSecretAccessKey = _secretAccessKey,
-                BucketName = _bucketName,
                 Region = Region.EuCentral1
+            };
+
+            _input = new Input
+            {
+                BucketName = _bucketName
             };
 
             _options = new Options
@@ -89,7 +102,7 @@ namespace Frends.AmazonS3.ListObjects.Test
                 StartAfter = null
             };
 
-            var result = AmazonS3.ListObjects(_input, _options, default);
+            var result = AmazonS3.ListObjects(_connection, _input, _options, default);
             Assert.IsNotNull(result.Result.ObjectList);
         }
 
@@ -99,12 +112,16 @@ namespace Frends.AmazonS3.ListObjects.Test
         [TestMethod]
         public void MissingKeyTest()
         {
-            _input = new Input
+            _connection = new Connection
             {
                 AwsAccessKeyId = null,
                 AwsSecretAccessKey = _secretAccessKey,
-                BucketName = _bucketName,
                 Region = Region.EuCentral1
+            };
+
+            _input = new Input
+            {
+                BucketName = _bucketName
             };
 
             _options = new Options
@@ -115,7 +132,7 @@ namespace Frends.AmazonS3.ListObjects.Test
                 StartAfter = null
             };
 
-            var ex = Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.ListObjects(_input, _options, default)).Result;
+            var ex = Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.ListObjects(_connection, _input, _options, default)).Result;
             Assert.IsTrue(ex.Message.Contains("AWS credentials missing."));
         }
     }
