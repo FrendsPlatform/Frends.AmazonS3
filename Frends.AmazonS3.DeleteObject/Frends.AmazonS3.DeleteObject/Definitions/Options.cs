@@ -3,28 +3,28 @@
 namespace Frends.AmazonS3.DeleteObject.Definitions;
 
 /// <summary>
-/// Options parameters.
+/// Optional parameters for controlling task behavior and error handling.
 /// </summary>
 public class Options
 {
     /// <summary>
-    /// Timeout in seconds.
+    /// Timeout in seconds for S3 operations. If an operation takes longer than this value, it will be cancelled.
     /// </summary>
-    /// <example>5</example>
+    /// <example>30</example>
     [DefaultValue(30)]
     public int Timeout { get; set; }
 
     /// <summary>
-    /// Throw error on failure.
+    /// If true, throws an exception when any delete operation fails. If false, returns a Result object with error information.
     /// </summary>
     /// <example>false</example>
     [DefaultValue(false)]
     public bool ThrowErrorOnFailure { get; set; }
 
     /// <summary>
-    /// Error message on failure.
+    /// Custom error message to use when operations fail. If empty, default error messages will be used.
     /// </summary>
-    /// <example></example>
+    /// <example>"Custom delete operation failed"</example>
     [DefaultValue("")]
     public string ErrorMessageOnFailure { get; set; }
 }
