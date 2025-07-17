@@ -141,7 +141,7 @@ public class UnitTests
         connection.PreSignedURL = CreatePreSignedURL(setS3Key);
         connection.DestinationFileExistsAction = DestinationFileExistsActions.Error;
 
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DownloadObject(input, connection, default));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DownloadObject(_input, connection, default));
         Assert.IsTrue(ex.Message.Contains("already exists"));
         Assert.IsTrue(File.Exists(@$"{_dir}\Download\Testfile.txt"));
     }
