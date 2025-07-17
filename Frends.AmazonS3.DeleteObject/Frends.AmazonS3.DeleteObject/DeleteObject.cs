@@ -6,6 +6,7 @@ using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Frends.AmazonS3.DeleteObject.Definitions;
+using Frends.AmazonS3.DeleteObject.Helpers;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Collections.Generic;
