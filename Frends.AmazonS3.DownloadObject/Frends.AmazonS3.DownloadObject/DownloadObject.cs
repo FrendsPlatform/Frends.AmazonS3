@@ -92,8 +92,7 @@ public class AmazonS3
         }
         catch (Exception ex)
         {
-            var error = new Error(ex.Message, new { StackTrace = ex.StackTrace, InnerException = ex.InnerException?.Message });
-            return new Result(false, result, error);
+            return ErrorHandler.Handle(ex, options, result);
         }
     }
 

@@ -328,6 +328,68 @@ public class UnitTests
         Assert.IsTrue(result.Error.Message.Contains("No matches found with search pattern"));
     }
 
+    [TestMethod]
+    public async Task ErrorHandler_ThrowErrorOnFailure_True_WithCustomMessage_Test()
+    {
+        var connection = _connection;
+        connection.AwsAccessKeyId = "invalid";
+        
+        var options = _options;
+        options.ThrowErrorOnFailure = true;
+        options.ErrorMessageOnFailure = "Custom error message for testing";
+
+        try
+        {
+            await AmazonS3.DownloadObject(_input, connection, options, default);
+            Assert.Fail("Expected exception was not thrown");
+        }
+        catch (Exception ex)
+        {
+            Assert.AreEqual("Custom error message for testing", ex.Message);
+        }
+    }
+
+    [TestMethod]
+    public async Task ErrorHandler_ThrowErrorOnFailure_True_WithOriginalMessage_Test()
+    {
+        var connection = _connection;
+        connection.AwsAccessKeyId = "invalid";
+        
+        var options = _options;
+        options.ThrowErrorOnFailure = true;
+        options.ErrorMessageOnFailure = "";
+
+        try
+        {
+            await AmazonS3.DownloadObject(_input, connection, options, default);
+            Assert.Fail("Expected exception was not thrown");
+        }
+        catch (Exception ex)
+        {
+            Assert.IsTrue(ex.Message.Contains("The AWS Access Key Id you provided does not exist") || 
+                         ex.Message.Contains("InvalidAccessKeyId") ||
+                         ex.Message.Contains("credentials"));
+        }
+    }
+
+    [TestMethod]
+    public async Task ErrorHandler_ThrowErrorOnFailure_False_Test()
+    {
+        var connection = _connection;
+        connection.AwsAccessKeyId = "invalid";
+        
+        var options = _options;
+        options.ThrowErrorOnFailure = false;
+
+        var result = await AmazonS3.DownloadObject(_input, connection, options, default);
+        Assert.IsFalse(result.Success);
+        Assert.IsNotNull(result.Error);
+        Assert.IsTrue(result.Error.Message.Contains("The AWS Access Key Id you provided does not exist") || 
+                     result.Error.Message.Contains("InvalidAccessKeyId") ||
+                     result.Error.Message.Contains("credentials"));
+        Assert.IsNotNull(result.Error.AdditionalInfo);
+    }
+
     private string CreatePreSignedURL(string key)
     {
         AmazonS3Client? client = new(_accessKey, _secretAccessKey, RegionEndpoint.EUCentral1);
