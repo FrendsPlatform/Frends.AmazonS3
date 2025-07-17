@@ -1,4 +1,4 @@
-﻿namespace Frends.AmazonS3.DeleteObject.Definitions;
+namespace Frends.AmazonS3.DeleteObject.Definitions;
 
 /// <summary>
 /// Represents the result of a single delete operation, containing information about the processed object.
@@ -18,7 +18,7 @@ public class SingleResultObject
     public string Key { get; set; }
 
     /// <summary>
-    /// The version ID of the delete marker created as a result of the DELETE operation, or the version ID of the deleted object. 
+    /// The version ID of the delete marker created as a result of the DELETE operation, or the version ID of the deleted object.
     /// Null if the object was not found (when ActionOnObjectNotFound is set to Info) or if the bucket is not versioned.
     /// </summary>
     /// <example>q97fnr1zy_gsDcPAMbbwoW2eY0wgoFPt</example>

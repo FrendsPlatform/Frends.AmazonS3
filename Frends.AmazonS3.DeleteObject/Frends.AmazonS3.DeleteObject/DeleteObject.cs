@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -71,7 +71,7 @@ public class AmazonS3
                     // Validate object properties
                     if (string.IsNullOrWhiteSpace(obj.BucketName))
                         throw new ArgumentException($"BucketName cannot be null or empty for object with key: {obj.Key}");
-                    
+
                     if (string.IsNullOrWhiteSpace(obj.Key))
                         throw new ArgumentException("Object Key cannot be null or empty");
 
@@ -100,11 +100,11 @@ public class AmazonS3
                 {
                     // Add failed object to error list
                     errorObjects.Add(new SingleResultObject() { BucketName = obj.BucketName, Key = obj.Key, VersionId = obj.VersionId });
-                    
+
                     // If we should throw on individual object failure, rethrow
                     if (options.ThrowErrorOnFailure)
                         throw;
-                    
+
                     // Log the specific error for debugging
                     System.Diagnostics.Debug.WriteLine($"Failed to delete object {obj.Key}: {ex.Message}");
                 }
@@ -113,10 +113,10 @@ public class AmazonS3
             // If we have errors but didn't throw, return result with error info
             if (errorObjects.Count > 0)
             {
-                var errorMessage = string.IsNullOrWhiteSpace(options.ErrorMessageOnFailure) 
+                var errorMessage = string.IsNullOrWhiteSpace(options.ErrorMessageOnFailure)
                     ? $"Failed to delete {errorObjects.Count} out of {input.Objects.Length} objects"
                     : options.ErrorMessageOnFailure;
-                    
+
                 var error = new Error
                 {
                     ErrorMessage = errorMessage,

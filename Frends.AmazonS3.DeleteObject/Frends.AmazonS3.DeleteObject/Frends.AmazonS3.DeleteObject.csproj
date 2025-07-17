@@ -1,31 +1,31 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-	<TargetFrameworks>net8.0</TargetFrameworks>
-	<Version>2.1.0</Version>
-	<Authors>Frends</Authors>
-	<Copyright>Frends</Copyright>
-	<Company>Frends</Company>
-	<Product>Frends</Product>
-	<PackageTags>Frends</PackageTags>
-	<PackageLicenseExpression>MIT</PackageLicenseExpression>
-	<GenerateDocumentationFile>true</GenerateDocumentationFile>
-	<Description>Frends Task to delete single or multiple objects from an Amazon S3 bucket with support for versioning, error handling, and batch operations.</Description>
-	<PackageProjectUrl>https://frends.com/</PackageProjectUrl>
-	<RepositoryUrl>https://github.com/FrendsPlatform/Frends.AmazonS3</RepositoryUrl>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <Version>2.1.0</Version>
+    <Authors>Frends</Authors>
+    <Copyright>Frends</Copyright>
+    <Company>Frends</Company>
+    <Product>Frends</Product>
+    <PackageTags>Frends</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Description>Frends Task to delete single or multiple objects from an Amazon S3 bucket with support for versioning, error handling, and batch operations.</Description>
+    <PackageProjectUrl>https://frends.com/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/FrendsPlatform/Frends.AmazonS3</RepositoryUrl>
   </PropertyGroup>
-	
   <ItemGroup>
-	  <None Include="FrendsTaskMetadata.json" Pack="true" PackagePath="/">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+    <None Include="FrendsTaskMetadata.json" Pack="true" PackagePath="/">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
-  
   <ItemGroup>
     <PackageReference Include="AWSSDK.Core" Version="3.7.400.44" />
     <PackageReference Include="AWSSDK.S3" Version="3.7.400.44" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
   </ItemGroup>
-
+  <ItemGroup>
+    <Content Include="migration.json" PackagePath="/" Pack="true" />
+    <Content Include="../CHANGELOG.md" PackagePath="/" Pack="true" />
+  </ItemGroup>
 </Project>
-

@@ -1,4 +1,4 @@
-﻿namespace Frends.AmazonS3.DeleteObject.Definitions;
+namespace Frends.AmazonS3.DeleteObject.Definitions;
 
 /// <summary>
 /// Represents a single S3 object to be deleted, containing bucket name, key, and optional version ID.
@@ -18,7 +18,7 @@ public class S3ObjectArray
     public string Key { get; set; }
 
     /// <summary>
-    /// Version ID used to reference a specific version of the object in a versioned bucket. 
+    /// Version ID used to reference a specific version of the object in a versioned bucket.
     /// Leave empty or null to delete the current version of the object.
     /// </summary>
     /// <example>q97fnr1zy_gsDcPAMbbwoW2eY0wgoFPt</example>

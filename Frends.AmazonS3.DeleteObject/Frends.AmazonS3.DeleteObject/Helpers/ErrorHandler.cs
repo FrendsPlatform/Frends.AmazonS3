@@ -20,8 +20,8 @@ public static class ErrorHandler
     /// <returns>Result object with appropriate success status</returns>
     public static Result Handle(Exception exception, bool throwOnFailure, string errorMessage, List<SingleResultObject> deletedObjects)
     {
-        var finalErrorMessage = string.IsNullOrEmpty(errorMessage) 
-            ? GetDefaultErrorMessage(exception) 
+        var finalErrorMessage = string.IsNullOrEmpty(errorMessage)
+            ? GetDefaultErrorMessage(exception)
             : errorMessage;
 
         if (throwOnFailure)
@@ -31,13 +31,13 @@ public static class ErrorHandler
             else
                 throw new Exception(finalErrorMessage, exception);
         }
-            
+
         var error = new Error
         {
             ErrorMessage = finalErrorMessage,
             AdditionalInfo = new List<SingleResultObject>() // Objects that failed will be added here by caller if needed
         };
-        
+
         return new Result(false, deletedObjects, error);
     }
 
