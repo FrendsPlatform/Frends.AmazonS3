@@ -60,7 +60,9 @@ public class UnitTests
 
             var options = new Options()
             {
-                Timeout = 1
+                Timeout = 1,
+                ThrowErrorOnFailure = false,
+                ErrorMessageOnFailure = ""
             };
 
             var result = await AmazonS3.DeleteObject(input, connection, options, default);
@@ -103,7 +105,9 @@ public class UnitTests
 
             var options = new Options()
             {
-                Timeout = 0
+                Timeout = 0,
+                ThrowErrorOnFailure = true,
+                ErrorMessageOnFailure = ""
             };
 
             var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DeleteObject(input, connection, options, default));
@@ -139,7 +143,9 @@ public class UnitTests
 
             var options = new Options()
             {
-                Timeout = 1
+                Timeout = 1,
+                ThrowErrorOnFailure = false,
+                ErrorMessageOnFailure = ""
             };
 
             var result = await AmazonS3.DeleteObject(input, connection, options, default);
@@ -182,7 +188,9 @@ public class UnitTests
 
             var options = new Options()
             {
-                Timeout = 1
+                Timeout = 1,
+                ThrowErrorOnFailure = false,
+                ErrorMessageOnFailure = ""
             };
 
             var result = await AmazonS3.DeleteObject(input, connection, options, default);
@@ -233,7 +241,9 @@ public class UnitTests
 
         var options = new Options()
         {
-            Timeout = 1
+            Timeout = 1,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
         };
 
         // Delete one of the keys.
@@ -291,7 +301,9 @@ public class UnitTests
 
         var options = new Options()
         {
-            Timeout = 1
+            Timeout = 1,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
         };
 
         var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DeleteObject(input, connection, options, default));
@@ -320,7 +332,9 @@ public class UnitTests
 
         var options = new Options()
         {
-            Timeout = 1
+            Timeout = 1,
+            ThrowErrorOnFailure = true,
+            ErrorMessageOnFailure = ""
         };
 
         var ex = await Assert.ThrowsExceptionAsync<AmazonS3Exception>(async () => await AmazonS3.DeleteObject(input, connection, options, default));
@@ -348,7 +362,9 @@ public class UnitTests
         };
         var options = new Options()
         {
-            Timeout = 1
+            Timeout = 1,
+            ThrowErrorOnFailure = true,
+            ErrorMessageOnFailure = ""
         };
 
         var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DeleteObject(input, connection, options, default));
@@ -374,7 +390,9 @@ public class UnitTests
 
         var options = new Options()
         {
-            Timeout = 1
+            Timeout = 1,
+            ThrowErrorOnFailure = true,
+            ErrorMessageOnFailure = ""
         };
 
         var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DeleteObject(input, connection, options, default));
@@ -382,7 +400,65 @@ public class UnitTests
         Assert.AreEqual("DeleteObject error: Input.Objects cannot be empty.", ex.Message);
     }
 
+    [TestMethod]
+    public async Task DeleteSingleObject_ThrowErrorOnFailure_False()
+    {
+        var key = "Foo";
+        var objects = new[] { new S3ObjectArray { BucketName = _bucketName, Key = key, VersionId = null } };
 
+        var input = new Input()
+        {
+            Objects = objects,
+            ActionOnObjectNotFound = NotExistsHandler.None,
+        };
+
+        var connection = new Connection()
+        {
+            AwsAccessKeyId = "",
+            AwsSecretAccessKey = _secretAccessKey,
+            Region = Region.EuCentral1,
+        };
+
+        var options = new Options()
+        {
+            Timeout = 1,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
+        };
+
+        var result = await AmazonS3.DeleteObject(input, connection, options, default);
+        Assert.IsFalse(result.Success);
+    }
+
+    [TestMethod]
+    public async Task DeleteSingleObject_CustomErrorMessage()
+    {
+        var key = "Foo";
+        var objects = new[] { new S3ObjectArray { BucketName = _bucketName, Key = key, VersionId = null } };
+
+        var input = new Input()
+        {
+            Objects = objects,
+            ActionOnObjectNotFound = NotExistsHandler.None,
+        };
+
+        var connection = new Connection()
+        {
+            AwsAccessKeyId = "",
+            AwsSecretAccessKey = _secretAccessKey,
+            Region = Region.EuCentral1,
+        };
+
+        var options = new Options()
+        {
+            Timeout = 1,
+            ThrowErrorOnFailure = true,
+            ErrorMessageOnFailure = "Custom error message"
+        };
+
+        var ex = await Assert.ThrowsExceptionAsync<AmazonS3Exception>(async () => await AmazonS3.DeleteObject(input, connection, options, default));
+        Assert.AreEqual("Custom error message", ex.Message);
+    }
 
     private async Task CreateTestFiles(S3ObjectArray[] array)
     {
