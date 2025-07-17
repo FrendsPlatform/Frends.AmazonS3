@@ -12,6 +12,7 @@ public class Connection
     /// </summary>
     /// <example>AKIAQWERTY7NJ5Q7NZ6Q</example>
     [PasswordPropertyText]
+    [DefaultValue("")]
     public string AwsAccessKeyId { get; set; }
 
     /// <summary>
@@ -19,11 +20,13 @@ public class Connection
     /// </summary>
     /// <example>TVh5hgd3uGY/2CqH</example>
     [PasswordPropertyText]
+    [DefaultValue("")]
     public string AwsSecretAccessKey { get; set; }
 
     /// <summary>
     /// The region to connect.
     /// </summary>
     /// <example>EuCentral1</example>
+    [DefaultValue(Region.EuWest1)]
     public Region Region { get; set; }
 }

@@ -11,6 +11,7 @@ public class Input
     /// Array of objects to be deleted.
     /// </summary>
     /// <example>[ ExampleBucket, ExampleKey, 1 ], [ ExampleBucket, ExampleKey, 'empty' ]</example>
+    [DefaultValue(null)]
     public S3ObjectArray[] Objects { get; set; }
 
     /// <summary>

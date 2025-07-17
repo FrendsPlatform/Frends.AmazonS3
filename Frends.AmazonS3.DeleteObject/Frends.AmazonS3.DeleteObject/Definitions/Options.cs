@@ -11,6 +11,7 @@ public class Options
     /// Timeout in seconds.
     /// </summary>
     /// <example>5</example>
+    [DefaultValue(30)]
     public int Timeout { get; set; }
 
     /// <summary>
