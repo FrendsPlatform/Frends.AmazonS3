@@ -92,37 +92,4 @@ public class Connection
     public Region Region { get; set; }
 
 
-    /// <summary>
-    /// Delete S3 source object after download. 
-    /// Subfolders will also be deleted if they are part of the object's key and there are no objects left. 
-    /// Create subfolders manually to make sure they won't be deleted. 
-    /// </summary>
-    /// <example>false</example>
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethods.AwsCredentials)]
-    [DefaultValue(false)]
-    public bool DeleteSourceObject { get; set; }
-
-    /// <summary>
-    /// Throw an error if there are no objects in the path matching the search pattern.
-    /// </summary>
-    /// <example>false</example>
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethods.AwsCredentials)]
-    [DefaultValue(true)]
-    public bool ThrowErrorIfNoMatch { get; set; }
-
-    /// <summary>
-    /// Actions if destination file already exists.
-    /// </summary>
-    /// <example>Info</example>
-    [DefaultValue(DestinationFileExistsActions.Info)]
-    public DestinationFileExistsActions DestinationFileExistsAction { get; set; }
-
-
-    /// <summary>
-    /// For how long will this Task try to write to a locked file.
-    /// Value in seconds.
-    /// </summary>
-    /// <example>10</example>
-    [DefaultValue(10)]
-    public int FileLockedRetries { get; set; }
 }
