@@ -33,6 +33,19 @@ namespace Frends.AmazonS3.ListObjects.Definitions
         /// </summary>
         /// <example>20220401</example>
         public string StartAfter { get; set; }
+
+        /// <summary>
+        /// Throw an exception on failure. If set to false, returns Result with error message.
+        /// </summary>
+        /// <example>true</example>
+        [DefaultValue(true)]
+        public bool ThrowErrorOnFailure { get; set; }
+
+        /// <summary>
+        /// Custom error message to return when ThrowErrorOnFailure is false.
+        /// </summary>
+        /// <example>Custom error occurred</example>
+        public string ErrorMessageOnFailure { get; set; }
     }
 }
 
