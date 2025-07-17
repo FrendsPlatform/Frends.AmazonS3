@@ -141,7 +141,7 @@ public class UnitTests
         connection.PreSignedURL = CreatePreSignedURL(setS3Key);
         connection.DestinationFileExistsAction = DestinationFileExistsActions.Error;
 
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DownloadObject(_input, connection, default));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DownloadObject(input, connection, default));
         Assert.IsTrue(ex.Message.Contains("already exists"));
         Assert.IsTrue(File.Exists(@$"{_dir}\Download\Testfile.txt"));
     }
@@ -167,7 +167,9 @@ public class UnitTests
         var connection = _connection;
         connection.AuthenticationMethod = AuthenticationMethods.PreSignedURL;
         connection.PreSignedURL = CreatePreSignedURL(setS3Key);
-        connection.DestinationDirectory = "";
+        
+        var input = _input;
+        input.TargetDirectory = "";
 
         var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DownloadObject(_input, connection, default));
         Assert.IsTrue(ex.Message.Contains("Path cannot be the empty"));
