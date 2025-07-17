@@ -73,16 +73,16 @@ public class AmazonS3
                     case NotExistsHandler.Throw:
                     default:
                         var deleted = await DeleteS3Object(client, obj.BucketName, obj.Key, versionId, cancellationToken);
-                        result.Add(new SingleResultObject() { Success = true, Key = obj.Key, VersionId = deleted.VersionId, Error = null });
+                        result.Add(new SingleResultObject() { BucketName = obj.BucketName, Key = obj.Key, VersionId = deleted.VersionId });
                         break;
                     case NotExistsHandler.Info:
                         if (await FileExistsInS3(client, obj.BucketName, obj.Key))
                         {
                             var deleted2 = await DeleteS3Object(client, obj.BucketName, obj.Key, string.IsNullOrWhiteSpace(obj.VersionId) ? obj.VersionId : null, cancellationToken);
-                            result.Add(new SingleResultObject() { Success = true, Key = obj.Key, VersionId = deleted2.VersionId, Error = null });
+                            result.Add(new SingleResultObject() { BucketName = obj.BucketName, Key = obj.Key, VersionId = deleted2.VersionId });
                         }
                         else
-                            result.Add(new SingleResultObject() { Success = false, Key = obj.Key, VersionId = null, Error = new Error { Message = $"Object {obj.Key} doesn't exist in {obj.BucketName}.", AdditionalInfo = null } });
+                            result.Add(new SingleResultObject() { BucketName = obj.BucketName, Key = obj.Key, VersionId = null });
                         break;
                 }
             }

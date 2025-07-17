@@ -68,10 +68,9 @@ public class UnitTests
             var result = await AmazonS3.DeleteObject(input, connection, options, default);
             Assert.IsTrue(result.Success);
             Assert.AreEqual(objects.Length, result.Data.Count);
-            Assert.IsTrue(result.Data[0].Success);
+            Assert.AreEqual(_bucketName, result.Data[0].BucketName);
             Assert.AreEqual(key, result.Data[0].Key);
             Assert.IsNotNull(result.Data[0].VersionId);
-            Assert.IsNull(result.Data[0].Error);
             Assert.IsFalse(FileExistsInS3(key).Result);
             Assert.IsTrue(FileExistsInS3("ExampleFile").Result);
 
@@ -151,10 +150,9 @@ public class UnitTests
             var result = await AmazonS3.DeleteObject(input, connection, options, default);
             Assert.IsTrue(result.Success);
             Assert.AreEqual(objects.Length, result.Data.Count);
-            Assert.IsTrue(result.Data[0].Success);
+            Assert.AreEqual(_bucketName, result.Data[0].BucketName);
             Assert.AreEqual(key, result.Data[0].Key);
             Assert.IsNotNull(result.Data[0].VersionId);
-            Assert.IsNull(result.Data[0].Error);
             Assert.IsFalse(FileExistsInS3(key).Result);
             Assert.IsTrue(FileExistsInS3("ExampleFile").Result);
 
@@ -199,10 +197,9 @@ public class UnitTests
 
             for (int i = 0; i < objects.Length; i++)
             {
-                Assert.IsTrue(result.Data[i].Success);
+                Assert.AreEqual(_bucketName, result.Data[i].BucketName);
                 Assert.AreEqual(keys[i], result.Data[i].Key);
                 Assert.IsNotNull(result.Data[i].VersionId);
-                Assert.IsNull(result.Data[i].Error);
                 Assert.IsFalse(FileExistsInS3(keys[i]).Result);
             }
 
@@ -259,22 +256,17 @@ public class UnitTests
 
         for (int i = 0; i < objects.Length; i++)
         {
+            Assert.AreEqual(_bucketName, result.Data[i].BucketName);
+            Assert.AreEqual(keys[i], result.Data[i].Key);
             if (result.Data[i].Key == keys[0])
             {
-                Assert.IsFalse(result.Data[i].Success);
-                Assert.AreEqual(keys[i], result.Data[i].Key);
                 Assert.IsNull(result.Data[i].VersionId);
-                Assert.IsTrue(result.Data[i].Error.Message.Contains("doesn't exist in"));
-                Assert.IsFalse(FileExistsInS3(keys[i]).Result);
             }
             else
             {
-                Assert.IsTrue(result.Data[i].Success);
-                Assert.AreEqual(keys[i], result.Data[i].Key);
                 Assert.IsNotNull(result.Data[i].VersionId);
-                Assert.IsNull(result.Data[i].Error);
-                Assert.IsFalse(FileExistsInS3(keys[i]).Result);
             }
+            Assert.IsFalse(FileExistsInS3(keys[i]).Result);
         }
 
         Assert.IsTrue(FileExistsInS3("ExampleFile").Result);

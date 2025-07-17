@@ -6,10 +6,10 @@
 public class SingleResultObject
 {
     /// <summary>
-    /// Operation complete without errors.
+    /// The bucket name containing the deleted object.
     /// </summary>
-    /// <example>true</example>
-    public bool Success { get; set; }
+    /// <example>my-bucket</example>
+    public string BucketName { get; set; }
 
     /// <summary>
     /// The key identifying the deleted object.
@@ -22,10 +22,4 @@ public class SingleResultObject
     /// </summary>
     /// <example>q97fnr1zy_gsDcPAMbbwoW2eY0wgoFPt</example>
     public string VersionId { get; set; }
-
-    /// <summary>
-    /// Error information.
-    /// </summary>
-    /// <example>Error object with Message and AdditionalInfo</example>
-    public Error Error { get; set; }
 }
