@@ -2,9 +2,9 @@
 namespace Frends.AmazonS3.ListObjects.Definitions
 {
     /// <summary>
-    /// Source values.
+    /// Input values.
     /// </summary>
-    public class Source
+    public class Input
     {
         /// <summary>
         /// The name of the bucket containing this object.

@@ -11,7 +11,7 @@ namespace Frends.AmazonS3.ListObjects.Test
         private readonly string? _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
         private readonly string? _bucketName = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_BucketName");
 
-        Source? _source = null;
+        Input? _input = null;
         Options? _options = null;
 
 
@@ -21,7 +21,7 @@ namespace Frends.AmazonS3.ListObjects.Test
         [TestMethod]
         public void ListAllTest()
         {
-            _source = new Source
+            _input = new Input
             {
                 AwsAccessKeyId = _accessKey,
                 AwsSecretAccessKey = _secretAccessKey,
@@ -37,7 +37,7 @@ namespace Frends.AmazonS3.ListObjects.Test
                 StartAfter = null
             };
 
-            var result = AmazonS3.ListObjects(_source, _options, default);
+            var result = AmazonS3.ListObjects(_input, _options, default);
             Assert.IsNotNull(result.Result.ObjectList);
         }
 
@@ -47,7 +47,7 @@ namespace Frends.AmazonS3.ListObjects.Test
         [TestMethod]
         public void UsingStartAfterTest()
         {
-            _source = new Source
+            _input = new Input
             {
                 AwsAccessKeyId = _accessKey,
                 AwsSecretAccessKey = _secretAccessKey,
@@ -63,7 +63,7 @@ namespace Frends.AmazonS3.ListObjects.Test
                 StartAfter = "testfolder/subfolder/20220401.txt"
             };
 
-            var result = AmazonS3.ListObjects(_source, _options, default);
+            var result = AmazonS3.ListObjects(_input, _options, default);
             Assert.IsNotNull(result.Result.ObjectList);
         }
 
@@ -73,7 +73,7 @@ namespace Frends.AmazonS3.ListObjects.Test
         [TestMethod]
         public void UsingPrefixTest()
         {
-            _source = new Source
+            _input = new Input
             {
                 AwsAccessKeyId = _accessKey,
                 AwsSecretAccessKey = _secretAccessKey,
@@ -89,7 +89,7 @@ namespace Frends.AmazonS3.ListObjects.Test
                 StartAfter = null
             };
 
-            var result = AmazonS3.ListObjects(_source, _options, default);
+            var result = AmazonS3.ListObjects(_input, _options, default);
             Assert.IsNotNull(result.Result.ObjectList);
         }
 
@@ -99,7 +99,7 @@ namespace Frends.AmazonS3.ListObjects.Test
         [TestMethod]
         public void MissingKeyTest()
         {
-            _source = new Source
+            _input = new Input
             {
                 AwsAccessKeyId = null,
                 AwsSecretAccessKey = _secretAccessKey,
@@ -115,7 +115,7 @@ namespace Frends.AmazonS3.ListObjects.Test
                 StartAfter = null
             };
 
-            var ex = Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.ListObjects(_source, _options, default)).Result;
+            var ex = Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.ListObjects(_input, _options, default)).Result;
             Assert.IsTrue(ex.Message.Contains("AWS credentials missing."));
         }
     }
