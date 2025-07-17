@@ -89,7 +89,7 @@ public class AmazonS3
                             break;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // Add failed object to error list
                     errorObjects.Add(new SingleResultObject() { BucketName = obj.BucketName, Key = obj.Key, VersionId = obj.VersionId });

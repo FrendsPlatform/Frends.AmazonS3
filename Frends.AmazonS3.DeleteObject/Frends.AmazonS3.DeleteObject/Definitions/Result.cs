@@ -24,7 +24,7 @@ public class Result
     /// </summary>
     public Error Error { get; private set; }
 
-    internal Result(bool success, List<SingleResultObject> deletedObjects, Error error = null)
+    public Result(bool success, List<SingleResultObject> deletedObjects, Error error = null)
     {
         Success = success;
         DeletedObjects = deletedObjects;

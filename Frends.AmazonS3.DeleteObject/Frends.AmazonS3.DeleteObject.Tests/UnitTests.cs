@@ -635,7 +635,7 @@ public class UnitTests
         };
 
         // Act
-        var result = new Result(true, deletedObjects);
+        var result = new Result(true, deletedObjects, null);
 
         // Assert
         Assert.IsTrue(result.Success);
