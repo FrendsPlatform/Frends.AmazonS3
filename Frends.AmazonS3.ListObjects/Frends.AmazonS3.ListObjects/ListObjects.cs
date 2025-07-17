@@ -30,12 +30,7 @@ namespace Frends.AmazonS3.ListObjects
             {
                 if (string.IsNullOrWhiteSpace(connection.AwsSecretAccessKey) || string.IsNullOrWhiteSpace(connection.AwsAccessKeyId))
                 {
-                    var credentialsError = "AWS credentials missing.";
-                    if (options.ThrowErrorOnFailure)
-                        throw new Exception(credentialsError);
-                    
-                    var errorMessage = string.IsNullOrWhiteSpace(options.ErrorMessageOnFailure) ? credentialsError : options.ErrorMessageOnFailure;
-                    return new Result(errorMessage);
+                    return ErrorHandler.HandleCredentialsError("AWS credentials missing.", options);
                 }
 
                 var region = RegionSelection(connection.Region);
@@ -45,12 +40,7 @@ namespace Frends.AmazonS3.ListObjects
             }
             catch (Exception ex)
             {
-                if (options.ThrowErrorOnFailure)
-                    throw;
-                
-                var errorMessage = string.IsNullOrWhiteSpace(options.ErrorMessageOnFailure) ? ex.Message : options.ErrorMessageOnFailure;
-                var error = new Error(errorMessage, new { OriginalException = ex.GetType().Name, StackTrace = ex.StackTrace });
-                return new Result(error);
+                return ErrorHandler.Handle(ex, options);
             }
         }
 
