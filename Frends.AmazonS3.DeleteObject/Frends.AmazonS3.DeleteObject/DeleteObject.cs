@@ -68,6 +68,13 @@ public class AmazonS3
             {
                 try
                 {
+                    // Validate object properties
+                    if (string.IsNullOrWhiteSpace(obj.BucketName))
+                        throw new ArgumentException($"BucketName cannot be null or empty for object with key: {obj.Key}");
+                    
+                    if (string.IsNullOrWhiteSpace(obj.Key))
+                        throw new ArgumentException("Object Key cannot be null or empty");
+
                     var versionId = string.IsNullOrWhiteSpace(obj.VersionId) ? null : obj.VersionId;
 
                     switch (input.ActionOnObjectNotFound)
@@ -89,7 +96,7 @@ public class AmazonS3
                             break;
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     // Add failed object to error list
                     errorObjects.Add(new SingleResultObject() { BucketName = obj.BucketName, Key = obj.Key, VersionId = obj.VersionId });
@@ -97,15 +104,22 @@ public class AmazonS3
                     // If we should throw on individual object failure, rethrow
                     if (options.ThrowErrorOnFailure)
                         throw;
+                    
+                    // Log the specific error for debugging
+                    System.Diagnostics.Debug.WriteLine($"Failed to delete object {obj.Key}: {ex.Message}");
                 }
             }
 
             // If we have errors but didn't throw, return result with error info
             if (errorObjects.Count > 0)
             {
+                var errorMessage = string.IsNullOrWhiteSpace(options.ErrorMessageOnFailure) 
+                    ? $"Failed to delete {errorObjects.Count} out of {input.Objects.Length} objects"
+                    : options.ErrorMessageOnFailure;
+                    
                 var error = new Error
                 {
-                    ErrorMessage = "Some objects failed to delete",
+                    ErrorMessage = errorMessage,
                     AdditionalInfo = errorObjects
                 };
                 return new Result(false, deletedObjects, error);

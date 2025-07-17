@@ -663,4 +663,149 @@ public class UnitTests
         Assert.IsNotNull(result.Error);
         Assert.AreEqual("Test error message", result.Error.ErrorMessage);
     }
+
+    [TestMethod]
+    public async Task DeleteObject_EmptyBucketName_ThrowsException()
+    {
+        // Arrange
+        var objects = new[] { new S3ObjectArray { BucketName = "", Key = "test-key", VersionId = null } };
+        
+        var input = new Input()
+        {
+            Objects = objects,
+            ActionOnObjectNotFound = NotExistsHandler.None,
+        };
+
+        var connection = new Connection()
+        {
+            AwsAccessKeyId = _accessKey,
+            AwsSecretAccessKey = _secretAccessKey,
+            Region = Region.EuCentral1,
+        };
+
+        var options = new Options()
+        {
+            Timeout = 1,
+            ThrowErrorOnFailure = true,
+            ErrorMessageOnFailure = ""
+        };
+
+        // Act & Assert
+        var ex = await Assert.ThrowsExceptionAsync<ArgumentException>(
+            async () => await AmazonS3.DeleteObject(input, connection, options, default));
+        Assert.IsTrue(ex.Message.Contains("BucketName cannot be null or empty"));
+    }
+
+    [TestMethod]
+    public async Task DeleteObject_EmptyKey_ThrowsException()
+    {
+        // Arrange
+        var objects = new[] { new S3ObjectArray { BucketName = _bucketName, Key = "", VersionId = null } };
+        
+        var input = new Input()
+        {
+            Objects = objects,
+            ActionOnObjectNotFound = NotExistsHandler.None,
+        };
+
+        var connection = new Connection()
+        {
+            AwsAccessKeyId = _accessKey,
+            AwsSecretAccessKey = _secretAccessKey,
+            Region = Region.EuCentral1,
+        };
+
+        var options = new Options()
+        {
+            Timeout = 1,
+            ThrowErrorOnFailure = true,
+            ErrorMessageOnFailure = ""
+        };
+
+        // Act & Assert
+        var ex = await Assert.ThrowsExceptionAsync<ArgumentException>(
+            async () => await AmazonS3.DeleteObject(input, connection, options, default));
+        Assert.IsTrue(ex.Message.Contains("Object Key cannot be null or empty"));
+    }
+
+    [TestMethod]
+    public async Task DeleteObject_PartialFailure_CustomErrorMessage()
+    {
+        // Arrange
+        var keys = new[] { "Key1.txt", "Key2.txt" };
+        var objects = new[] { 
+            new S3ObjectArray { BucketName = _bucketName, Key = keys[0] }, 
+            new S3ObjectArray { BucketName = "non-existent-bucket", Key = keys[1] }
+        };
+
+        // Create only the first object
+        var validObjects = new[] { new S3ObjectArray { BucketName = _bucketName, Key = keys[0] } };
+        await CreateTestFiles(validObjects);
+
+        var customErrorMessage = "Custom partial failure message";
+        var input = new Input()
+        {
+            Objects = objects,
+            ActionOnObjectNotFound = NotExistsHandler.None,
+        };
+
+        var connection = new Connection()
+        {
+            AwsAccessKeyId = _accessKey,
+            AwsSecretAccessKey = _secretAccessKey,
+            Region = Region.EuCentral1,
+        };
+
+        var options = new Options()
+        {
+            Timeout = 1,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = customErrorMessage
+        };
+
+        // Act
+        var result = await AmazonS3.DeleteObject(input, connection, options, default);
+        
+        // Assert
+        Assert.IsFalse(result.Success);
+        Assert.IsNotNull(result.Error);
+        Assert.AreEqual(customErrorMessage, result.Error.ErrorMessage);
+        Assert.IsTrue(result.DeletedObjects.Count > 0); // Some objects should have been deleted successfully
+    }
+
+    [TestMethod]
+    public async Task DeleteObject_ZeroTimeout_HandlesGracefully()
+    {
+        // Arrange
+        var key = "Key1.txt";
+        var objects = new[] { new S3ObjectArray { BucketName = _bucketName, Key = key, VersionId = null } };
+        await CreateTestFiles(objects);
+
+        var input = new Input()
+        {
+            Objects = objects,
+            ActionOnObjectNotFound = NotExistsHandler.None,
+        };
+
+        var connection = new Connection()
+        {
+            AwsAccessKeyId = _accessKey,
+            AwsSecretAccessKey = _secretAccessKey,
+            Region = Region.EuCentral1,
+        };
+
+        var options = new Options()
+        {
+            Timeout = 0, // Zero timeout
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
+        };
+
+        // Act
+        var result = await AmazonS3.DeleteObject(input, connection, options, default);
+        
+        // Assert - Should handle zero timeout gracefully
+        // Result may succeed or fail depending on AWS response time, but shouldn't crash
+        Assert.IsNotNull(result);
+    }
 }
