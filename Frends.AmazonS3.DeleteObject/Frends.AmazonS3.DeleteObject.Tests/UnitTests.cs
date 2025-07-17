@@ -149,10 +149,10 @@ public class UnitTests
 
             var result = await AmazonS3.DeleteObject(input, connection, options, default);
             Assert.IsTrue(result.Success);
-            Assert.AreEqual(objects.Length, result.Data.Count);
-            Assert.AreEqual(_bucketName, result.Data[0].BucketName);
-            Assert.AreEqual(key, result.Data[0].Key);
-            Assert.IsNotNull(result.Data[0].VersionId);
+            Assert.AreEqual(objects.Length, result.DeletedObjects.Count);
+            Assert.AreEqual(_bucketName, result.DeletedObjects[0].BucketName);
+            Assert.AreEqual(key, result.DeletedObjects[0].Key);
+            Assert.IsNotNull(result.DeletedObjects[0].VersionId);
             Assert.IsFalse(FileExistsInS3(key).Result);
             Assert.IsTrue(FileExistsInS3("ExampleFile").Result);
 
