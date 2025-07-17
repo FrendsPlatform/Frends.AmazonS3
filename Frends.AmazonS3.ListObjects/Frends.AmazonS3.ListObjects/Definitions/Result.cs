@@ -27,21 +27,21 @@ namespace Frends.AmazonS3.ListObjects.Definitions
         /// </summary>
         public string ErrorMessage => Error?.Message ?? string.Empty;
 
-        internal Result(List<BucketObject> bucketObject)
+        public Result(List<BucketObject> bucketObject)
         {
             Objects = bucketObject;
             Success = true;
             Error = null;
         }
 
-        internal Result(string errorMessage)
+        public Result(string errorMessage)
         {
             Objects = new List<BucketObject>();
             Success = false;
             Error = new Error(errorMessage);
         }
 
-        internal Result(Error error)
+        public Result(Error error)
         {
             Objects = new List<BucketObject>();
             Success = false;

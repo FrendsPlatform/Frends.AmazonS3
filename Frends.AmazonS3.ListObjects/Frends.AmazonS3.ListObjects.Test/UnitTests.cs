@@ -124,7 +124,7 @@ namespace Frends.AmazonS3.ListObjects.Test
         /// Missing AwsAccessKeyId. Authentication fail.
         /// </summary>
         [TestMethod]
-        public async Task MissingKeyTest()
+        public void MissingKeyTest()
         {
             _connection = new Connection
             {
@@ -148,7 +148,7 @@ namespace Frends.AmazonS3.ListObjects.Test
                 ErrorMessageOnFailure = ""
             };
 
-            var ex = Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.ListObjects(_connection, _input, _options, default)).Result;
+            var ex = Assert.ThrowsException<Exception>(() => AmazonS3.ListObjects(_connection, _input, _options, default).Result);
             Assert.IsTrue(ex.Message.Contains("AWS credentials missing."));
         }
 
