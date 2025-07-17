@@ -249,8 +249,10 @@ public class UnitTests
         var options = _options;
         options.ActionOnExistingFile = DestinationFileExistsActions.Error;
 
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DownloadObject(_input, connection, options, default));
-        Assert.IsTrue(ex.Message.Contains("already exists"));
+        var result = await AmazonS3.DownloadObject(_input, connection, options, default);
+        Assert.IsFalse(result.Success);
+        Assert.IsNotNull(result.Error);
+        Assert.IsTrue(result.Error.Message.Contains("already exists"));
         Assert.IsTrue(File.Exists(@$"{_dir}\Download\Overwrite.txt"));
         Assert.IsFalse(CompareFiles());
     }
