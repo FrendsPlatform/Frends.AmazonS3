@@ -49,11 +49,10 @@ namespace Frends.AmazonS3.ListObjects
         {
             var data = new List<BucketObject>();
             var request = GetListObjectsV2Request(input, options);
-            var response = new ListObjectsV2Response();
 
-            while (request != null && !response.IsTruncated)
+            do
             {
-                response = await client.ListObjectsV2Async(request, cancellationToken);
+                var response = await client.ListObjectsV2Async(request, cancellationToken);
 
                 foreach (var item in response.S3Objects)
                 {
@@ -65,14 +64,15 @@ namespace Frends.AmazonS3.ListObjects
                         Size = item.Size,
                         Etag = item.ETag,
                         LastModified = item.LastModified
-
                     });
                 }
+
                 if (response.IsTruncated)
                     request.ContinuationToken = response.NextContinuationToken;
                 else
-                    request = null;
+                    break;
             }
+            while (true);
 
             return data;
         }
