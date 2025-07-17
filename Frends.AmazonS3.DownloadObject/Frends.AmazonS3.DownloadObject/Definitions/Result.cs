@@ -19,9 +19,16 @@ public class Result
     /// <example>{ "File.txt", "C:\temp\File.txt", true, false, "Additional information" }</example>
     public List<SingleResultObject> Objects { get; private set; }
 
-    internal Result(bool success, List<SingleResultObject> objects)
+    /// <summary>
+    /// Error information if operation failed.
+    /// </summary>
+    /// <example>{ "An error occurred", { "ErrorCode": 500 } }</example>
+    public Error Error { get; private set; }
+
+    internal Result(bool success, List<SingleResultObject> objects, Error error = null)
     {
         Success = success;
         Objects = objects;
+        Error = error;
     }
 }

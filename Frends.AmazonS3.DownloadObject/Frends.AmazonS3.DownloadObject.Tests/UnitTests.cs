@@ -152,8 +152,10 @@ public class UnitTests
         var options = _options;
         options.ActionOnExistingFile = DestinationFileExistsActions.Error;
 
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DownloadObject(_input, connection, options, default));
-        Assert.IsTrue(ex.Message.Contains("already exists"));
+        var result = await AmazonS3.DownloadObject(_input, connection, options, default);
+        Assert.IsFalse(result.Success);
+        Assert.IsNotNull(result.Error);
+        Assert.IsTrue(result.Error.Message.Contains("already exists"));
         Assert.IsTrue(File.Exists(@$"{_dir}\Download\Testfile.txt"));
     }
 
@@ -166,8 +168,10 @@ public class UnitTests
         connection.AuthenticationMethod = AuthenticationMethods.PreSignedUrl;
         connection.PreSignedUrl = "";
 
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DownloadObject(_input, connection, _options, default));
-        Assert.IsTrue(ex.Message.Contains("AWS pre-signed URL required."));
+        var result = await AmazonS3.DownloadObject(_input, connection, _options, default);
+        Assert.IsFalse(result.Success);
+        Assert.IsNotNull(result.Error);
+        Assert.IsTrue(result.Error.Message.Contains("AWS pre-signed URL required."));
     }
 
     [TestMethod]
@@ -182,8 +186,10 @@ public class UnitTests
         var input = _input;
         input.TargetDirectory = "";
 
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DownloadObject(_input, connection, _options, default));
-        Assert.IsTrue(ex.Message.Contains("Path cannot be the empty"));
+        var result = await AmazonS3.DownloadObject(_input, connection, _options, default);
+        Assert.IsFalse(result.Success);
+        Assert.IsNotNull(result.Error);
+        Assert.IsTrue(result.Error.Message.Contains("Path cannot be the empty"));
     }
 
     [TestMethod]
@@ -314,8 +320,10 @@ public class UnitTests
         var input = _input;
         input.SearchPattern = "nofile";
 
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DownloadObject(input, connection, _options, default));
-        Assert.IsTrue(ex.Message.Contains("No matches found with search pattern"));
+        var result = await AmazonS3.DownloadObject(input, connection, _options, default);
+        Assert.IsFalse(result.Success);
+        Assert.IsNotNull(result.Error);
+        Assert.IsTrue(result.Error.Message.Contains("No matches found with search pattern"));
     }
 
     private string CreatePreSignedURL(string key)
