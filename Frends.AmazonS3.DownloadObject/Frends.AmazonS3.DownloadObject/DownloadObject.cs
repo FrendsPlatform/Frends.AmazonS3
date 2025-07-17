@@ -2,6 +2,7 @@
 using Amazon.S3;
 using Amazon.S3.Model;
 using Frends.AmazonS3.DownloadObject.Definitions;
+using Frends.AmazonS3.DownloadObject.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
