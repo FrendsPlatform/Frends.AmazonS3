@@ -5,6 +5,7 @@ using Amazon.S3;
 using Amazon;
 using Amazon.S3.Model;
 using Frends.AmazonS3.DeleteObject.Definitions;
+using Frends.AmazonS3.DeleteObject.Helpers;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 namespace Frends.AmazonS3.DeleteObject.Tests;
@@ -420,6 +421,9 @@ public class UnitTests
 
         var result = await AmazonS3.DeleteObject(input, connection, options, default);
         Assert.IsFalse(result.Success);
+        Assert.IsNotNull(result.Error);
+        Assert.IsNotNull(result.Error.ErrorMessage);
+        Assert.IsTrue(result.Error.ErrorMessage.Contains("DeleteObject AmazonS3Exception"));
     }
 
     [TestMethod]
@@ -450,6 +454,136 @@ public class UnitTests
 
         var ex = await Assert.ThrowsExceptionAsync<AmazonS3Exception>(async () => await AmazonS3.DeleteObject(input, connection, options, default));
         Assert.AreEqual("Custom error message", ex.Message);
+    }
+
+    [TestMethod]
+    public void ErrorHandler_Handle_AmazonS3Exception_ThrowOnFailure()
+    {
+        // Arrange
+        var deletedObjects = new List<SingleResultObject>();
+        var exception = new AmazonS3Exception("Test S3 exception");
+        
+        // Act & Assert
+        var ex = Assert.ThrowsException<AmazonS3Exception>(() => 
+            ErrorHandler.Handle(exception, true, "", deletedObjects));
+        Assert.IsTrue(ex.Message.Contains("Test S3 exception"));
+    }
+
+    [TestMethod]
+    public void ErrorHandler_Handle_AmazonS3Exception_NoThrow()
+    {
+        // Arrange
+        var deletedObjects = new List<SingleResultObject>
+        {
+            new SingleResultObject { BucketName = "test-bucket", Key = "test-key", VersionId = "v1" }
+        };
+        var exception = new AmazonS3Exception("Test S3 exception");
+        
+        // Act
+        var result = ErrorHandler.Handle(exception, false, "", deletedObjects);
+        
+        // Assert
+        Assert.IsFalse(result.Success);
+        Assert.AreEqual(1, result.DeletedObjects.Count);
+        Assert.IsNotNull(result.Error);
+        Assert.IsTrue(result.Error.ErrorMessage.Contains("DeleteObject AmazonS3Exception: Test S3 exception"));
+        Assert.AreEqual(0, result.Error.AdditionalInfo.Count);
+    }
+
+    [TestMethod]
+    public void ErrorHandler_Handle_GenericException_ThrowOnFailure()
+    {
+        // Arrange
+        var deletedObjects = new List<SingleResultObject>();
+        var exception = new Exception("Test generic exception");
+        
+        // Act & Assert
+        var ex = Assert.ThrowsException<Exception>(() => 
+            ErrorHandler.Handle(exception, true, "", deletedObjects));
+        Assert.IsTrue(ex.Message.Contains("Test generic exception"));
+    }
+
+    [TestMethod]
+    public void ErrorHandler_Handle_GenericException_NoThrow()
+    {
+        // Arrange
+        var deletedObjects = new List<SingleResultObject>
+        {
+            new SingleResultObject { BucketName = "test-bucket", Key = "test-key", VersionId = "v1" }
+        };
+        var exception = new Exception("Test generic exception");
+        
+        // Act
+        var result = ErrorHandler.Handle(exception, false, "", deletedObjects);
+        
+        // Assert
+        Assert.IsFalse(result.Success);
+        Assert.AreEqual(1, result.DeletedObjects.Count);
+        Assert.IsNotNull(result.Error);
+        Assert.IsTrue(result.Error.ErrorMessage.Contains("DeleteObject Exception: Test generic exception"));
+        Assert.AreEqual(0, result.Error.AdditionalInfo.Count);
+    }
+
+    [TestMethod]
+    public void ErrorHandler_Handle_CustomErrorMessage()
+    {
+        // Arrange
+        var deletedObjects = new List<SingleResultObject>();
+        var exception = new Exception("Original exception message");
+        var customMessage = "Custom error message for testing";
+        
+        // Act
+        var result = ErrorHandler.Handle(exception, false, customMessage, deletedObjects);
+        
+        // Assert
+        Assert.IsFalse(result.Success);
+        Assert.IsNotNull(result.Error);
+        Assert.AreEqual(customMessage, result.Error.ErrorMessage);
+    }
+
+    [TestMethod]
+    public async Task DeleteMultipleObjects_PartialFailure()
+    {
+        var keys = new[] { "Key1.txt", "NonExistentKey.txt", "Key3.txt" };
+        var objects = new[] { 
+            new S3ObjectArray { BucketName = _bucketName, Key = keys[0] }, 
+            new S3ObjectArray { BucketName = "non-existent-bucket", Key = keys[1] }, 
+            new S3ObjectArray { BucketName = _bucketName, Key = keys[2] } 
+        };
+
+        // Create only the first and third objects
+        var validObjects = new[] { 
+            new S3ObjectArray { BucketName = _bucketName, Key = keys[0] },
+            new S3ObjectArray { BucketName = _bucketName, Key = keys[2] }
+        };
+        await CreateTestFiles(validObjects);
+
+        var input = new Input()
+        {
+            Objects = objects,
+            ActionOnObjectNotFound = NotExistsHandler.None,
+        };
+
+        var connection = new Connection()
+        {
+            AwsAccessKeyId = _accessKey,
+            AwsSecretAccessKey = _secretAccessKey,
+            Region = Region.EuCentral1,
+        };
+
+        var options = new Options()
+        {
+            Timeout = 1,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
+        };
+
+        var result = await AmazonS3.DeleteObject(input, connection, options, default);
+        
+        // Should return false due to partial failure, but still contain successfully deleted objects
+        Assert.IsFalse(result.Success);
+        Assert.IsNotNull(result.Error);
+        Assert.IsTrue(result.DeletedObjects.Count > 0); // Some objects should have been deleted successfully
     }
 
     private async Task CreateTestFiles(S3ObjectArray[] array)
@@ -489,5 +623,44 @@ public class UnitTests
         };
         ListObjectsResponse response = await client.ListObjectsAsync(request);
         return (response != null && response.S3Objects != null && response.S3Objects.Count > 0);
+    }
+
+    [TestMethod]
+    public void Result_Constructor_Success()
+    {
+        // Arrange
+        var deletedObjects = new List<SingleResultObject>
+        {
+            new SingleResultObject { BucketName = "test-bucket", Key = "test-key", VersionId = "v1" }
+        };
+
+        // Act
+        var result = new Result(true, deletedObjects);
+
+        // Assert
+        Assert.IsTrue(result.Success);
+        Assert.AreEqual(1, result.DeletedObjects.Count);
+        Assert.IsNull(result.Error);
+    }
+
+    [TestMethod]
+    public void Result_Constructor_WithError()
+    {
+        // Arrange
+        var deletedObjects = new List<SingleResultObject>();
+        var error = new Error
+        {
+            ErrorMessage = "Test error message",
+            AdditionalInfo = new List<SingleResultObject>()
+        };
+
+        // Act
+        var result = new Result(false, deletedObjects, error);
+
+        // Assert
+        Assert.IsFalse(result.Success);
+        Assert.AreEqual(0, result.DeletedObjects.Count);
+        Assert.IsNotNull(result.Error);
+        Assert.AreEqual("Test error message", result.Error.ErrorMessage);
     }
 }
