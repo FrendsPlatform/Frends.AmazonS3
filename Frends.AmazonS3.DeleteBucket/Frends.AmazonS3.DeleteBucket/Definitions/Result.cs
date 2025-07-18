@@ -11,7 +11,7 @@ public class Result
     /// Returns false only when an error occurred and ThrowErrorOnFailure is false.
     /// </summary>
     /// <example>true</example>
-    public bool Success { get; private set; }
+    public bool Success { get; init; }
 
     /// <summary>
     /// Contains error information when the operation fails.
@@ -19,17 +19,5 @@ public class Result
     /// Only populated when ThrowErrorOnFailure is false and an error occurs.
     /// </summary>
     /// <example>null</example>
-    public Error Error { get; private set; }
-
-    internal Result(bool success)
-    {
-        Success = success;
-        Error = null;
-    }
-
-    internal Result(bool success, Error error)
-    {
-        Success = success;
-        Error = error;
-    }
+    public Error Error { get; init; }
 }

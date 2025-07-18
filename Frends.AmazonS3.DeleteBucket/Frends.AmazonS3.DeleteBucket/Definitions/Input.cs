@@ -10,7 +10,7 @@ public class Input
     /// <summary>
     /// AWS S3 bucket's name to be deleted.
     /// Must follow AWS S3 bucket naming requirements.
-    /// See https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-s3-bucket-naming-requirements.html
+    /// See https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html
     /// </summary>
     /// <example>my-example-bucket</example>
     [DisplayFormat(DataFormatString = "Text")]

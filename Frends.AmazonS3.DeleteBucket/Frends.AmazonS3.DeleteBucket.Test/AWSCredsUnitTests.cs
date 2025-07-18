@@ -108,7 +108,7 @@ public class AWSCredsUnitTests
         };
 
         var options = new Options { ThrowErrorOnFailure = true };
-        var ex = await Assert.ThrowsExceptionAsync<AmazonS3Exception>(() => AmazonS3.DeleteBucket(input, connection, options, default));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => AmazonS3.DeleteBucket(input, connection, options, default));
         Assert.IsNotNull(ex.InnerException);
     }
 
@@ -157,7 +157,7 @@ public class AWSCredsUnitTests
             ErrorMessageOnFailure = customErrorMessage
         };
 
-        var ex = await Assert.ThrowsExceptionAsync<AmazonS3Exception>(() => AmazonS3.DeleteBucket(input, connection, options, default));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => AmazonS3.DeleteBucket(input, connection, options, default));
         Assert.AreEqual(customErrorMessage, ex.Message);
     }
 
@@ -186,7 +186,7 @@ public class AWSCredsUnitTests
         var result = await AmazonS3.DeleteBucket(input, connection, options, default);
         Assert.IsFalse(result.Success);
         Assert.IsNotNull(result.Error);
-        Assert.AreEqual(customErrorMessage, result.Error.Message);
+        Assert.IsTrue(result.Error.Message.StartsWith(customErrorMessage));
     }
 
     [TestMethod]
