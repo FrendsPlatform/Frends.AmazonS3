@@ -22,7 +22,7 @@ public class AWSCredsUnitTests
     [TestInitialize]
     public async Task Init()
     {
-        DotNetEnv.Env.TraversePath().Load("./.env.local");
+        // DotNetEnv.Env.TraversePath().Load("./.env.local");
         _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
         _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
 
