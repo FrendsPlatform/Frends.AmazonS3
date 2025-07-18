@@ -11,9 +11,10 @@ namespace Frends.AmazonS3.DeleteBucket.Tests;
 
 [TestClass]
 public class AWSCredsUnitTests
+
 {
-    private readonly string? _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
-    private readonly string? _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
+    private string? _accessKey;
+    private string? _secretAccessKey;
     private Connection _connection = new();
     private Input _input = new();
     private Options _options = new();
@@ -22,9 +23,10 @@ public class AWSCredsUnitTests
     [TestInitialize]
     public async Task Init()
     {
-        // DotNetEnv.Env.TraversePath().Load("./.env.local");
-        // _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
-        // _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
+        DotNetEnv.Env.TraversePath().Load("./.env.local");
+        _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
+        Console.WriteLine(_accessKey);
+        _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
 
         _connection = new Connection
         {
