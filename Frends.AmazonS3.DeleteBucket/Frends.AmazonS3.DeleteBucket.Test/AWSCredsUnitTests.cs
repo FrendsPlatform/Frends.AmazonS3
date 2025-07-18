@@ -25,7 +25,7 @@ public class AWSCredsUnitTests
         DotNetEnv.Env.TraversePath().Load("./.env.local");
         _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
         _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
-        
+
         _connection = new Connection
         {
             AwsAccessKeyId = _accessKey,
@@ -54,7 +54,8 @@ public class AWSCredsUnitTests
     {
         try
         {
-            using IAmazonS3 s3Client = new AmazonS3Client(_connection.AwsAccessKeyId, _connection.AwsSecretAccessKey, RegionEndpoint.EUCentral1);
+            using IAmazonS3 s3Client = new AmazonS3Client(_connection.AwsAccessKeyId, _connection.AwsSecretAccessKey,
+                RegionEndpoint.EUCentral1);
             if (await AmazonS3Util.DoesS3BucketExistV2Async(s3Client, _bucketName))
             {
                 var request = new DeleteBucketRequest
@@ -111,7 +112,8 @@ public class AWSCredsUnitTests
         };
 
         var options = new Options { ThrowErrorOnFailure = true };
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => AmazonS3.DeleteBucket(input, connection, options, default));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(() =>
+            AmazonS3.DeleteBucket(input, connection, options, default));
         Assert.IsNotNull(ex.InnerException);
     }
 
@@ -160,7 +162,8 @@ public class AWSCredsUnitTests
             ErrorMessageOnFailure = customErrorMessage
         };
 
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => AmazonS3.DeleteBucket(input, connection, options, default));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(() =>
+            AmazonS3.DeleteBucket(input, connection, options, default));
         Assert.AreEqual(customErrorMessage, ex.Message);
     }
 
@@ -267,7 +270,8 @@ public class AWSCredsUnitTests
 
         var options = new Options { ThrowErrorOnFailure = true };
 
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => AmazonS3.DeleteBucket(input, null, options, default));
+        var ex =
+            await Assert.ThrowsExceptionAsync<Exception>(() => AmazonS3.DeleteBucket(input, null, options, default));
         Assert.IsNotNull(ex);
     }
 
@@ -276,7 +280,8 @@ public class AWSCredsUnitTests
     {
         var options = new Options { ThrowErrorOnFailure = true };
 
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => AmazonS3.DeleteBucket(null, _connection, options, default));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(() =>
+            AmazonS3.DeleteBucket(null, _connection, options, default));
         Assert.IsNotNull(ex);
     }
 
