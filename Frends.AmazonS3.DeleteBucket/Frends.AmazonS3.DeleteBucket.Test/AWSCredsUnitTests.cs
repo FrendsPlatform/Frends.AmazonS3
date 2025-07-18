@@ -25,7 +25,6 @@ public class AWSCredsUnitTests
     {
         DotNetEnv.Env.TraversePath().Load("./.env.local");
         _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
-        Console.WriteLine(_accessKey);
         _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
 
         _connection = new Connection
