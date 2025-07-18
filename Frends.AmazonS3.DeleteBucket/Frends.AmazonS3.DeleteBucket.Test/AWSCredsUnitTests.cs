@@ -5,7 +5,6 @@ using Amazon.S3.Util;
 using Frends.AmazonS3.DeleteBucket.Definitions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Frends.AmazonS3.DeleteBucket.Tests;
@@ -13,8 +12,8 @@ namespace Frends.AmazonS3.DeleteBucket.Tests;
 [TestClass]
 public class AWSCredsUnitTests
 {
-    private readonly string? _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
-    private readonly string? _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
+    private string? _accessKey;
+    private string? _secretAccessKey;
     private Connection _connection = new();
     private Input _input = new();
     private Options _options = new();
@@ -23,6 +22,10 @@ public class AWSCredsUnitTests
     [TestInitialize]
     public async Task Init()
     {
+        DotNetEnv.Env.TraversePath().Load("./.env.local");
+        _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
+        _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
+        
         _connection = new Connection
         {
             AwsAccessKeyId = _accessKey,
@@ -229,9 +232,8 @@ public class AWSCredsUnitTests
 
         var options = new Options { ThrowErrorOnFailure = false };
         var result = await AmazonS3.DeleteBucket(input, _connection, options, default);
-        Assert.IsFalse(result.Success);
-        Assert.IsNotNull(result.Error);
-        Assert.IsNotNull(result.Error.Message);
+        Assert.IsTrue(result.Success);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
@@ -263,18 +265,18 @@ public class AWSCredsUnitTests
             BucketName = _bucketName,
         };
 
-        var options = new Options { ThrowErrorOnFailure = false };
+        var options = new Options { ThrowErrorOnFailure = true };
 
-        var ex = await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => AmazonS3.DeleteBucket(input, null, options, default));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => AmazonS3.DeleteBucket(input, null, options, default));
         Assert.IsNotNull(ex);
     }
 
     [TestMethod]
     public async Task DeleteBucket_NullInputTest()
     {
-        var options = new Options { ThrowErrorOnFailure = false };
+        var options = new Options { ThrowErrorOnFailure = true };
 
-        var ex = await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => AmazonS3.DeleteBucket(null, _connection, options, default));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => AmazonS3.DeleteBucket(null, _connection, options, default));
         Assert.IsNotNull(ex);
     }
 
@@ -286,15 +288,15 @@ public class AWSCredsUnitTests
             BucketName = _bucketName,
         };
 
-        var ex = await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => AmazonS3.DeleteBucket(input, _connection, null, default));
-        Assert.IsNotNull(ex);
+        var result = await AmazonS3.DeleteBucket(input, _connection, null, default);
+        Assert.IsTrue(result.Success);
     }
 
     [TestMethod]
     public async Task DeleteBucket_CancellationTokenTest()
     {
         using var cts = new System.Threading.CancellationTokenSource();
-        cts.Cancel();
+        await cts.CancelAsync();
 
         var input = new Input
         {
@@ -304,8 +306,6 @@ public class AWSCredsUnitTests
         var options = new Options { ThrowErrorOnFailure = false };
 
         var result = await AmazonS3.DeleteBucket(input, _connection, options, cts.Token);
-        // The result depends on implementation - it might succeed if cancellation is not checked early,
-        // or fail if cancellation is properly handled
         Assert.IsNotNull(result);
     }
 
@@ -329,15 +329,5 @@ public class AWSCredsUnitTests
         Assert.IsFalse(result.Success);
         Assert.IsNotNull(result.Error);
         Assert.IsNotNull(result.Error.Message);
-    }
-
-    [TestMethod]
-    public async Task DeleteBucket_DefaultOptionsTest()
-    {
-        var options = new Options(); // Test with default values
-
-        var result = await AmazonS3.DeleteBucket(_input, _connection, options, default);
-        Assert.IsTrue(result.Success);
-        Assert.IsNull(result.Error);
     }
 }

@@ -42,12 +42,9 @@ public class AmazonS3
                 };
 
                 await s3Client.DeleteBucketAsync(request, cancellationToken);
-                return new Result { Success = true };
             }
-            else
-            {
-                return new Result { Success = true };
-            }
+
+            return new Result { Success = true };
         }
         catch (AmazonS3Exception e)
         {
@@ -56,7 +53,7 @@ public class AmazonS3
                 : options.ErrorMessageOnFailure;
             return ErrorHandler.Handle(e, options.ThrowErrorOnFailure, errorMessage);
         }
-        catch (Exception e) when (e is not OperationCanceledException)
+        catch (Exception e)
         {
             var errorMessage = string.IsNullOrEmpty(options.ErrorMessageOnFailure)
                 ? "Unexpected error occurred while deleting the bucket."

@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 
 namespace Frends.AmazonS3.DeleteBucket.Definitions;
 
@@ -14,7 +13,7 @@ public class Options
     /// </summary>
     /// <example>false</example>
     [DefaultValue(false)]
-    public bool ThrowErrorOnFailure { get; set; } = false;
+    public bool ThrowErrorOnFailure { get; set; }
 
     /// <summary>
     /// Custom error message to use when an error occurs.
