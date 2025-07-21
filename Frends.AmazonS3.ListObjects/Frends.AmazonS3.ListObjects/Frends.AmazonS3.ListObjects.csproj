@@ -20,8 +20,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AWSSDK.Core" Version="3.7.10.11" />
-    <PackageReference Include="AWSSDK.S3" Version="3.7.8.23" />
+    <PackageReference Include="AWSSDK.Core" Version="4.0.0.16" />
+    <PackageReference Include="AWSSDK.S3" Version="4.0.6" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="migration.json" PackagePath="/" Pack="true" />

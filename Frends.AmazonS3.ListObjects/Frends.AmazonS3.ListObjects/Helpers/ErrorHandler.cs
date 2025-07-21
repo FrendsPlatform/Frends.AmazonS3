@@ -24,7 +24,7 @@ namespace Frends.AmazonS3.ListObjects.Helpers
                 ? exception.Message
                 : options.ErrorMessageOnFailure;
 
-            var error = new Error(errorMessage, new { OriginalException = exception.GetType().Name, StackTrace = exception.StackTrace });
+            var error = new Error(errorMessage, new { OriginalException = exception.GetType().Name, exception.StackTrace });
             return new Result(error);
         }
 

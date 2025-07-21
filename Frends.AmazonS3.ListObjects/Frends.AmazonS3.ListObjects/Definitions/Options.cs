@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 
 namespace Frends.AmazonS3.ListObjects.Definitions
 {
@@ -27,7 +26,7 @@ namespace Frends.AmazonS3.ListObjects.Definitions
         /// </summary>
         /// <example>1000</example>
         [DefaultValue(1000)]
-        public int MaxKeys { get; set; }
+        public int MaxKeys { get; set; } = 1000;
 
         /// <summary>
         /// StartAfter specifies the key to start listing from (exclusive).
@@ -43,13 +42,14 @@ namespace Frends.AmazonS3.ListObjects.Definitions
         /// </summary>
         /// <example>true</example>
         [DefaultValue(true)]
-        public bool ThrowErrorOnFailure { get; set; }
+        public bool ThrowErrorOnFailure { get; set; } = true;
 
         /// <summary>
         /// Custom error message to return when ThrowErrorOnFailure is false.
         /// If not specified, the original error message will be used.
         /// </summary>
-        /// <example>Custom error occurred</example>
+        /// <example>Failed to create object list</example>
+        [DefaultValue("")]
         public string ErrorMessageOnFailure { get; set; }
     }
 }

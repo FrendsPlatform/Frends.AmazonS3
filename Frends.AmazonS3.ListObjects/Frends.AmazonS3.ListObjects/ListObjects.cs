@@ -20,6 +20,19 @@ namespace Frends.AmazonS3.ListObjects
         /// Lists objects from specified AWS S3 Bucket.
         /// [Documentation](https://tasks.frends.com/tasks/frends-tasks/Frends.AmazonS3.ListObjects)
         /// </summary>
+        /// <example>
+        /// <code>
+        /// var connection = new Connection 
+        /// {
+        ///     AwsAccessKeyId = "your-access-key",
+        ///     AwsSecretAccessKey = "your-secret-key",
+        ///     Region = Region.EuCentral1
+        /// };
+        /// var input = new Input { BucketName = "my-bucket" };
+        /// var options = new Options { MaxKeys = 1000 };
+        /// var result = await AmazonS3.ListObjects(connection, input, options, cancellationToken);
+        /// </code>
+        /// </example>
         /// <param name="connection">Connection parameters for AWS S3</param>
         /// <param name="input">Input parameters</param>
         /// <param name="options">Options for the task</param>
@@ -69,13 +82,13 @@ namespace Frends.AmazonS3.ListObjects
                     {
                         BucketName = item.BucketName,
                         Key = item.Key,
-                        Size = item.Size,
+                        Size = (long)item.Size,
                         Etag = item.ETag,
-                        LastModified = item.LastModified
+                        LastModified = (DateTime)item.LastModified
                     });
                 }
 
-                if (response.IsTruncated)
+                if ((bool)response.IsTruncated)
                     request.ContinuationToken = response.NextContinuationToken;
                 else
                     break;

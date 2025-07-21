@@ -6,6 +6,9 @@ using Frends.AmazonS3.ListObjects.Helpers;
 
 namespace Frends.AmazonS3.ListObjects.Test
 {
+    /// <summary>
+    /// Test cases for Amazon ListObjects task.
+    /// </summary>
     [TestClass]
     public class ListObjectsTest
     {
@@ -148,8 +151,10 @@ namespace Frends.AmazonS3.ListObjects.Test
                 ErrorMessageOnFailure = ""
             };
 
-            var ex = Assert.ThrowsException<Exception>(() => AmazonS3.ListObjects(_connection, _input, _options, default).Result);
-            Assert.IsTrue(ex.Message.Contains("AWS credentials missing."));
+            var ex = Assert.ThrowsException<AggregateException>(() => AmazonS3.ListObjects(_connection, _input, _options, default).Result);
+
+            Assert.IsNotNull(ex.InnerException, "AggregateException should contain an inner exception");
+            Assert.IsTrue(ex.InnerException!.Message.Contains("AWS credentials missing."));
         }
 
         /// <summary>
@@ -333,8 +338,7 @@ namespace Frends.AmazonS3.ListObjects.Test
         {
             var bucketObjects = new System.Collections.Generic.List<BucketObject>
             {
-                new BucketObject
-                {
+                new() {
                     BucketName = "test-bucket",
                     Key = "test-key",
                     Size = 1024,
