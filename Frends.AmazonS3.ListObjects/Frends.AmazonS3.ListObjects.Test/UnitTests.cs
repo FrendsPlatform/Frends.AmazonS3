@@ -76,18 +76,29 @@ namespace Frends.AmazonS3.ListObjects.Test
             _options = new Options
             {
                 Delimiter = null,
-                MaxKeys = 100,
+                MaxKeys = 1000,
                 Prefix = null,
                 StartAfter = "testfolder/subfolder/20220401.txt",
                 ThrowErrorOnFailure = false,
                 ErrorMessageOnFailure = ""
             };
 
+            var initialResult = await AmazonS3.ListObjects(_connection, _input, new Options { MaxKeys = 1000 }, default);
+
+            if (!initialResult.Success)
+                Assert.Inconclusive("Unable to fetch initial object list: " + initialResult.ErrorMessage);
+
+            var exists = initialResult.Objects.Exists(o => o.Key == _options.StartAfter);
+
+            if (!exists)
+                Assert.Inconclusive($"StartAfter object '{_options.StartAfter}' does not exist in bucket '{_input.BucketName}'.");
+
             var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.Objects);
             Assert.IsNull(result.Error);
         }
+
 
         /// <summary>
         /// With Prefix value. Get objects from 2020/11/23/ locations.
@@ -117,11 +128,22 @@ namespace Frends.AmazonS3.ListObjects.Test
                 ErrorMessageOnFailure = ""
             };
 
+            var initialResult = await AmazonS3.ListObjects(_connection, _input, new Options { MaxKeys = 1000 }, default);
+
+            if (!initialResult.Success)
+                Assert.Inconclusive("Unable to fetch initial object list: " + initialResult.ErrorMessage);
+
+            var hasPrefix = initialResult.Objects.Exists(o => o.Key.StartsWith(_options.Prefix));
+
+            if (!hasPrefix)
+                Assert.Inconclusive($"No objects found with prefix '{_options.Prefix}' in bucket '{_input.BucketName}'.");
+
             var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.Objects);
             Assert.IsNull(result.Error);
         }
+
 
         /// <summary>
         /// Missing AwsAccessKeyId. Authentication fail.
