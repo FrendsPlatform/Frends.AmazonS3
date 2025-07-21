@@ -151,7 +151,7 @@ namespace Frends.AmazonS3.ListObjects.Test
                 ErrorMessageOnFailure = ""
             };
 
-            var ex = Assert.ThrowsException<AggregateException>(() => AmazonS3.ListObjects(_connection, _input, _options, default).Result);
+            var ex = Assert.ThrowsExactly<AggregateException>(() => AmazonS3.ListObjects(_connection, _input, _options, default).Result);
 
             Assert.IsNotNull(ex.InnerException, "AggregateException should contain an inner exception");
             Assert.IsTrue(ex.InnerException!.Message.Contains("AWS credentials missing."));
@@ -403,7 +403,7 @@ namespace Frends.AmazonS3.ListObjects.Test
             var options = new Options { ThrowErrorOnFailure = true };
             var exception = new Exception("Test exception");
 
-            Assert.ThrowsException<Exception>(() => ErrorHandler.Handle(exception, options));
+            Assert.ThrowsExactly<Exception>(() => ErrorHandler.Handle(exception, options));
         }
 
         /// <summary>
@@ -452,7 +452,7 @@ namespace Frends.AmazonS3.ListObjects.Test
         {
             var options = new Options { ThrowErrorOnFailure = true };
 
-            Assert.ThrowsException<Exception>(() =>
+            Assert.ThrowsExactly<Exception>(() =>
                 ErrorHandler.HandleCredentialsError("Credentials missing", options));
         }
 
