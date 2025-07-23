@@ -1,0 +1,88 @@
+﻿[
+    {
+        "Task": "Frends.AmazonS3.UploadObject",
+        "Migrations": [
+            {
+                "Version": "3.0.0",
+                "Description": "Major refactoring: restructured parameters into Input/Connection/Options pattern, renamed properties for consistency, and improved error handling",
+                "Migration": [
+                    {
+                        "Type": "Copy",
+                        "Source": "Input.FilePath",
+                        "Target": "Input.SourceDirectory"
+                    },
+                    {
+                        "Type": "Copy",
+                        "Source": "Input.S3Directory",
+                        "Target": "Input.TargetDirectory"
+                    },
+                    {
+                        "Type": "Copy",
+                        "Source": "Connection.BucketName",
+                        "Target": "Input.BucketName"
+                    },
+                    {
+                        "Type": "Copy",
+                        "Source": "Connection.UploadFromCurrentDirectoryOnly",
+                        "Target": "Input.UploadFromCurrentDirectoryOnly"
+                    },
+                    {
+                        "Type": "Copy",
+                        "Source": "Connection.PreserveFolderStructure",
+                        "Target": "Input.PreserveFolderStructure"
+                    },
+                    {
+                        "Type": "Copy",
+                        "Source": "Connection.DeleteSource",
+                        "Target": "Input.DeleteSource"
+                    },
+                    {
+                        "Type": "Copy",
+                        "Source": "Connection.AWSCredentials",
+                        "Target": "Connection.AwsCredentials"
+                    },
+                    {
+                        "Type": "Copy",
+                        "Source": "Connection.PreSignedURL",
+                        "Target": "Connection.PreSignedUrl"
+                    },
+                    {
+                        "Type": "Copy",
+                        "Source": "Input.PartSize",
+                        "Target": "Connection.PartSize"
+                    },
+                    {
+                        "Type": "Copy",
+                        "Source": "Input.UseACL",
+                        "Target": "Connection.UseAcl"
+                    },
+                    {
+                        "Type": "Copy",
+                        "Source": "Input.ACL",
+                        "Target": "Connection.Acl"
+                    },
+                    {
+                        "Type": "Copy",
+                        "Source": "Connection.ThrowErrorIfNoMatch",
+                        "Target": "Options.ThrowErrorIfNoMatch"
+                    },
+                    {
+                        "Type": "Copy",
+                        "Source": "Connection.ThrowExceptionOnErrorResponse",
+                        "Target": "Options.FailOnErrorResponse"
+                    },
+                    {
+                        "Type": "Set",
+                        "Target": "Options.ThrowErrorOnFailure",
+                        "Value": "false"
+                    },
+                    {
+                        "Type": "Set",
+                        "Target": "Options.ErrorMessageOnFailure",
+                        "Value": "\"\""
+                    }
+                ]
+            }
+        ]
+    }
+]
