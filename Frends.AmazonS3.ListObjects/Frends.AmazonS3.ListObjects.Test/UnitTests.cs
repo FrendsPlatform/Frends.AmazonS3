@@ -57,7 +57,7 @@ namespace Frends.AmazonS3.ListObjects.Test
             };
 
             var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
-            Console.WriteLine($"Found {result.Objects.Count} objects");
+
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.Objects);
             Assert.IsNull(result.Error);
@@ -92,7 +92,23 @@ namespace Frends.AmazonS3.ListObjects.Test
             };
 
             var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
-            Console.WriteLine($"Found {result.Objects.Count} objects");
+
+            Console.WriteLine($"UsingStartAfterTest Debug:");
+            Console.WriteLine($"Success: {result.Success}");
+            Console.WriteLine($"Objects found: {result.Objects?.Count ?? 0}");
+            if (result.Objects?.Count > 0)
+            {
+                Console.WriteLine("First object key: " + result.Objects[0].Key);
+            }
+            if (!string.IsNullOrEmpty(result.ErrorMessage))
+            {
+                Console.WriteLine($"Error: {result.ErrorMessage}");
+            }
+
+            Assert.IsTrue(result.Success);
+            Assert.IsNotNull(result.Objects);
+            Assert.IsNull(result.Error);
+
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.Objects);
             Assert.IsNull(result.Error);
@@ -127,6 +143,14 @@ namespace Frends.AmazonS3.ListObjects.Test
             };
 
             var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
+
+            Console.WriteLine($"UsingPrefixTest Debug:");
+            Console.WriteLine($"Prefix used: '{_options.Prefix}'");
+            Console.WriteLine($"Objects found: {result.Objects?.Count ?? 0}");
+            if (result.Objects?.Count > 0)
+            {
+                Console.WriteLine("First object key: " + result.Objects[0].Key);
+            }
 
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.Objects);
