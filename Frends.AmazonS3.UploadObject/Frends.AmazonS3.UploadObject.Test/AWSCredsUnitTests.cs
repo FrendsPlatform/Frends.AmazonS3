@@ -22,6 +22,7 @@ public class AWSCredsUnitTests
     private readonly string _dir = Path.Combine(Environment.CurrentDirectory);
     Connection? _connection;
     Input? _input;
+    Options? _options;
 
     public AWSCredsUnitTests()
     {
@@ -97,12 +98,19 @@ public class AWSCredsUnitTests
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
-            ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
             GatherDebugLog = true
         };
 
-        var result = await AmazonS3.UploadObject(_input, _connection, default);
+        _options = new Options
+        {
+            ThrowErrorIfNoMatch = false,
+            FailOnErrorResponse = false,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
+        };
+
+        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
         Assert.AreEqual(5, result.UploadedObjects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
@@ -138,7 +146,15 @@ public class AWSCredsUnitTests
             GatherDebugLog = false,
         };
 
-        var result = await AmazonS3.UploadObject(_input, _connection, default);
+        _options = new Options
+        {
+            ThrowErrorIfNoMatch = false,
+            FailOnErrorResponse = false,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
+        };
+
+        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
         Assert.AreEqual(5, result.UploadedObjects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNull(result.DebugLog);
@@ -170,12 +186,19 @@ public class AWSCredsUnitTests
             Overwrite = false,
             ReturnListOfObjectKeys = false,
             ThrowErrorIfNoMatch = false,
-            ThrowExceptionOnErrorResponse = false,
             UseMultipartUpload = false,
             GatherDebugLog = true,
         };
 
-        var result = await AmazonS3.UploadObject(_input, _connection, default);
+        _options = new Options
+        {
+            ThrowErrorIfNoMatch = false,
+            FailOnErrorResponse = false,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
+        };
+
+        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
         Assert.AreEqual(0, result.UploadedObjects.Count);
         Assert.IsFalse(result.Success);
         Assert.IsTrue(result.DebugLog.Contains("Access Denied"));
@@ -206,12 +229,19 @@ public class AWSCredsUnitTests
             Overwrite = false,
             ReturnListOfObjectKeys = false,
             ThrowErrorIfNoMatch = false,
-            ThrowExceptionOnErrorResponse = true,
             UseMultipartUpload = false,
             GatherDebugLog = true,
         };
 
-        var ex = await Assert.ThrowsExceptionAsync<UploadException>(async () => await AmazonS3.UploadObject(_input, _connection, default));
+        _options = new Options
+        {
+            ThrowErrorIfNoMatch = false,
+            FailOnErrorResponse = true,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
+        };
+
+        var ex = await Assert.ThrowsExceptionAsync<UploadException>(async () => await AmazonS3.UploadObject(_input, _connection, _options, default));
         Assert.IsTrue(ex.DebugLog.Contains("Access Denied"));
     }
 
@@ -244,7 +274,15 @@ public class AWSCredsUnitTests
             GatherDebugLog = true,
         };
 
-        var result = await AmazonS3.UploadObject(_input, _connection, default);
+        _options = new Options
+        {
+            ThrowErrorIfNoMatch = false,
+            FailOnErrorResponse = false,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
+        };
+
+        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
         Assert.AreEqual(4, result.UploadedObjects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
@@ -280,7 +318,15 @@ public class AWSCredsUnitTests
             GatherDebugLog = true,
         };
 
-        var result = await AmazonS3.UploadObject(_input, _connection, default);
+        _options = new Options
+        {
+            ThrowErrorIfNoMatch = false,
+            FailOnErrorResponse = false,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
+        };
+
+        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
         Assert.AreEqual(5, result.UploadedObjects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
@@ -316,7 +362,15 @@ public class AWSCredsUnitTests
             GatherDebugLog = true,
         };
 
-        var result = await AmazonS3.UploadObject(_input, _connection, default);
+        _options = new Options
+        {
+            ThrowErrorIfNoMatch = false,
+            FailOnErrorResponse = false,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
+        };
+
+        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
         Assert.AreEqual(5, result.UploadedObjects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
@@ -352,7 +406,15 @@ public class AWSCredsUnitTests
             GatherDebugLog = true,
         };
 
-        var result = await AmazonS3.UploadObject(_input, _connection, default);
+        _options = new Options
+        {
+            ThrowErrorIfNoMatch = false,
+            FailOnErrorResponse = false,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
+        };
+
+        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
         Assert.AreEqual(5, result.UploadedObjects.Count);
         Assert.IsFalse(result.UploadedObjects.Any(x => x.Contains("C:")));
         Assert.IsTrue(result.Success);
@@ -390,7 +452,15 @@ public class AWSCredsUnitTests
             GatherDebugLog = true,
         };
 
-        var result = await AmazonS3.UploadObject(_input, _connection, default);
+        _options = new Options
+        {
+            ThrowErrorIfNoMatch = false,
+            FailOnErrorResponse = false,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
+        };
+
+        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
         Assert.AreEqual(1, result.UploadedObjects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
@@ -420,14 +490,19 @@ public class AWSCredsUnitTests
             AwsAccessKeyId = _accessKey,
             AwsSecretAccessKey = _secretAccessKey,
             Region = Region.EuCentral1,
-            ThrowErrorIfNoMatch = true,
             ReturnListOfObjectKeys = false,
             Overwrite = false,
-            ThrowExceptionOnErrorResponse = false,
             UseMultipartUpload = false,
         };
 
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.UploadObject(_input, _connection, default));
+        _options = new Options
+        {
+            FailOnErrorResponse = false,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
+        };
+
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.UploadObject(_input, _connection, _options, default));
         Assert.IsTrue(ex.Message.Contains($"No files match the filemask '{_input.FileMask}' within supplied path."));
     }
 
@@ -467,7 +542,15 @@ public class AWSCredsUnitTests
                 DeleteSource = false,
             };
 
-            var result = await AmazonS3.UploadObject(_input, _connection, default);
+            _options = new Options
+            {
+                ThrowErrorIfNoMatch = false,
+                FailOnErrorResponse = false,
+                ThrowErrorOnFailure = false,
+                ErrorMessageOnFailure = ""
+            };
+
+            var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
             Assert.AreEqual(5, result.UploadedObjects.Count, acl + Environment.NewLine + result.DebugLog);
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.DebugLog);
@@ -507,7 +590,15 @@ public class AWSCredsUnitTests
             GatherDebugLog = true,
         };
 
-        var result = await AmazonS3.UploadObject(_input, _connection, default);
+        _options = new Options
+        {
+            ThrowErrorIfNoMatch = false,
+            FailOnErrorResponse = false,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
+        };
+
+        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
         Assert.AreEqual(0, result.UploadedObjects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
@@ -541,7 +632,15 @@ public class AWSCredsUnitTests
             UseMultipartUpload = false,
         };
 
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.UploadObject(_input, _connection, default));
+        _options = new Options
+        {
+            ThrowErrorIfNoMatch = true,
+            FailOnErrorResponse = false,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
+        };
+
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.UploadObject(_input, _connection, _options, default));
         Assert.IsTrue(ex.Message.Contains($"No files match the filemask '*' within supplied path."));
     }
 

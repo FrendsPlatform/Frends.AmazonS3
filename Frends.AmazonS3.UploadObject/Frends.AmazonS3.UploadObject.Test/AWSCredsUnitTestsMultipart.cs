@@ -22,6 +22,7 @@ public class AWSCredsUnitTestsMultipart
     private readonly string _dir = Path.Combine(Environment.CurrentDirectory);
     private Connection _connection = new();
     private Input _input = new();
+    private Options _options = new();
 
     public AWSCredsUnitTestsMultipart()
     {
@@ -60,6 +61,14 @@ public class AWSCredsUnitTestsMultipart
             ThrowErrorIfNoMatch = false,
             UseMultipartUpload = true,
             GatherDebugLog = true
+        };
+
+        _options = new Options
+        {
+            ThrowErrorIfNoMatch = false,
+            FailOnErrorResponse = false,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
         };
 
         Directory.CreateDirectory(Path.Combine(_dir, "AWS"));
@@ -102,7 +111,7 @@ public class AWSCredsUnitTestsMultipart
     [TestMethod]
     public async Task AWSCreds_Upload()
     {
-        var result = await AmazonS3.UploadObject(_input, _connection, default);
+        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
         Assert.AreEqual(2, result.UploadedObjects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
@@ -116,7 +125,15 @@ public class AWSCredsUnitTestsMultipart
         connection.AwsAccessKeyId = null;
         connection.AwsSecretAccessKey = "";
 
-        var result = await AmazonS3.UploadObject(_input, connection, default);
+        var options = new Options
+        {
+            ThrowErrorIfNoMatch = false,
+            FailOnErrorResponse = false,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
+        };
+
+        var result = await AmazonS3.UploadObject(_input, connection, options, default);
         Assert.AreEqual(0, result.UploadedObjects.Count);
         Assert.IsFalse(result.Success, result.DebugLog);
         Assert.IsTrue(result.DebugLog.Contains("Please authenticate"));
@@ -128,9 +145,15 @@ public class AWSCredsUnitTestsMultipart
         var connection = _connection;
         connection.AwsAccessKeyId = null;
         connection.AwsSecretAccessKey = "";
-        connection.ThrowExceptionOnErrorResponse = true;
+        var options = new Options
+        {
+            ThrowErrorIfNoMatch = false,
+            FailOnErrorResponse = true,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
+        };
 
-        var ex = await Assert.ThrowsExceptionAsync<UploadException>(async () => await AmazonS3.UploadObject(_input, connection, default));
+        var ex = await Assert.ThrowsExceptionAsync<UploadException>(async () => await AmazonS3.UploadObject(_input, connection, options, default));
         Assert.IsTrue(ex.DebugLog.Contains("Please authenticate"));
     }
 

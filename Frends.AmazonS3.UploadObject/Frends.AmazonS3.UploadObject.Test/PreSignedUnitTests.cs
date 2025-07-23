@@ -21,6 +21,7 @@ public class PreSignedUnitTests
 
     Connection? _connection;
     Input? _input;
+    Options? _options;
 
     public PreSignedUnitTests()
     {
@@ -84,8 +85,15 @@ public class PreSignedUnitTests
             UseMultipartUpload = false,
             GatherDebugLog = false
         };
+        _options = new Options
+        {
+            ThrowErrorIfNoMatch = false,
+            FailOnErrorResponse = false,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
+        };
 
-        var result = await AmazonS3.UploadObject(_input, _connection, default);
+        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
         Assert.AreEqual(1, result.UploadedObjects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNull(result.DebugLog);
@@ -116,12 +124,18 @@ public class PreSignedUnitTests
             Region = default,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
-            ThrowErrorIfNoMatch = false,
-            ThrowExceptionOnErrorResponse = false,
             UseMultipartUpload = false,
         };
 
-        var result = await AmazonS3.UploadObject(_input, _connection, default);
+        _options = new Options
+        {
+            ThrowErrorIfNoMatch = false,
+            FailOnErrorResponse = false,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
+        };
+
+        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
         Assert.AreEqual(0, result.UploadedObjects.Count);
         Assert.IsFalse(result.Success);
         Assert.IsTrue(result.DebugLog.Contains("Invalid URI: The format of the URI could not be determined"));
@@ -151,12 +165,18 @@ public class PreSignedUnitTests
             Region = default,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
-            ThrowErrorIfNoMatch = false,
-            ThrowExceptionOnErrorResponse = true,
             UseMultipartUpload = false,
         };
 
-        var ex = await Assert.ThrowsExceptionAsync<UploadException>(async () => await AmazonS3.UploadObject(_input, _connection, default));
+        _options = new Options
+        {
+            ThrowErrorIfNoMatch = false,
+            FailOnErrorResponse = true,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
+        };
+
+        var ex = await Assert.ThrowsExceptionAsync<UploadException>(async () => await AmazonS3.UploadObject(_input, _connection, _options, default));
         Assert.IsTrue(ex.Message.Contains("Invalid URI: The format of the URI could not be determined"));
     }
 
