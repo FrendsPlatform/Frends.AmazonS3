@@ -115,40 +115,24 @@ public class AmazonS3
             if (options.FailOnErrorResponse)
                 throw new UploadException(sw?.ToString(), ex.Message, ex.InnerException);
 
-            var error = new Error
-            {
-                Message = ex.Message,
-                AdditionalInfo = ex.InnerException?.Message
-            };
-
-            return new Result(
-                false,
-                result,
-                connection.AuthenticationMethod is AuthenticationMethod.AWSCredentials
-                    ? sw?.ToString()
-                    : $"Exception: {ex.Message}, InnerException: {ex.InnerException}",
-                error
-            );
+            var errorHandlerResult = ErrorHandler.Handle(ex, options);
+            errorHandlerResult.DebugLog = connection.AuthenticationMethod is AuthenticationMethod.AWSCredentials
+                ? sw?.ToString()
+                : $"Exception: {ex.Message}, InnerException: {ex.InnerException}";
+            errorHandlerResult.Objects = result;
+            return errorHandlerResult;
         }
         catch (Exception ex)
         {
             if (options.FailOnErrorResponse)
                 throw new UploadException(sw?.ToString(), ex.Message, ex.InnerException);
 
-            var error = new Error
-            {
-                Message = ex.Message,
-                AdditionalInfo = ex.InnerException?.Message
-            };
-
-            return new Result(
-                false,
-                result,
-                connection.AuthenticationMethod is AuthenticationMethod.AWSCredentials
-                    ? sw?.ToString()
-                    : $"Exception: {ex.Message}, InnerException: {ex.InnerException}",
-                error
-            );
+            var errorHandlerResult = ErrorHandler.Handle(ex, options);
+            errorHandlerResult.DebugLog = connection.AuthenticationMethod is AuthenticationMethod.AWSCredentials
+                ? sw?.ToString()
+                : $"Exception: {ex.Message}, InnerException: {ex.InnerException}";
+            errorHandlerResult.Objects = result;
+            return errorHandlerResult;
         }
         finally
         {
