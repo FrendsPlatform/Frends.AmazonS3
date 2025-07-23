@@ -89,10 +89,17 @@ namespace Frends.AmazonS3.ListObjects.Test
                 ThrowErrorOnFailure = false,
                 ErrorMessageOnFailure = ""
             };
+
             var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
+
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.Objects);
             Assert.IsNull(result.Error);
+
+            if (result.Objects.Count == 0)
+            {
+                Console.WriteLine("Warning: No objects found after the specified StartAfter key");
+            }
         }
 
         /// <summary>
@@ -124,9 +131,15 @@ namespace Frends.AmazonS3.ListObjects.Test
             };
 
             var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
+
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.Objects);
             Assert.IsNull(result.Error);
+
+            if (result.Objects.Count == 0)
+            {
+                Console.WriteLine("Warning: No objects found with the specified prefix");
+            }
         }
 
         /// <summary>
@@ -547,8 +560,8 @@ namespace Frends.AmazonS3.ListObjects.Test
             var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
 
             // Should handle the error gracefully when bucket doesn't exist
-            Assert.IsTrue(result.Success);
-            Assert.IsNull(result.Error);
+            Assert.IsFalse(result.Success);
+            Assert.IsNotNull(result.Error);
             Assert.IsNotNull(result.Objects);
             Assert.AreEqual(0, result.Objects.Count);
         }
