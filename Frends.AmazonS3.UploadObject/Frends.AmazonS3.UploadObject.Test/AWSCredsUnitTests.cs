@@ -628,7 +628,7 @@ public class AWSCredsUnitTests
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
-            ThrowErrorIfNoMatch = true,
+            ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
         };
 

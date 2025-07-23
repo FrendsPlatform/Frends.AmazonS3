@@ -40,7 +40,7 @@ public class AmazonS3
             input.FileMask ?? "*",
             input.UploadFromCurrentDirectoryOnly ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories);
 
-        if (options.ThrowErrorIfNoMatch && filesToCopy.Length < 1)
+        if ((options.ThrowErrorIfNoMatch || connection.ThrowErrorIfNoMatch) && filesToCopy.Length < 1)
             throw new Exception($"No files match the filemask '{input.FileMask ?? "*"}' within supplied path.");
 
         var result = new List<string>();
