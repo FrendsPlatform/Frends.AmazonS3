@@ -57,6 +57,7 @@ namespace Frends.AmazonS3.ListObjects.Test
             };
 
             var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
+            Console.WriteLine($"Found {result.Objects.Count} objects");
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.Objects);
             Assert.IsNull(result.Error);
@@ -91,7 +92,7 @@ namespace Frends.AmazonS3.ListObjects.Test
             };
 
             var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
-
+            Console.WriteLine($"Found {result.Objects.Count} objects");
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.Objects);
             Assert.IsNull(result.Error);
