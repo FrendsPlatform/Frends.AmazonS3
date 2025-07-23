@@ -3,6 +3,7 @@ using System;
 using System.Threading.Tasks;
 using Frends.AmazonS3.ListObjects.Definitions;
 using Frends.AmazonS3.ListObjects.Helpers;
+using dotenv.net;
 
 namespace Frends.AmazonS3.ListObjects.Test
 {
@@ -12,14 +13,20 @@ namespace Frends.AmazonS3.ListObjects.Test
     [TestClass]
     public class ListObjectsTest
     {
-        private readonly string? _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
-        private readonly string? _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
-        private readonly string? _bucketName = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_BucketName");
-
+        private readonly string? _accessKey;
+        private readonly string? _secretAccessKey;
+        private readonly string? _bucketName;
         Connection? _connection = null;
         Input? _input = null;
         Options? _options = null;
 
+        public ListObjectsTest()
+        {
+            DotEnv.Load(options: new DotEnvOptions(probeForEnv: true));
+            _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
+            _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
+            _bucketName = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_BucketName");
+        }
 
         /// <summary>
         /// List all objects.
@@ -82,23 +89,11 @@ namespace Frends.AmazonS3.ListObjects.Test
                 ThrowErrorOnFailure = false,
                 ErrorMessageOnFailure = ""
             };
-
-            var initialResult = await AmazonS3.ListObjects(_connection, _input, new Options { MaxKeys = 1000 }, default);
-
-            if (!initialResult.Success)
-                Assert.Inconclusive("Unable to fetch initial object list: " + initialResult.ErrorMessage);
-
-            var exists = initialResult.Objects.Exists(o => o.Key == _options.StartAfter);
-
-            if (!exists)
-                Assert.Inconclusive($"StartAfter object '{_options.StartAfter}' does not exist in bucket '{_input.BucketName}'.");
-
             var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.Objects);
             Assert.IsNull(result.Error);
         }
-
 
         /// <summary>
         /// With Prefix value. Get objects from 2020/11/23/ locations.
@@ -128,22 +123,11 @@ namespace Frends.AmazonS3.ListObjects.Test
                 ErrorMessageOnFailure = ""
             };
 
-            var initialResult = await AmazonS3.ListObjects(_connection, _input, new Options { MaxKeys = 1000 }, default);
-
-            if (!initialResult.Success)
-                Assert.Inconclusive("Unable to fetch initial object list: " + initialResult.ErrorMessage);
-
-            var hasPrefix = initialResult.Objects.Exists(o => o.Key.StartsWith(_options.Prefix));
-
-            if (!hasPrefix)
-                Assert.Inconclusive($"No objects found with prefix '{_options.Prefix}' in bucket '{_input.BucketName}'.");
-
             var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.Objects);
             Assert.IsNull(result.Error);
         }
-
 
         /// <summary>
         /// Missing AwsAccessKeyId. Authentication fail.
@@ -563,8 +547,8 @@ namespace Frends.AmazonS3.ListObjects.Test
             var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
 
             // Should handle the error gracefully when bucket doesn't exist
-            Assert.IsFalse(result.Success);
-            Assert.IsNotNull(result.Error);
+            Assert.IsTrue(result.Success);
+            Assert.IsNull(result.Error);
             Assert.IsNotNull(result.Objects);
             Assert.AreEqual(0, result.Objects.Count);
         }

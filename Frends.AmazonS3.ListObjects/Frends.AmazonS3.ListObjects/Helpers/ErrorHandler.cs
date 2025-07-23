@@ -13,7 +13,9 @@ namespace Frends.AmazonS3.ListObjects.Helpers
         /// </summary>
         /// <param name="exception">The exception that occurred</param>
         /// <param name="options">Options containing error handling settings</param>
-        /// <returns>Result object with error information</returns>
+        /// <returns>
+        /// Object { Error Error { string Message, object Data { string OriginalException, string StackTrace } } }
+        /// </returns>
         /// <exception cref="Exception">Throws the original exception if ThrowErrorOnFailure is true</exception>
         public static Result Handle(Exception exception, Options options)
         {
@@ -33,7 +35,9 @@ namespace Frends.AmazonS3.ListObjects.Helpers
         /// </summary>
         /// <param name="credentialsError">The credentials error message</param>
         /// <param name="options">Options containing error handling settings</param>
-        /// <returns>Result object with error information</returns>
+        /// <returns>
+        /// Object { Error Error { string Message } }
+        /// </returns>
         /// <exception cref="Exception">Throws an exception if ThrowErrorOnFailure is true</exception>
         public static Result HandleCredentialsError(string credentialsError, Options options)
         {
