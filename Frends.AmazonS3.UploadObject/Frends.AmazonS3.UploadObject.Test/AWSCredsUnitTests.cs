@@ -497,6 +497,7 @@ public class AWSCredsUnitTests
 
         _options = new Options
         {
+            ThrowErrorIfNoMatch = true,
             FailOnErrorResponse = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
