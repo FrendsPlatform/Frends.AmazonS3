@@ -96,18 +96,16 @@ namespace Frends.AmazonS3.ListObjects.Test
             Console.WriteLine($"UsingStartAfterTest Debug:");
             Console.WriteLine($"Success: {result.Success}");
             Console.WriteLine($"Objects found: {result.Objects?.Count ?? 0}");
+
             if (result.Objects?.Count > 0)
             {
                 Console.WriteLine("First object key: " + result.Objects[0].Key);
             }
+
             if (!string.IsNullOrEmpty(result.ErrorMessage))
             {
                 Console.WriteLine($"Error: {result.ErrorMessage}");
             }
-
-            Assert.IsTrue(result.Success);
-            Assert.IsNotNull(result.Objects);
-            Assert.IsNull(result.Error);
 
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.Objects);
@@ -147,6 +145,7 @@ namespace Frends.AmazonS3.ListObjects.Test
             Console.WriteLine($"UsingPrefixTest Debug:");
             Console.WriteLine($"Prefix used: '{_options.Prefix}'");
             Console.WriteLine($"Objects found: {result.Objects?.Count ?? 0}");
+
             if (result.Objects?.Count > 0)
             {
                 Console.WriteLine("First object key: " + result.Objects[0].Key);
