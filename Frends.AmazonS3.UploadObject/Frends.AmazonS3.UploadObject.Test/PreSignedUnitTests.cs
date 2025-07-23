@@ -81,7 +81,6 @@ public class PreSignedUnitTests
             Region = default,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
-            ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
             GatherDebugLog = false
         };

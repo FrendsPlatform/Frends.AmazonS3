@@ -58,7 +58,6 @@ public class AWSCredsUnitTestsMultipart
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
-            ThrowErrorIfNoMatch = false,
             UseMultipartUpload = true,
             GatherDebugLog = true
         };

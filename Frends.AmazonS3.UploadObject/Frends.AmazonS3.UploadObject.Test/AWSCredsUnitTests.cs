@@ -141,7 +141,6 @@ public class AWSCredsUnitTests
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
-            ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
             GatherDebugLog = false,
         };
@@ -185,7 +184,6 @@ public class AWSCredsUnitTests
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
-            ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
             GatherDebugLog = true,
         };
@@ -228,7 +226,6 @@ public class AWSCredsUnitTests
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
-            ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
             GatherDebugLog = true,
         };
@@ -269,7 +266,6 @@ public class AWSCredsUnitTests
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
-            ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
             GatherDebugLog = true,
         };
@@ -313,7 +309,6 @@ public class AWSCredsUnitTests
             Region = Region.EuCentral1,
             Overwrite = true,
             ReturnListOfObjectKeys = false,
-            ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
             GatherDebugLog = true,
         };
@@ -357,7 +352,6 @@ public class AWSCredsUnitTests
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
-            ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
             GatherDebugLog = true,
         };
@@ -401,7 +395,6 @@ public class AWSCredsUnitTests
             Region = Region.EuCentral1,
             ReturnListOfObjectKeys = true,
             Overwrite = true,
-            ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
             GatherDebugLog = true,
         };
@@ -447,7 +440,6 @@ public class AWSCredsUnitTests
             Region = Region.EuCentral1,
             ReturnListOfObjectKeys = false,
             Overwrite = false,
-            ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
             GatherDebugLog = true,
         };
@@ -523,7 +515,6 @@ public class AWSCredsUnitTests
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
-            ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
             GatherDebugLog = true
         };
@@ -629,7 +620,6 @@ public class AWSCredsUnitTests
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
-            ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
         };
 
