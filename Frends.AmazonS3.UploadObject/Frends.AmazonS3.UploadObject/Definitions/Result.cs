@@ -25,10 +25,16 @@ public class Result
     /// <example>EnvironmentVariableInternalConfiguration 1|2023-02-06T08:52:17.618Z|INFO|The environment variable AWS_ENABLE_ENDPOINT_DISCOVERY was not set with a value...</example>
     public string DebugLog { get; private set; }
 
-    internal Result(bool success, List<string> uploadedObjects, string debugLog)
+    /// <summary>
+    /// Error information if upload failed.
+    /// </summary>
+    public Error Error { get; private set; }
+
+    internal Result(bool success, List<string> uploadedObjects, string debugLog, Error error = null)
     {
         Success = success;
         UploadedObjects = uploadedObjects;
         DebugLog = debugLog;
+        Error = error;
     }
 }
