@@ -113,24 +113,18 @@ public class AmazonS3
         }
         catch (AmazonS3Exception ex)
         {
-            if (options.FailOnErrorResponse)
-                throw new UploadException(sw?.ToString(), ex.Message, ex.InnerException);
-
             var errorHandlerResult = ErrorHandler.Handle(ex, options);
-            errorHandlerResult.DebugLog = connection.AuthenticationMethod is AuthenticationMethod.AWSCredentials
-                ? sw?.ToString()
+            errorHandlerResult.DebugLog = connection.GatherDebugLog && sw != null
+                ? sw.ToString()
                 : $"Exception: {ex.Message}, InnerException: {ex.InnerException}";
             errorHandlerResult.Objects = result;
             return errorHandlerResult;
         }
         catch (Exception ex)
         {
-            if (options.FailOnErrorResponse)
-                throw new UploadException(sw?.ToString(), ex.Message, ex.InnerException);
-
             var errorHandlerResult = ErrorHandler.Handle(ex, options);
-            errorHandlerResult.DebugLog = connection.AuthenticationMethod is AuthenticationMethod.AWSCredentials
-                ? sw?.ToString()
+            errorHandlerResult.DebugLog = connection.GatherDebugLog && sw != null
+                ? sw.ToString()
                 : $"Exception: {ex.Message}, InnerException: {ex.InnerException}";
             errorHandlerResult.Objects = result;
             return errorHandlerResult;
