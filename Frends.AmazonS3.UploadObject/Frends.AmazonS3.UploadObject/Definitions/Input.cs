@@ -13,7 +13,7 @@ public class Input
     /// </summary>
     /// <example>c:\temp, \\network\folder</example>
     [DisplayFormat(DataFormatString = "Text")]
-    public string FilePath { get; set; }
+    public string SourceDirectory { get; set; }
 
     /// <summary>
     /// Windows-style filemask. Empty field = all objects (*).
@@ -29,7 +29,32 @@ public class Input
     /// </summary>
     /// <example>directory/</example>
     [DisplayFormat(DataFormatString = "Text")]
-    public string S3Directory { get; set; }
+    public string TargetDirectory { get; set; }
+
+    /// <summary>
+    /// AWS S3 bucket's name.
+    /// </summary>
+    /// <example>Bucket</example>
+    [DisplayFormat(DataFormatString = "Text")]
+    public string BucketName { get; set; }
+
+    /// <summary>
+    /// Set to true to upload object(s) from current directory only.
+    /// </summary>
+    /// <example>false</example>
+    public bool UploadFromCurrentDirectoryOnly { get; set; }
+
+    /// <summary>
+    /// Set to true to create subdirectories to S3 bucket.
+    /// </summary>
+    /// <example>false</example>
+    public bool PreserveFolderStructure { get; set; }
+
+    /// <summary>
+    /// Delete local source object(s) after upload.
+    /// </summary>
+    /// <example>false</example>
+    public bool DeleteSource { get; set; }
 
     /// <summary>
     /// Specifies the size (in MB) of individual parts into which large files are divided when Connection.UseMultipartUpload = true.

@@ -55,13 +55,6 @@ public class Connection
     [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AWSCredentials)]
     public string AwsSecretAccessKey { get; set; }
 
-    /// <summary>
-    /// AWS S3 bucket's name. Enabled when using AWSCredentials.
-    /// </summary>
-    /// <example>Bucket</example>
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AWSCredentials)]
-    [DisplayFormat(DataFormatString = "Text")]
-    public string BucketName { get; set; }
 
     /// <summary>
     /// AWS S3 bucket's region. Enabled when using AWSCredentials.
@@ -72,18 +65,6 @@ public class Connection
     #endregion AWSCredentials
 
     #region options
-    /// <summary>
-    /// Set to true to upload object(s) from current directory only.
-    /// </summary>
-    /// <example>false</example>
-    public bool UploadFromCurrentDirectoryOnly { get; set; }
-
-    /// <summary>
-    /// Set to true to create subdirectories to S3 bucket. Enabled when UploadFromCurrentDirectoryOnly = false and using AWSCredentials.
-    /// </summary>
-    /// <example>false</example>
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AWSCredentials)]
-    public bool PreserveFolderStructure { get; set; }
 
     /// <summary>
     /// Return object keys from S3 in prefix/filename-format. Enabled when using AWSCredentials.
@@ -98,12 +79,6 @@ public class Connection
     /// <example>false</example>
     [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AWSCredentials)]
     public bool Overwrite { get; set; }
-
-    /// <summary>
-    /// Delete local source object(s) after upload.
-    /// </summary>
-    /// <example>false</example>
-    public bool DeleteSource { get; set; }
 
     /// <summary>
     /// Whether to gather AWS SDK debug log.

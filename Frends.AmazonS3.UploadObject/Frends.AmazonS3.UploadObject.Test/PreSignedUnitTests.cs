@@ -61,11 +61,15 @@ public class PreSignedUnitTests
 
         _input = new Input
         {
-            FilePath = Path.Combine(_dir, "AWS"),
+            SourceDirectory = Path.Combine(_dir, "AWS"),
             ACL = default,
             FileMask = null,
             UseACL = false,
-            S3Directory = null,
+            TargetDirectory = null,
+            BucketName = null,
+            UploadFromCurrentDirectoryOnly = false,
+            PreserveFolderStructure = false,
+            DeleteSource = false,
         };
         _connection = new Connection
         {
@@ -73,19 +77,15 @@ public class PreSignedUnitTests
             PreSignedURL = CreatePresignedUrl(setS3Key).ToString(),
             AwsAccessKeyId = null,
             AwsSecretAccessKey = null,
-            BucketName = null,
             Region = default,
-            UploadFromCurrentDirectoryOnly = false,
             Overwrite = false,
-            PreserveFolderStructure = false,
             ReturnListOfObjectKeys = false,
-            DeleteSource = false,
             ThrowErrorIfNoMatch = false,
             UseMultipartUpload = false,
             GatherDebugLog = false
         };
 
-        var result = await AmazonS3.UploadObject(_connection, _input, default);
+        var result = await AmazonS3.UploadObject(_input, _connection, default);
         Assert.AreEqual(1, result.UploadedObjects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNull(result.DebugLog);
@@ -97,11 +97,15 @@ public class PreSignedUnitTests
     {
         _input = new Input
         {
-            FilePath = Path.Combine(_dir, "AWS"),
+            SourceDirectory = Path.Combine(_dir, "AWS"),
             ACL = default,
             FileMask = null,
             UseACL = false,
-            S3Directory = null,
+            TargetDirectory = null,
+            BucketName = null,
+            UploadFromCurrentDirectoryOnly = false,
+            PreserveFolderStructure = false,
+            DeleteSource = false,
         };
         _connection = new Connection
         {
@@ -109,19 +113,15 @@ public class PreSignedUnitTests
             PreSignedURL = " ",
             AwsAccessKeyId = null,
             AwsSecretAccessKey = null,
-            BucketName = null,
             Region = default,
-            UploadFromCurrentDirectoryOnly = false,
             Overwrite = false,
-            PreserveFolderStructure = false,
             ReturnListOfObjectKeys = false,
-            DeleteSource = false,
             ThrowErrorIfNoMatch = false,
             ThrowExceptionOnErrorResponse = false,
             UseMultipartUpload = false,
         };
 
-        var result = await AmazonS3.UploadObject(_connection, _input, default);
+        var result = await AmazonS3.UploadObject(_input, _connection, default);
         Assert.AreEqual(0, result.UploadedObjects.Count);
         Assert.IsFalse(result.Success);
         Assert.IsTrue(result.DebugLog.Contains("Invalid URI: The format of the URI could not be determined"));
@@ -132,11 +132,15 @@ public class PreSignedUnitTests
     {
         _input = new Input
         {
-            FilePath = Path.Combine(_dir, "AWS"),
+            SourceDirectory = Path.Combine(_dir, "AWS"),
             ACL = default,
             FileMask = null,
             UseACL = false,
-            S3Directory = null,
+            TargetDirectory = null,
+            BucketName = null,
+            UploadFromCurrentDirectoryOnly = false,
+            PreserveFolderStructure = false,
+            DeleteSource = false,
         };
         _connection = new Connection
         {
@@ -144,19 +148,15 @@ public class PreSignedUnitTests
             PreSignedURL = " ",
             AwsAccessKeyId = null,
             AwsSecretAccessKey = null,
-            BucketName = null,
             Region = default,
-            UploadFromCurrentDirectoryOnly = false,
             Overwrite = false,
-            PreserveFolderStructure = false,
             ReturnListOfObjectKeys = false,
-            DeleteSource = false,
             ThrowErrorIfNoMatch = false,
             ThrowExceptionOnErrorResponse = true,
             UseMultipartUpload = false,
         };
 
-        var ex = await Assert.ThrowsExceptionAsync<UploadException>(async () => await AmazonS3.UploadObject(_connection, _input, default));
+        var ex = await Assert.ThrowsExceptionAsync<UploadException>(async () => await AmazonS3.UploadObject(_input, _connection, default));
         Assert.IsTrue(ex.Message.Contains("Invalid URI: The format of the URI could not be determined"));
     }
 
