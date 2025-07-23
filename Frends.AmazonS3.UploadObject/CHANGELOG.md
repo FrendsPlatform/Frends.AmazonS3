@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.0.0] - 2025-07-23
+### Changed
+- Updated NuGet version to 3.0.0
+
 ## [2.0.0] - 2025-05-21
 ### Changed
 - Updated AWS SDK to version 4.0.0.5
