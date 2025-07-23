@@ -12,7 +12,7 @@ public class Options
     /// If false, errors will be returned in the Result object instead of throwing exceptions.
     /// </summary>
     /// <example>false</example>
-    [DefaultValue(false)]
+    [DefaultValue(true)]
     public bool ThrowErrorOnFailure { get; set; }
 
     /// <summary>
