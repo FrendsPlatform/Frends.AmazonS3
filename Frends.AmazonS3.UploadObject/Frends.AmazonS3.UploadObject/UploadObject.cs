@@ -2,6 +2,7 @@
 using Amazon.S3;
 using Amazon.S3.Model;
 using Frends.AmazonS3.UploadObject.Definitions;
+using Frends.AmazonS3.UploadObject.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
