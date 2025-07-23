@@ -72,7 +72,7 @@ public class AmazonS3
 
                     var fullPath = input.TargetDirectory + subfolders + file.Name;
 
-                    if (connection.AuthenticationMethod is AuthenticationMethod.PreSignedURL)
+                    if (connection.AuthenticationMethod is AuthenticationMethod.PreSignedUrl)
                         await UploadFilePreSignedUrl(connection, file.FullName, cancellationToken);
                     else
                     {
@@ -86,7 +86,7 @@ public class AmazonS3
                 }
                 else
                 {
-                    if (connection.AuthenticationMethod is AuthenticationMethod.PreSignedURL)
+                    if (connection.AuthenticationMethod is AuthenticationMethod.PreSignedUrl)
                         await UploadFilePreSignedUrl(connection, file.FullName, cancellationToken);
                     else
                     {
@@ -104,7 +104,7 @@ public class AmazonS3
                 if (input.DeleteSource) DeleteSourceFile(file.FullName);
 
                 // Each file require their own presigned URL so no point to loop more than first file.
-                if (connection.AuthenticationMethod == AuthenticationMethod.PreSignedURL) break;
+                if (connection.AuthenticationMethod == AuthenticationMethod.PreSignedUrl) break;
             }
 
             return new Result(true, result, sw?.ToString());
@@ -117,7 +117,7 @@ public class AmazonS3
             return new Result(
                 false,
                 result,
-                connection.AuthenticationMethod is AuthenticationMethod.AWSCredentials
+                connection.AuthenticationMethod is AuthenticationMethod.AwsCredentials
                     ? sw?.ToString()
                     : $"Exception: {ex.Message}, InnerException: {ex.InnerException}"
             );
@@ -130,7 +130,7 @@ public class AmazonS3
             return new Result(
                 false,
                 result,
-                connection.AuthenticationMethod is AuthenticationMethod.AWSCredentials
+                connection.AuthenticationMethod is AuthenticationMethod.AwsCredentials
                     ? sw?.ToString()
                     : $"Exception: {ex.Message}, InnerException: {ex.InnerException}"
             );
