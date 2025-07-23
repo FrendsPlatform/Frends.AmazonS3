@@ -111,10 +111,10 @@ public class AWSCredsUnitTests
         };
 
         var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
-        Assert.AreEqual(5, result.UploadedObjects.Count);
+        Assert.AreEqual(5, result.Objects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
-        Assert.IsTrue(result.UploadedObjects.Any(x => x.Contains("deletethis_awscreds.txt")));
+        Assert.IsTrue(result.Objects.Any(x => x.Contains("deletethis_awscreds.txt")));
     }
 
     [TestMethod]
@@ -155,10 +155,10 @@ public class AWSCredsUnitTests
         };
 
         var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
-        Assert.AreEqual(5, result.UploadedObjects.Count);
+        Assert.AreEqual(5, result.Objects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNull(result.DebugLog);
-        Assert.IsTrue(result.UploadedObjects.Any(x => x.Contains("deletethis_awscreds.txt")));
+        Assert.IsTrue(result.Objects.Any(x => x.Contains("deletethis_awscreds.txt")));
     }
 
     [TestMethod]
@@ -199,7 +199,7 @@ public class AWSCredsUnitTests
         };
 
         var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
-        Assert.AreEqual(0, result.UploadedObjects.Count);
+        Assert.AreEqual(0, result.Objects.Count);
         Assert.IsFalse(result.Success);
         Assert.IsTrue(result.DebugLog.Contains("Access Denied"));
     }
@@ -283,10 +283,10 @@ public class AWSCredsUnitTests
         };
 
         var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
-        Assert.AreEqual(4, result.UploadedObjects.Count);
+        Assert.AreEqual(4, result.Objects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
-        Assert.IsTrue(result.UploadedObjects.Any(x => x.Contains("deletethis_awscreds.txt")));
+        Assert.IsTrue(result.Objects.Any(x => x.Contains("deletethis_awscreds.txt")));
     }
 
     [TestMethod]
@@ -327,10 +327,10 @@ public class AWSCredsUnitTests
         };
 
         var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
-        Assert.AreEqual(5, result.UploadedObjects.Count);
+        Assert.AreEqual(5, result.Objects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
-        Assert.IsTrue(result.UploadedObjects.Any(x => x.Contains("deletethis_awscreds.txt")));
+        Assert.IsTrue(result.Objects.Any(x => x.Contains("deletethis_awscreds.txt")));
     }
 
     [TestMethod]
@@ -371,10 +371,10 @@ public class AWSCredsUnitTests
         };
 
         var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
-        Assert.AreEqual(5, result.UploadedObjects.Count);
+        Assert.AreEqual(5, result.Objects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
-        Assert.IsTrue(result.UploadedObjects.Any(x => x.Contains("deletethis_awscreds.txt")));
+        Assert.IsTrue(result.Objects.Any(x => x.Contains("deletethis_awscreds.txt")));
     }
 
     [TestMethod]
@@ -415,11 +415,11 @@ public class AWSCredsUnitTests
         };
 
         var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
-        Assert.AreEqual(5, result.UploadedObjects.Count);
-        Assert.IsFalse(result.UploadedObjects.Any(x => x.Contains("C:")));
+        Assert.AreEqual(5, result.Objects.Count);
+        Assert.IsFalse(result.Objects.Any(x => x.Contains("C:")));
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
-        Assert.IsTrue(result.UploadedObjects.Any(x => x.Contains("deletethis_awscreds.txt")));
+        Assert.IsTrue(result.Objects.Any(x => x.Contains("deletethis_awscreds.txt")));
     }
 
     [TestMethod]
@@ -461,10 +461,10 @@ public class AWSCredsUnitTests
         };
 
         var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
-        Assert.AreEqual(1, result.UploadedObjects.Count);
+        Assert.AreEqual(1, result.Objects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
-        Assert.IsTrue(result.UploadedObjects.Any(x => x.Contains("deletethis_awscreds.txt")));
+        Assert.IsTrue(result.Objects.Any(x => x.Contains("deletethis_awscreds.txt")));
         Assert.IsFalse(File.Exists(Path.Combine(_dir, "AWS", fileName)));
     }
 
@@ -551,10 +551,10 @@ public class AWSCredsUnitTests
             };
 
             var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
-            Assert.AreEqual(5, result.UploadedObjects.Count, acl + Environment.NewLine + result.DebugLog);
+            Assert.AreEqual(5, result.Objects.Count, acl + Environment.NewLine + result.DebugLog);
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.DebugLog);
-            Assert.IsTrue(result.UploadedObjects.Any(x => x.Contains("deletethis_awscreds.txt")));
+            Assert.IsTrue(result.Objects.Any(x => x.Contains("deletethis_awscreds.txt")));
 
             await CleanUp();
             Initialize();
@@ -599,7 +599,7 @@ public class AWSCredsUnitTests
         };
 
         var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
-        Assert.AreEqual(0, result.UploadedObjects.Count);
+        Assert.AreEqual(0, result.Objects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
     }

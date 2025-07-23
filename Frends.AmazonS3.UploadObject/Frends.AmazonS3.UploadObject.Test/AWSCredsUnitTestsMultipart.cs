@@ -112,10 +112,10 @@ public class AWSCredsUnitTestsMultipart
     public async Task AWSCreds_Upload()
     {
         var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
-        Assert.AreEqual(2, result.UploadedObjects.Count);
+        Assert.AreEqual(2, result.Objects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
-        Assert.IsTrue(result.UploadedObjects.Any(x => x.Contains("test1.txt")));
+        Assert.IsTrue(result.Objects.Any(x => x.Contains("test1.txt")));
     }
 
     [TestMethod]
@@ -134,7 +134,7 @@ public class AWSCredsUnitTestsMultipart
         };
 
         var result = await AmazonS3.UploadObject(_input, connection, options, default);
-        Assert.AreEqual(0, result.UploadedObjects.Count);
+        Assert.AreEqual(0, result.Objects.Count);
         Assert.IsFalse(result.Success, result.DebugLog);
         Assert.IsTrue(result.DebugLog.Contains("Please authenticate"));
     }

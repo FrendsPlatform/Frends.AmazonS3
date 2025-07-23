@@ -94,10 +94,10 @@ public class PreSignedUnitTests
         };
 
         var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
-        Assert.AreEqual(1, result.UploadedObjects.Count);
+        Assert.AreEqual(1, result.Objects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNull(result.DebugLog);
-        Assert.IsTrue(result.UploadedObjects.Any(x => x.Contains("deletethis_presign.txt")));
+        Assert.IsTrue(result.Objects.Any(x => x.Contains("deletethis_presign.txt")));
     }
 
     [TestMethod]
@@ -136,7 +136,7 @@ public class PreSignedUnitTests
         };
 
         var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
-        Assert.AreEqual(0, result.UploadedObjects.Count);
+        Assert.AreEqual(0, result.Objects.Count);
         Assert.IsFalse(result.Success);
         Assert.IsTrue(result.DebugLog.Contains("Invalid URI: The format of the URI could not be determined"));
     }

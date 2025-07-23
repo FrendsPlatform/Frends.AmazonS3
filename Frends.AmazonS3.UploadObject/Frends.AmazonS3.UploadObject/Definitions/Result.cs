@@ -17,7 +17,7 @@ public class Result
     /// Uploaded Object.
     /// </summary>
     /// <example>{C:\temp\ExampleFile.txt}, {temp\ExampleFile.txt}</example>
-    public List<string> UploadedObjects { get; private set; }
+    public List<string> Objects { get; private set; }
 
     /// <summary>
     /// Debug log of file upload.
@@ -33,7 +33,7 @@ public class Result
     internal Result(bool success, List<string> uploadedObjects, string debugLog, Error error = null)
     {
         Success = success;
-        UploadedObjects = uploadedObjects;
+        Objects = uploadedObjects;
         DebugLog = debugLog;
         Error = error;
     }
