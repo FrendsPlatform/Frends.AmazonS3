@@ -95,11 +95,6 @@ namespace Frends.AmazonS3.ListObjects.Test
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.Objects);
             Assert.IsNull(result.Error);
-
-            if (result.Objects.Count == 0)
-            {
-                Console.WriteLine("Warning: No objects found after the specified StartAfter key");
-            }
         }
 
         /// <summary>
@@ -135,11 +130,6 @@ namespace Frends.AmazonS3.ListObjects.Test
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.Objects);
             Assert.IsNull(result.Error);
-
-            if (result.Objects.Count == 0)
-            {
-                Console.WriteLine("Warning: No objects found with the specified prefix");
-            }
         }
 
         /// <summary>
