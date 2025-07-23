@@ -25,18 +25,13 @@ public static class ErrorHandler
         var errorMessage = !string.IsNullOrEmpty(options.ErrorMessageOnFailure)
             ? $"{options.ErrorMessageOnFailure}: {exception.Message}"
             : exception.Message;
-        return new Result
+        return new Result(false, null, null, new Error
         {
-            Success = false,
-            Objects = null,
-            Error = new Error
+            Message = errorMessage,
+            AdditionalInfo = new
             {
-                Message = errorMessage,
-                AdditionalInfo = new
-                {
-                    Exception = exception,
-                },
+                Exception = exception,
             },
-        };
+        });
     }
 }
