@@ -29,13 +29,13 @@ namespace Frends.AmazonS3.ListObjects.Definitions
         /// The size of the object.
         /// </summary>
         /// <example>20110</example>
-        public long Size { get; set; }
+        public long? Size { get; set; }
 
         /// <summary>
         /// The date and time the object was last modified.
         /// </summary>
         /// <example>2022-04-22T00:16:40+02:00</example>
-        public DateTime LastModified { get; set; }
+        public DateTime? LastModified { get; set; }
 
     }
 }

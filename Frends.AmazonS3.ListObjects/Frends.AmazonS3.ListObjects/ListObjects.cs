@@ -7,6 +7,7 @@ using Amazon;
 using Amazon.S3;
 using System.Collections.Generic;
 using Amazon.S3.Model;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Frends.AmazonS3.ListObjects
 {
@@ -42,7 +43,7 @@ namespace Frends.AmazonS3.ListObjects
                 var request = GetListObjectsV2Request(source, options);
                 var response = new ListObjectsV2Response();
 
-                while (request != null && !response.IsTruncated)
+                while (request != null && !(response.IsTruncated ?? false))
                 {
                     response = await client.ListObjectsV2Async(request, cancellationToken);
 
@@ -56,10 +57,9 @@ namespace Frends.AmazonS3.ListObjects
                             Size = item.Size,
                             Etag = item.ETag,
                             LastModified = item.LastModified
-
                         });
                     }
-                    if (response.IsTruncated)
+                    if ((response.IsTruncated ?? false))
                         request.ContinuationToken = response.NextContinuationToken;
                     else
                         request = null;
@@ -93,6 +93,7 @@ namespace Frends.AmazonS3.ListObjects
             return request;
         }
 
+        [ExcludeFromCodeCoverage]
         private static RegionEndpoint RegionSelection(Region region)
         {
             switch (region)
