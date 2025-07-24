@@ -57,6 +57,15 @@ namespace Frends.AmazonS3.ListObjects.Test
 
             var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
 
+            if (result.Success && result.Objects != null)
+            {
+                Console.WriteLine("All objects in bucket:");
+                foreach (var obj in result.Objects)
+                {
+                    Console.WriteLine(obj.Key);
+                }
+            }
+
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.Objects);
             Assert.IsNull(result.Error);
@@ -92,6 +101,15 @@ namespace Frends.AmazonS3.ListObjects.Test
 
             var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
 
+            if (result.Success && result.Objects != null)
+            {
+                Console.WriteLine($"Objects after {_options.StartAfter}:");
+                foreach (var obj in result.Objects)
+                {
+                    Console.WriteLine(obj.Key);
+                }
+            }
+
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.Objects);
             Assert.IsNull(result.Error);
@@ -126,6 +144,15 @@ namespace Frends.AmazonS3.ListObjects.Test
             };
 
             var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
+
+            if (result.Success && result.Objects != null)
+            {
+                Console.WriteLine($"Objects with prefix {_options.Prefix}:");
+                foreach (var obj in result.Objects)
+                {
+                    Console.WriteLine(obj.Key);
+                }
+            }
 
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.Objects);
