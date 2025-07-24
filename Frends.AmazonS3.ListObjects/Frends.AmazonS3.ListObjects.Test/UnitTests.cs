@@ -15,7 +15,7 @@ namespace Frends.AmazonS3.ListObjects.Test
     {
         private readonly string? _accessKey;
         private readonly string? _secretAccessKey;
-        private readonly string? _bucketName;
+        private readonly string? _bucketName = "frends-gd-test-bucket";
         Connection? _connection = null;
         Input? _input = null;
         Options? _options = null;
@@ -25,7 +25,6 @@ namespace Frends.AmazonS3.ListObjects.Test
             DotEnv.Load(options: new DotEnvOptions(probeForEnv: true));
             _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
             _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
-            _bucketName = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_BucketName");
         }
 
         /// <summary>
