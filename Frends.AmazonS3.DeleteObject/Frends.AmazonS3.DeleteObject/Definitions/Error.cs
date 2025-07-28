@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Frends.AmazonS3.DeleteObject.Definitions;
 
 /// <summary>
@@ -12,14 +14,8 @@ public class Error
     public string Message { get; set; }
 
     /// <summary>
-    /// Error message.
-    /// </summary>
-    /// <example>Object ExampleKey doesn't exist in ExampleBucket.</example>
-    public string ErrorMessage { get; set; }
-
-    /// <summary>
-    /// Additional error information.
+    /// List of objects that encountered errors during delete operation.
     /// </summary>
     /// <example>Additional context or details</example>
-    public dynamic AdditionalInfo { get; set; }
+    public List<SingleResultObject> AdditionalInfo { get; set; }
 }

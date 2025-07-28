@@ -1,7 +1,5 @@
 ﻿# Changelog
 
-## [2.1.0] - 2025-07-17
-
 ## [2.0.0] - 2025-07-16
 
 ### Added
@@ -21,20 +19,6 @@
 - [Breaking] Updated Result class structure with new Error property
 - Improved error handling to provide more detailed information about failed operations
 - Updated parameter organization following Frends task development guidelines
-
-### Migration Notes
-- **To upgrade to version 2.0.0:**
-  - Move AWS connection parameters (AwsAccessKeyId, AwsSecretAccessKey, Region) from Input tab to the new Connection tab
-  - Move NotExistsHandler setting from Options tab to Input tab and rename to ActionOnObjectNotFound
-  - Update any code that references Result.Data to use Result.DeletedObjects instead
-  - Review error handling logic as the error structure has been updated
-
-### Technical Changes
-- Reorganized code structure following Frends development standards
-- Enhanced unit test coverage for new functionality
-- Updated XML documentation for all public members
-- Improved separation of concerns with dedicated Connection and Error classes
-
 
 ## [1.0.0] - 2023-02-20
 ### Added

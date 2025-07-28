@@ -17,36 +17,21 @@ public static class ErrorHandler
     /// <param name="throwOnFailure">Whether to throw the exception or return a failed result</param>
     /// <param name="errorMessage">Custom error message to use</param>
     /// <param name="deletedObjects">The list of successfully deleted objects</param>
+    /// <param name="errorObjects">The list of objects that encountered errors during delete operation</param>
     /// <returns>Result object with appropriate success status</returns>
-    public static Result Handle(Exception exception, bool throwOnFailure, string errorMessage, List<SingleResultObject> deletedObjects)
+    public static Result Handle(Exception exception, bool throwOnFailure, string errorMessage, List<SingleResultObject> deletedObjects, List<SingleResultObject> errorObjects = null)
     {
-        var finalErrorMessage = string.IsNullOrEmpty(errorMessage)
-            ? GetDefaultErrorMessage(exception)
-            : errorMessage;
-
         if (throwOnFailure)
         {
-            if (exception is AmazonS3Exception)
-                throw new AmazonS3Exception(finalErrorMessage, exception);
-            else
-                throw new Exception(finalErrorMessage, exception);
+            throw new Exception($"{errorMessage}\n{exception.Message}");
         }
 
         var error = new Error
         {
-            ErrorMessage = finalErrorMessage,
-            AdditionalInfo = new List<SingleResultObject>() // Objects that failed will be added here by caller if needed
+            Message = $"{errorMessage}\n{exception.Message}",
+            AdditionalInfo = errorObjects
         };
 
         return new Result(false, deletedObjects, error);
-    }
-
-    private static string GetDefaultErrorMessage(Exception exception)
-    {
-        return exception switch
-        {
-            AmazonS3Exception => $"DeleteObject AmazonS3Exception: {exception.Message}",
-            _ => $"DeleteObject Exception: {exception.Message}"
-        };
     }
 }

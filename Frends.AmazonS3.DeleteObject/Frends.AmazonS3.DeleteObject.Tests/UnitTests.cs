@@ -422,8 +422,7 @@ public class UnitTests
         var result = await AmazonS3.DeleteObject(input, connection, options, default);
         Assert.IsFalse(result.Success);
         Assert.IsNotNull(result.Error);
-        Assert.IsNotNull(result.Error.ErrorMessage);
-        Assert.IsTrue(result.Error.ErrorMessage.Contains("DeleteObject AmazonS3Exception"));
+        Assert.IsNotNull(result.Error.Message);
     }
 
     [TestMethod]
@@ -486,7 +485,7 @@ public class UnitTests
         Assert.IsFalse(result.Success);
         Assert.AreEqual(1, result.DeletedObjects.Count);
         Assert.IsNotNull(result.Error);
-        Assert.IsTrue(result.Error.ErrorMessage.Contains("DeleteObject AmazonS3Exception: Test S3 exception"));
+        Assert.IsTrue(result.Error.Message.Contains("Test S3 exception"));
         Assert.AreEqual(0, result.Error.AdditionalInfo.Count);
     }
 
@@ -520,7 +519,7 @@ public class UnitTests
         Assert.IsFalse(result.Success);
         Assert.AreEqual(1, result.DeletedObjects.Count);
         Assert.IsNotNull(result.Error);
-        Assert.IsTrue(result.Error.ErrorMessage.Contains("DeleteObject Exception: Test generic exception"));
+        Assert.IsTrue(result.Error.Message.Contains("Test generic exception"));
         Assert.AreEqual(0, result.Error.AdditionalInfo.Count);
     }
 
@@ -538,7 +537,7 @@ public class UnitTests
         // Assert
         Assert.IsFalse(result.Success);
         Assert.IsNotNull(result.Error);
-        Assert.AreEqual(customMessage, result.Error.ErrorMessage);
+        Assert.AreEqual(customMessage, result.Error.Message);
     }
 
     [TestMethod]
@@ -650,7 +649,7 @@ public class UnitTests
         var deletedObjects = new List<SingleResultObject>();
         var error = new Error
         {
-            ErrorMessage = "Test error message",
+            Message = "Test error message",
             AdditionalInfo = new List<SingleResultObject>()
         };
 
@@ -661,7 +660,7 @@ public class UnitTests
         Assert.IsFalse(result.Success);
         Assert.AreEqual(0, result.DeletedObjects.Count);
         Assert.IsNotNull(result.Error);
-        Assert.AreEqual("Test error message", result.Error.ErrorMessage);
+        Assert.AreEqual("Test error message", result.Error.Message);
     }
 
     [TestMethod]
@@ -769,7 +768,7 @@ public class UnitTests
         // Assert
         Assert.IsFalse(result.Success);
         Assert.IsNotNull(result.Error);
-        Assert.AreEqual(customErrorMessage, result.Error.ErrorMessage);
+        Assert.AreEqual(customErrorMessage, result.Error.Message);
         Assert.IsTrue(result.DeletedObjects.Count > 0); // Some objects should have been deleted successfully
     }
 

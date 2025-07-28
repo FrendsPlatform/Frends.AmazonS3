@@ -24,6 +24,9 @@ public class Result
     /// </summary>
     public Error Error { get; private set; }
 
+    /// <summary>
+    /// Initializes a new result indicating whether the delete operation succeeded, along with deleted items and any error info.
+    /// </summary>
     public Result(bool success, List<SingleResultObject> deletedObjects, Error error = null)
     {
         Success = success;
