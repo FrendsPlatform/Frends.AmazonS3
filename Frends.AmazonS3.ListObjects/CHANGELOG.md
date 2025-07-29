@@ -30,17 +30,6 @@
 - **[Breaking]** Task method signature now includes Connection and Options parameters
 - Improved error handling with consistent error structure and configurable error behavior
 
-### Migration Guide
-To upgrade to the new version:
-1. **Connection parameters**: Move AWS credentials (AwsAccessKeyId, AwsSecretAccessKey, Region) from Input tab to Connection tab
-2. **Input parameters**: Remaining input parameters (BucketName, Prefix, MaxKeys) stay in Input tab  
-3. **Options parameters**: Configure new options in Options tab:
-   - Set `ThrowErrorOnFailure` to `true` if you want exceptions thrown on failures (previous behavior)
-   - Set `ErrorMessageOnFailure` to customize error messages if needed
-4. **Result handling**: Update code that references `ObjectList` to use `Objects` instead
-5. **Error handling**: Check the new `Success` property and `Error` object for error information
-
-
 ## [1.0.0] - 2022-04-25
 ### Added
 - Initial implementation

@@ -24,7 +24,7 @@ namespace Frends.AmazonS3.ListObjects.Helpers
 
             var errorMessage = string.IsNullOrWhiteSpace(options.ErrorMessageOnFailure)
                 ? exception.Message
-                : options.ErrorMessageOnFailure;
+                : $"{options.ErrorMessageOnFailure}: {exception.Message}";
 
             var error = new Error(errorMessage, new { OriginalException = exception.GetType().Name, exception.StackTrace });
             return new Result(error);
@@ -46,7 +46,7 @@ namespace Frends.AmazonS3.ListObjects.Helpers
 
             var errorMessage = string.IsNullOrWhiteSpace(options.ErrorMessageOnFailure)
                 ? credentialsError
-                : options.ErrorMessageOnFailure;
+                : $"{options.ErrorMessageOnFailure}: {credentialsError}";
 
             return new Result(errorMessage);
         }

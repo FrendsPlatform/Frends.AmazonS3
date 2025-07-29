@@ -260,11 +260,11 @@ namespace Frends.AmazonS3.ListObjects.Test
 
             var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
             Assert.IsFalse(result.Success);
-            Assert.AreEqual("Custom authentication error occurred", result.ErrorMessage);
+            StringAssert.Contains(result.ErrorMessage, "Custom authentication error occurred");
             Assert.IsNotNull(result.Objects);
             Assert.AreEqual(0, result.Objects.Count);
             Assert.IsNotNull(result.Error);
-            Assert.AreEqual("Custom authentication error occurred", result.Error.Message);
+            StringAssert.Contains(result.Error.Message, "Custom authentication error occurred");
         }
 
         #region Connection Class Tests
@@ -475,9 +475,9 @@ namespace Frends.AmazonS3.ListObjects.Test
             var result = ErrorHandler.Handle(exception, options);
 
             Assert.IsFalse(result.Success);
-            Assert.AreEqual("Custom error occurred", result.ErrorMessage);
+            StringAssert.Contains(result.ErrorMessage, "Custom error occurred");
             Assert.IsNotNull(result.Error);
-            Assert.AreEqual("Custom error occurred", result.Error.Message);
+            StringAssert.Contains(result.Error.Message, "Custom error occurred");
         }
 
         /// <summary>
@@ -523,9 +523,10 @@ namespace Frends.AmazonS3.ListObjects.Test
             var result = ErrorHandler.HandleCredentialsError("Credentials missing", options);
 
             Assert.IsFalse(result.Success);
-            Assert.AreEqual("Authentication failed", result.ErrorMessage);
+            StringAssert.Contains(result.ErrorMessage, "Authentication failed");
             Assert.IsNotNull(result.Error);
-            Assert.AreEqual("Authentication failed", result.Error.Message);
+            StringAssert.Contains(result.Error.Message, "Authentication failed");
+
         }
 
         #endregion
