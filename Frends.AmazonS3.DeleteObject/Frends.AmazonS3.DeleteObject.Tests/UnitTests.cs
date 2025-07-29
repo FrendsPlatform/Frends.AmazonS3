@@ -152,6 +152,16 @@ public class UnitTests
             var versioningResponse = await client.GetBucketVersioningAsync(versioningRequest);
             Assert.AreEqual(VersionStatus.Enabled, versioningResponse.VersioningConfig.Status, "Bucket versioning must be enabled for this test");
             var result = await AmazonS3.DeleteObject(input, connection, options, default);
+            Console.WriteLine($"Success: {result.Success}");
+            Console.WriteLine($"Error Message: {result.Error.Message}");
+            Console.WriteLine($"Error: {result.Error}");
+            Console.WriteLine($"Error AdditionalInfo: {result.Error.AdditionalInfo}");
+
+            // Log each object's details
+            foreach (var obj in createdObjects)
+            {
+                Console.WriteLine($"Object - Bucket: {obj.BucketName}, Key: {obj.Key}, VersionId: '{obj.VersionId}'");
+            }
             Assert.IsTrue(result.Success);
             Assert.AreEqual(createdObjects.Length, result.DeletedObjects.Count);
             Assert.AreEqual(_bucketName, result.DeletedObjects[0].BucketName);
