@@ -25,7 +25,7 @@ public class UnitTests
         var key = "ExampleFile";
         var objects = new[] { new S3ObjectArray { BucketName = _bucketName, Key = key, VersionId = null }, };
 
-            if (!await FileExistsInS3(key))
+        if (!await FileExistsInS3(key))
             await CreateTestFiles(objects);
     }
 
