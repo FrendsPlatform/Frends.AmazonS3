@@ -25,7 +25,7 @@ public class UnitTests
         var key = "ExampleFile";
         var objects = new[] { new S3ObjectArray { BucketName = _bucketName, Key = key, VersionId = null }, };
 
-        if (!await FileExistsInS3(key))
+            if (!await FileExistsInS3(key))
             await CreateTestFiles(objects);
     }
 
@@ -128,7 +128,6 @@ public class UnitTests
         foreach (var handler in handlers)
         {
             var createdObjects = await CreateTestFiles(objects);
-
             var input = new Input()
             {
                 Objects = createdObjects,
@@ -148,7 +147,10 @@ public class UnitTests
                 ThrowErrorOnFailure = false,
                 ErrorMessageOnFailure = ""
             };
-
+            using var client = new AmazonS3Client(_accessKey, _secretAccessKey, RegionEndpoint.EUCentral1);
+            var versioningRequest = new GetBucketVersioningRequest { BucketName = _bucketName };
+            var versioningResponse = await client.GetBucketVersioningAsync(versioningRequest);
+            Assert.AreEqual(VersionStatus.Enabled, versioningResponse.VersioningConfig.Status, "Bucket versioning must be enabled for this test");
             var result = await AmazonS3.DeleteObject(input, connection, options, default);
             Assert.IsTrue(result.Success);
             Assert.AreEqual(createdObjects.Length, result.DeletedObjects.Count);
@@ -553,7 +555,6 @@ public class UnitTests
                 });
             }
             return createdObjects.ToArray();
-       
         }
         catch (Exception ex)
         {
