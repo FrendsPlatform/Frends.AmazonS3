@@ -122,16 +122,16 @@ public class UnitTests
     public async Task DeleteSingleObject_Version()
     {
         var key = "Key1.txt";
-        var objects = new[] { new S3ObjectArray { BucketName = _bucketName, Key = key, VersionId = "1" } };
+        var objects = new[] { new S3ObjectArray { BucketName = _bucketName, Key = key } };
         var handlers = new List<NotExistsHandler>() { NotExistsHandler.None, NotExistsHandler.Info, NotExistsHandler.Throw };
 
         foreach (var handler in handlers)
         {
-            await CreateTestFiles(objects);
+            var createdObjects = await CreateTestFiles(objects);
 
             var input = new Input()
             {
-                Objects = objects,
+                Objects = createdObjects,
                 ActionOnObjectNotFound = handler,
             };
 
@@ -151,7 +151,7 @@ public class UnitTests
 
             var result = await AmazonS3.DeleteObject(input, connection, options, default);
             Assert.IsTrue(result.Success);
-            Assert.AreEqual(objects.Length, result.DeletedObjects.Count);
+            Assert.AreEqual(createdObjects.Length, result.DeletedObjects.Count);
             Assert.AreEqual(_bucketName, result.DeletedObjects[0].BucketName);
             Assert.AreEqual(key, result.DeletedObjects[0].Key);
             Assert.IsNotNull(result.DeletedObjects[0].VersionId);
@@ -525,12 +525,14 @@ public class UnitTests
         Assert.IsTrue(result.DeletedObjects.Count > 0); // Some objects should have been deleted successfully
     }
 
-    private async Task CreateTestFiles(S3ObjectArray[] array)
+    private async Task<S3ObjectArray[]> CreateTestFiles(S3ObjectArray[] array)
     {
         try
         {
             Directory.CreateDirectory($@"{_dir}\TempFiles");
             using var client = new AmazonS3Client(_accessKey, _secretAccessKey, RegionEndpoint.EUCentral1);
+
+            var createdObjects = new List<S3ObjectArray>();
 
             foreach (var item in array)
             {
@@ -542,8 +544,16 @@ public class UnitTests
                     Key = item.Key,
                     FilePath = filePath,
                 };
-                await client.PutObjectAsync(putObjectRequest);
+                var response = await client.PutObjectAsync(putObjectRequest);
+                createdObjects.Add(new S3ObjectArray
+                {
+                    BucketName = item.BucketName,
+                    Key = item.Key,
+                    VersionId = response.VersionId
+                });
             }
+            return createdObjects.ToArray();
+       
         }
         catch (Exception ex)
         {
@@ -746,19 +756,5 @@ public class UnitTests
         // Assert - Should handle zero timeout gracefully
         // Result may succeed or fail depending on AWS response time, but shouldn't crash
         Assert.IsNotNull(result);
-    }
-
-    [TestMethod]
-    public async Task IsBucketVersioningEnabled()
-    {
-        using var s3Client = new AmazonS3Client(_accessKey, _secretAccessKey, RegionEndpoint.EUCentral1);
-
-        var response = await s3Client.GetBucketVersioningAsync(new GetBucketVersioningRequest
-        {
-            BucketName = _bucketName
-        });
-
-        var result = response.VersioningConfig?.Status;
-        Assert.AreEqual(result, "Off");
     }
 }

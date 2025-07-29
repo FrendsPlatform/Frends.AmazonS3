@@ -107,7 +107,7 @@ public class AmazonS3
 
             if (errorObjects.Count > 0)
             {
-                return ErrorHandler.Handle(new Exception ($"Failed to delete {errorObjects.Count} out of {input.Objects.Length} objects"), options.ThrowErrorOnFailure, options.ErrorMessageOnFailure, deletedObjects, errorObjects, errorExceptions);
+                return ErrorHandler.Handle(new Exception($"Failed to delete {errorObjects.Count} out of {input.Objects.Length} objects"), options.ThrowErrorOnFailure, options.ErrorMessageOnFailure, deletedObjects, errorObjects, errorExceptions);
             }
 
             return new Result(true, deletedObjects);
