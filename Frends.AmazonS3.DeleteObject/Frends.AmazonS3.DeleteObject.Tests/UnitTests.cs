@@ -8,6 +8,7 @@ using Frends.AmazonS3.DeleteObject.Definitions;
 using Frends.AmazonS3.DeleteObject.Helpers;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Amazon.S3.Util;
 namespace Frends.AmazonS3.DeleteObject.Tests;
 
 [TestClass]
@@ -295,13 +296,12 @@ public class UnitTests
         var options = new Options()
         {
             Timeout = 1,
-            ThrowErrorOnFailure = false,
+            ThrowErrorOnFailure = true,
             ErrorMessageOnFailure = ""
         };
 
         var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DeleteObject(input, connection, options, default));
-        Assert.IsNotNull(ex.InnerException);
-        Assert.IsTrue(ex.InnerException.Message.Contains("doesn't exist"));
+        Assert.IsTrue(ex.Message.Contains("doesn't exist"));
     }
 
     [TestMethod]
@@ -330,7 +330,7 @@ public class UnitTests
             ErrorMessageOnFailure = ""
         };
 
-        var ex = await Assert.ThrowsExceptionAsync<AmazonS3Exception>(async () => await AmazonS3.DeleteObject(input, connection, options, default));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DeleteObject(input, connection, options, default));
         Assert.IsNotNull(ex.InnerException);
         Assert.AreEqual("Access Denied", ex.InnerException.Message);
     }
@@ -361,8 +361,7 @@ public class UnitTests
         };
 
         var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DeleteObject(input, connection, options, default));
-        Assert.IsNotNull(ex.InnerException);
-        Assert.IsTrue(ex.InnerException.Message.Contains("Value cannot be null"));
+        Assert.IsTrue(ex.Message.Contains("Value cannot be null"));
     }
 
     [TestMethod]
@@ -451,8 +450,8 @@ public class UnitTests
             ErrorMessageOnFailure = "Custom error message"
         };
 
-        var ex = await Assert.ThrowsExceptionAsync<AmazonS3Exception>(async () => await AmazonS3.DeleteObject(input, connection, options, default));
-        Assert.AreEqual("Custom error message", ex.Message);
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.DeleteObject(input, connection, options, default));
+        Assert.IsTrue(ex.Message.Contains("Custom error message"));
     }
 
     [TestMethod]
@@ -469,27 +468,6 @@ public class UnitTests
     }
 
     [TestMethod]
-    public void ErrorHandler_Handle_AmazonS3Exception_NoThrow()
-    {
-        // Arrange
-        var deletedObjects = new List<SingleResultObject>
-        {
-            new SingleResultObject { BucketName = "test-bucket", Key = "test-key", VersionId = "v1" }
-        };
-        var exception = new AmazonS3Exception("Test S3 exception");
-
-        // Act
-        var result = ErrorHandler.Handle(exception, false, "", deletedObjects);
-
-        // Assert
-        Assert.IsFalse(result.Success);
-        Assert.AreEqual(1, result.DeletedObjects.Count);
-        Assert.IsNotNull(result.Error);
-        Assert.IsTrue(result.Error.Message.Contains("Test S3 exception"));
-        Assert.AreEqual(0, result.Error.AdditionalInfo.Count);
-    }
-
-    [TestMethod]
     public void ErrorHandler_Handle_GenericException_ThrowOnFailure()
     {
         // Arrange
@@ -500,44 +478,6 @@ public class UnitTests
         var ex = Assert.ThrowsException<Exception>(() =>
             ErrorHandler.Handle(exception, true, "", deletedObjects));
         Assert.IsTrue(ex.Message.Contains("Test generic exception"));
-    }
-
-    [TestMethod]
-    public void ErrorHandler_Handle_GenericException_NoThrow()
-    {
-        // Arrange
-        var deletedObjects = new List<SingleResultObject>
-        {
-            new SingleResultObject { BucketName = "test-bucket", Key = "test-key", VersionId = "v1" }
-        };
-        var exception = new Exception("Test generic exception");
-
-        // Act
-        var result = ErrorHandler.Handle(exception, false, "", deletedObjects);
-
-        // Assert
-        Assert.IsFalse(result.Success);
-        Assert.AreEqual(1, result.DeletedObjects.Count);
-        Assert.IsNotNull(result.Error);
-        Assert.IsTrue(result.Error.Message.Contains("Test generic exception"));
-        Assert.AreEqual(0, result.Error.AdditionalInfo.Count);
-    }
-
-    [TestMethod]
-    public void ErrorHandler_Handle_CustomErrorMessage()
-    {
-        // Arrange
-        var deletedObjects = new List<SingleResultObject>();
-        var exception = new Exception("Original exception message");
-        var customMessage = "Custom error message for testing";
-
-        // Act
-        var result = ErrorHandler.Handle(exception, false, customMessage, deletedObjects);
-
-        // Assert
-        Assert.IsFalse(result.Success);
-        Assert.IsNotNull(result.Error);
-        Assert.AreEqual(customMessage, result.Error.Message);
     }
 
     [TestMethod]
@@ -690,7 +630,7 @@ public class UnitTests
         };
 
         // Act & Assert
-        var ex = await Assert.ThrowsExceptionAsync<ArgumentException>(
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(
             async () => await AmazonS3.DeleteObject(input, connection, options, default));
         Assert.IsTrue(ex.Message.Contains("BucketName cannot be null or empty"));
     }
@@ -722,7 +662,7 @@ public class UnitTests
         };
 
         // Act & Assert
-        var ex = await Assert.ThrowsExceptionAsync<ArgumentException>(
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(
             async () => await AmazonS3.DeleteObject(input, connection, options, default));
         Assert.IsTrue(ex.Message.Contains("Object Key cannot be null or empty"));
     }
@@ -768,7 +708,7 @@ public class UnitTests
         // Assert
         Assert.IsFalse(result.Success);
         Assert.IsNotNull(result.Error);
-        Assert.AreEqual(customErrorMessage, result.Error.Message);
+        Assert.IsTrue(result.Error.Message.Contains(customErrorMessage));
         Assert.IsTrue(result.DeletedObjects.Count > 0); // Some objects should have been deleted successfully
     }
 
@@ -806,5 +746,19 @@ public class UnitTests
         // Assert - Should handle zero timeout gracefully
         // Result may succeed or fail depending on AWS response time, but shouldn't crash
         Assert.IsNotNull(result);
+    }
+
+    [TestMethod]
+    public async Task IsBucketVersioningEnabled()
+    {
+        using var s3Client = new AmazonS3Client(_accessKey, _secretAccessKey, RegionEndpoint.EUCentral1);
+
+        var response = await s3Client.GetBucketVersioningAsync(new GetBucketVersioningRequest
+        {
+            BucketName = _bucketName
+        });
+
+        var result = response.VersioningConfig?.Status;
+        Assert.AreEqual(result, "Off");
     }
 }

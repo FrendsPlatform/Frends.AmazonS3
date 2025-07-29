@@ -42,6 +42,7 @@ public class AmazonS3
     {
         var deletedObjects = new List<SingleResultObject>();
         var errorObjects = new List<SingleResultObject>();
+        var errorExceptions = new List<Exception>();
 
         if (input.Objects is null || input.Objects.Length == 0)
             throw new Exception("DeleteObject error: Input.Objects cannot be empty.");
@@ -96,27 +97,30 @@ public class AmazonS3
                             break;
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     // Add failed object to error list
                     errorObjects.Add(new SingleResultObject() { BucketName = obj.BucketName, Key = obj.Key, VersionId = obj.VersionId });
+                    errorExceptions.Add(ex);
                 }
             }
 
             if (errorObjects.Count > 0)
             {
-                return ErrorHandler.Handle(new Exception ($"Failed to delete {errorObjects.Count} out of {input.Objects.Length} objects"), options.ThrowErrorOnFailure, options.ErrorMessageOnFailure, deletedObjects, errorObjects);
+                return ErrorHandler.Handle(new Exception ($"Failed to delete {errorObjects.Count} out of {input.Objects.Length} objects"), options.ThrowErrorOnFailure, options.ErrorMessageOnFailure, deletedObjects, errorObjects, errorExceptions);
             }
 
             return new Result(true, deletedObjects);
         }
         catch (AmazonS3Exception aEx)
         {
-            return ErrorHandler.Handle(aEx, options.ThrowErrorOnFailure, options.ErrorMessageOnFailure, deletedObjects);
+            return ErrorHandler.Handle(aEx, options.ThrowErrorOnFailure, options.ErrorMessageOnFailure,
+                deletedObjects, errorObjects);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (!ex.Message.Contains("Failed to delete"))
         {
-            return ErrorHandler.Handle(ex, options.ThrowErrorOnFailure, options.ErrorMessageOnFailure, deletedObjects);
+            return ErrorHandler.Handle(ex, options.ThrowErrorOnFailure, options.ErrorMessageOnFailure,
+                deletedObjects, errorObjects);
         }
     }
 
