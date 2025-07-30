@@ -20,7 +20,7 @@ public static class ErrorHandler
     /// <param name="errorMessage">Custom error message to use</param>
     /// <param name="deletedObjects">The list of successfully deleted objects</param>
     /// <param name="errorObjects">The list of objects that encountered errors during delete operation</param>
-    /// <param name="errorExceptions">The list of exceptins that encountered during delete operation</param>
+    /// <param name="errorExceptions">The list of exceptions that encountered during delete operation</param>
     /// <returns>Result object with appropriate success status</returns>
     public static Result Handle(Exception initialException, bool throwOnFailure, string errorMessage, List<SingleResultObject> deletedObjects, List<SingleResultObject> errorObjects = null, List<Exception> errorExceptions = null)
     {
