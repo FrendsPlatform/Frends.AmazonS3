@@ -1,9 +1,15 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Threading.Tasks;
+using Amazon;
+using Amazon.S3;
+using Amazon.S3.Model;
+using Amazon.S3.Util;
+using dotenv.net;
 using Frends.AmazonS3.ListObjects.Definitions;
 using Frends.AmazonS3.ListObjects.Helpers;
-using dotenv.net;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Frends.AmazonS3.ListObjects.Test
 {
@@ -15,7 +21,16 @@ namespace Frends.AmazonS3.ListObjects.Test
     {
         private readonly string? _accessKey;
         private readonly string? _secretAccessKey;
-        private readonly string? _bucketName = "frends-gd-test-bucket";
+        private readonly string? _bucketName = "frends-listobjects-test-bucket";
+        private IAmazonS3? _s3Client;
+        private readonly List<string> _testFiles =
+        [
+            "testfile1.txt",
+            "testfolder/testfile2.txt",
+            "2020/11/23/file3.txt",
+            "testfolder/subfolder/20220401.txt"
+        ];
+
         Connection? _connection = null;
         Input? _input = null;
         Options? _options = null;
@@ -25,6 +40,77 @@ namespace Frends.AmazonS3.ListObjects.Test
             DotEnv.Load(options: new DotEnvOptions(probeForEnv: true));
             _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
             _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
+        }
+
+        [TestInitialize]
+        public async Task Init()
+        {
+            _s3Client = new AmazonS3Client(_accessKey, _secretAccessKey, RegionEndpoint.EUCentral1);
+
+            if (!await AmazonS3Util.DoesS3BucketExistV2Async(_s3Client, _bucketName))
+            {
+                await _s3Client.PutBucketAsync(_bucketName);
+
+                foreach (var file in _testFiles)
+                {
+                    await _s3Client.PutObjectAsync(new PutObjectRequest
+                    {
+                        BucketName = _bucketName,
+                        Key = file,
+                        ContentBody = "test content"
+                    });
+                }
+            }
+
+            _connection = new Connection
+            {
+                AwsAccessKeyId = _accessKey,
+                AwsSecretAccessKey = _secretAccessKey,
+                Region = Region.EuCentral1
+            };
+
+            _input = new Input
+            {
+                BucketName = _bucketName
+            };
+
+            _options = new Options
+            {
+                ThrowErrorOnFailure = true
+            };
+        }
+
+        [TestCleanup]
+        public async Task Cleanup()
+        {
+            try
+            {
+                if (_s3Client != null && await AmazonS3Util.DoesS3BucketExistV2Async(_s3Client, _bucketName))
+                {
+                    var listRequest = new ListObjectsV2Request { BucketName = _bucketName };
+                    var listResponse = await _s3Client.ListObjectsV2Async(listRequest);
+
+                    if (listResponse.S3Objects.Count != 0)
+                    {
+                        var deleteRequest = new DeleteObjectsRequest
+                        {
+                            BucketName = _bucketName,
+                            Objects = [.. listResponse.S3Objects.Select(x => new KeyVersion { Key = x.Key })]
+                        };
+                        await _s3Client.DeleteObjectsAsync(deleteRequest);
+                    }
+
+                    await _s3Client.DeleteBucketAsync(_bucketName);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Cleanup failed: {ex.Message}");
+            }
+            finally
+            {
+                _s3Client?.Dispose();
+            }
         }
 
         /// <summary>
