@@ -12,14 +12,7 @@ public class Options
     /// </summary>
     /// <example>false</example>
     public bool ThrowErrorIfNoMatch { get; set; }
-
-    /// <summary>
-    /// Throws exception if error occures in upload.
-    /// </summary>
-    /// <example>false</example>
-    [DefaultValue(false)]
-    public bool FailOnErrorResponse { get; set; }
-
+    
     /// <summary>
     /// Throw error on failure.
     /// </summary>

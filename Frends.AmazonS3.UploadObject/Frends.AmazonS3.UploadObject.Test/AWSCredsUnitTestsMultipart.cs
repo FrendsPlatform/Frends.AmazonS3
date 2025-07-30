@@ -65,7 +65,6 @@ public class AWSCredsUnitTestsMultipart
         _options = new Options
         {
             ThrowErrorIfNoMatch = false,
-            FailOnErrorResponse = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
@@ -127,7 +126,6 @@ public class AWSCredsUnitTestsMultipart
         var options = new Options
         {
             ThrowErrorIfNoMatch = false,
-            FailOnErrorResponse = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
@@ -139,7 +137,7 @@ public class AWSCredsUnitTestsMultipart
     }
 
     [TestMethod]
-    public async Task AWSCreds_Missing_ThrowExceptionOnErrorResponse_True()
+    public async Task AWSCreds_Missing_ThrowErrorOnFailure_True()
     {
         var connection = _connection;
         connection.AwsAccessKeyId = null;
@@ -147,8 +145,7 @@ public class AWSCredsUnitTestsMultipart
         var options = new Options
         {
             ThrowErrorIfNoMatch = false,
-            FailOnErrorResponse = true,
-            ThrowErrorOnFailure = false,
+            ThrowErrorOnFailure = true,
             ErrorMessageOnFailure = ""
         };
 

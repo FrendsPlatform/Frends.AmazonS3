@@ -105,7 +105,6 @@ public class AWSCredsUnitTests
         _options = new Options
         {
             ThrowErrorIfNoMatch = false,
-            FailOnErrorResponse = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
@@ -148,7 +147,6 @@ public class AWSCredsUnitTests
         _options = new Options
         {
             ThrowErrorIfNoMatch = false,
-            FailOnErrorResponse = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
@@ -161,7 +159,7 @@ public class AWSCredsUnitTests
     }
 
     [TestMethod]
-    public async Task AWSCreds_Missing_ThrowExceptionOnErrorResponse_False()
+    public async Task AWSCreds_Missing_ThrowErrorOnFailure_False()
     {
         _input = new Input
         {
@@ -191,7 +189,6 @@ public class AWSCredsUnitTests
         _options = new Options
         {
             ThrowErrorIfNoMatch = false,
-            FailOnErrorResponse = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
@@ -203,7 +200,7 @@ public class AWSCredsUnitTests
     }
 
     [TestMethod]
-    public async Task AWSCreds_Missing_FailOnErrorResponse_True()
+    public async Task AWSCreds_Missing_ThrowErrorOnFailure_True()
     {
         _input = new Input
         {
@@ -233,8 +230,7 @@ public class AWSCredsUnitTests
         _options = new Options
         {
             ThrowErrorIfNoMatch = false,
-            FailOnErrorResponse = true,
-            ThrowErrorOnFailure = false,
+            ThrowErrorOnFailure = true,
             ErrorMessageOnFailure = ""
         };
 
@@ -272,7 +268,6 @@ public class AWSCredsUnitTests
         _options = new Options
         {
             ThrowErrorIfNoMatch = false,
-            FailOnErrorResponse = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
@@ -315,7 +310,6 @@ public class AWSCredsUnitTests
         _options = new Options
         {
             ThrowErrorIfNoMatch = false,
-            FailOnErrorResponse = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
@@ -358,7 +352,6 @@ public class AWSCredsUnitTests
         _options = new Options
         {
             ThrowErrorIfNoMatch = false,
-            FailOnErrorResponse = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
@@ -401,7 +394,6 @@ public class AWSCredsUnitTests
         _options = new Options
         {
             ThrowErrorIfNoMatch = false,
-            FailOnErrorResponse = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
@@ -446,7 +438,6 @@ public class AWSCredsUnitTests
         _options = new Options
         {
             ThrowErrorIfNoMatch = false,
-            FailOnErrorResponse = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
@@ -489,7 +480,6 @@ public class AWSCredsUnitTests
         _options = new Options
         {
             ThrowErrorIfNoMatch = true,
-            FailOnErrorResponse = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
@@ -536,7 +526,6 @@ public class AWSCredsUnitTests
             _options = new Options
             {
                 ThrowErrorIfNoMatch = false,
-                FailOnErrorResponse = false,
                 ThrowErrorOnFailure = false,
                 ErrorMessageOnFailure = ""
             };
@@ -583,7 +572,6 @@ public class AWSCredsUnitTests
         _options = new Options
         {
             ThrowErrorIfNoMatch = false,
-            FailOnErrorResponse = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
@@ -624,7 +612,6 @@ public class AWSCredsUnitTests
         _options = new Options
         {
             ThrowErrorIfNoMatch = true,
-            FailOnErrorResponse = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };

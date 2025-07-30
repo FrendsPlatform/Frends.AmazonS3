@@ -87,7 +87,6 @@ public class PreSignedUnitTests
         _options = new Options
         {
             ThrowErrorIfNoMatch = false,
-            FailOnErrorResponse = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
@@ -129,7 +128,6 @@ public class PreSignedUnitTests
         _options = new Options
         {
             ThrowErrorIfNoMatch = false,
-            FailOnErrorResponse = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
@@ -141,7 +139,7 @@ public class PreSignedUnitTests
     }
 
     [TestMethod]
-    public async Task PreSignedUnitTest_MissingURL_FailOnErrorResponse_true()
+    public async Task PreSignedUnitTest_MissingURL_ThrowErrorOnFailure_true()
     {
         _input = new Input
         {
@@ -170,8 +168,7 @@ public class PreSignedUnitTests
         _options = new Options
         {
             ThrowErrorIfNoMatch = false,
-            FailOnErrorResponse = true,
-            ThrowErrorOnFailure = false,
+            ThrowErrorOnFailure = true,
             ErrorMessageOnFailure = ""
         };
 
