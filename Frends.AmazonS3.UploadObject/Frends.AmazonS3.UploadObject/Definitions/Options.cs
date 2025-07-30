@@ -12,7 +12,7 @@ public class Options
     /// </summary>
     /// <example>false</example>
     public bool ThrowErrorIfNoMatch { get; set; }
-    
+
     /// <summary>
     /// Throw error on failure.
     /// </summary>
