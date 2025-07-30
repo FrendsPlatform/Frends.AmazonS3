@@ -91,8 +91,8 @@ public class AWSCredsUnitTests
         };
         _connection = new Connection
         {
-            AuthenticationMethod = AuthenticationMethod.AWSCredentials,
-            PreSignedURL = null,
+            AuthenticationMethod = AuthenticationMethod.AwsCredentials,
+            PreSignedUrl = null,
             AwsAccessKeyId = _accessKey,
             AwsSecretAccessKey = _secretAccessKey,
             Region = Region.EuCentral1,
@@ -134,8 +134,8 @@ public class AWSCredsUnitTests
         };
         _connection = new Connection
         {
-            AuthenticationMethod = AuthenticationMethod.AWSCredentials,
-            PreSignedURL = null,
+            AuthenticationMethod = AuthenticationMethod.AwsCredentials,
+            PreSignedUrl = null,
             AwsAccessKeyId = _accessKey,
             AwsSecretAccessKey = _secretAccessKey,
             Region = Region.EuCentral1,
@@ -177,8 +177,8 @@ public class AWSCredsUnitTests
         };
         _connection = new Connection
         {
-            AuthenticationMethod = AuthenticationMethod.AWSCredentials,
-            PreSignedURL = null,
+            AuthenticationMethod = AuthenticationMethod.AwsCredentials,
+            PreSignedUrl = null,
             AwsAccessKeyId = null,
             AwsSecretAccessKey = "",
             Region = Region.EuCentral1,
@@ -219,8 +219,8 @@ public class AWSCredsUnitTests
         };
         _connection = new Connection
         {
-            AuthenticationMethod = AuthenticationMethod.AWSCredentials,
-            PreSignedURL = null,
+            AuthenticationMethod = AuthenticationMethod.AwsCredentials,
+            PreSignedUrl = null,
             AwsAccessKeyId = null,
             AwsSecretAccessKey = "",
             Region = Region.EuCentral1,
@@ -259,8 +259,8 @@ public class AWSCredsUnitTests
         };
         _connection = new Connection
         {
-            AuthenticationMethod = AuthenticationMethod.AWSCredentials,
-            PreSignedURL = null,
+            AuthenticationMethod = AuthenticationMethod.AwsCredentials,
+            PreSignedUrl = null,
             AwsAccessKeyId = _accessKey,
             AwsSecretAccessKey = _secretAccessKey,
             Region = Region.EuCentral1,
@@ -302,8 +302,8 @@ public class AWSCredsUnitTests
         };
         _connection = new Connection
         {
-            AuthenticationMethod = AuthenticationMethod.AWSCredentials,
-            PreSignedURL = null,
+            AuthenticationMethod = AuthenticationMethod.AwsCredentials,
+            PreSignedUrl = null,
             AwsAccessKeyId = _accessKey,
             AwsSecretAccessKey = _secretAccessKey,
             Region = Region.EuCentral1,
@@ -345,8 +345,8 @@ public class AWSCredsUnitTests
         };
         _connection = new Connection
         {
-            AuthenticationMethod = AuthenticationMethod.AWSCredentials,
-            PreSignedURL = null,
+            AuthenticationMethod = AuthenticationMethod.AwsCredentials,
+            PreSignedUrl = null,
             AwsAccessKeyId = _accessKey,
             AwsSecretAccessKey = _secretAccessKey,
             Region = Region.EuCentral1,
@@ -388,8 +388,8 @@ public class AWSCredsUnitTests
         };
         _connection = new Connection
         {
-            AuthenticationMethod = AuthenticationMethod.AWSCredentials,
-            PreSignedURL = null,
+            AuthenticationMethod = AuthenticationMethod.AwsCredentials,
+            PreSignedUrl = null,
             AwsAccessKeyId = _accessKey,
             AwsSecretAccessKey = _secretAccessKey,
             Region = Region.EuCentral1,
@@ -433,8 +433,8 @@ public class AWSCredsUnitTests
         };
         _connection = new Connection
         {
-            AuthenticationMethod = AuthenticationMethod.AWSCredentials,
-            PreSignedURL = null,
+            AuthenticationMethod = AuthenticationMethod.AwsCredentials,
+            PreSignedUrl = null,
             AwsAccessKeyId = _accessKey,
             AwsSecretAccessKey = _secretAccessKey,
             Region = Region.EuCentral1,
@@ -477,8 +477,8 @@ public class AWSCredsUnitTests
         };
         _connection = new Connection
         {
-            AuthenticationMethod = AuthenticationMethod.AWSCredentials,
-            PreSignedURL = null,
+            AuthenticationMethod = AuthenticationMethod.AwsCredentials,
+            PreSignedUrl = null,
             AwsAccessKeyId = _accessKey,
             AwsSecretAccessKey = _secretAccessKey,
             Region = Region.EuCentral1,
@@ -508,8 +508,8 @@ public class AWSCredsUnitTests
 
         _connection = new Connection
         {
-            AuthenticationMethod = AuthenticationMethod.AWSCredentials,
-            PreSignedURL = null,
+            AuthenticationMethod = AuthenticationMethod.AwsCredentials,
+            PreSignedUrl = null,
             AwsAccessKeyId = _accessKey,
             AwsSecretAccessKey = _secretAccessKey,
             Region = Region.EuCentral1,
@@ -570,8 +570,8 @@ public class AWSCredsUnitTests
         };
         _connection = new Connection
         {
-            AuthenticationMethod = AuthenticationMethod.AWSCredentials,
-            PreSignedURL = null,
+            AuthenticationMethod = AuthenticationMethod.AwsCredentials,
+            PreSignedUrl = null,
             AwsAccessKeyId = _accessKey,
             AwsSecretAccessKey = _secretAccessKey,
             Region = Region.EuCentral1,
@@ -612,8 +612,8 @@ public class AWSCredsUnitTests
         };
         _connection = new Connection
         {
-            AuthenticationMethod = AuthenticationMethod.AWSCredentials,
-            PreSignedURL = null,
+            AuthenticationMethod = AuthenticationMethod.AwsCredentials,
+            PreSignedUrl = null,
             AwsAccessKeyId = _accessKey,
             AwsSecretAccessKey = _secretAccessKey,
             Region = Region.EuCentral1,

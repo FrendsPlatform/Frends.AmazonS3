@@ -2,8 +2,6 @@
 
 ## [3.0.0] - 2025-07-23
 
-- [Breaking] Major refactoring to follow Frends task conventions and improve maintainability
-- [Breaking] Restructured task parameters into standard Input/Connection/Options pattern
 - [Breaking] Renamed `FilePath` to `SourceDirectory` in Input class for better clarity
 - [Breaking] Renamed `S3Directory` to `TargetDirectory` in Input class for consistency
 - [Breaking] Moved `BucketName` from Connection to Input class as it's essential for task function
@@ -19,15 +17,7 @@
 - [Breaking] Moved `ThrowErrorIfNoMatch` from Connection to Options class
 - [Breaking] Moved and renamed `ThrowExceptionOnErrorResponse` to `FailOnErrorResponse` in Options class
 - [Breaking] Renamed `UploadedObjects` to `Objects` in Result class for consistency
-- [Breaking] Added structured error handling with new Error class containing Message and AdditionalInfo properties
 - [Breaking] Task method signature now follows standard pattern: Input, Connection, Options parameters
-- Added ErrorHandler helper class for consistent error handling across the task
-- Improved error messaging and exception wrapping functionality
-
-
-## [3.0.0] - 2025-07-23
-### Changed
-- Updated NuGet version to 3.0.0
 
 ## [2.0.0] - 2025-05-21
 ### Changed

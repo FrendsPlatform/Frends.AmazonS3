@@ -74,8 +74,8 @@ public class PreSignedUnitTests
         };
         _connection = new Connection
         {
-            AuthenticationMethod = AuthenticationMethod.PreSignedURL,
-            PreSignedURL = CreatePresignedUrl(setS3Key).ToString(),
+            AuthenticationMethod = AuthenticationMethod.PreSignedUrl,
+            PreSignedUrl = CreatePresignedUrl(setS3Key).ToString(),
             AwsAccessKeyId = null,
             AwsSecretAccessKey = null,
             Region = default,
@@ -116,8 +116,8 @@ public class PreSignedUnitTests
         };
         _connection = new Connection
         {
-            AuthenticationMethod = AuthenticationMethod.PreSignedURL,
-            PreSignedURL = " ",
+            AuthenticationMethod = AuthenticationMethod.PreSignedUrl,
+            PreSignedUrl = " ",
             AwsAccessKeyId = null,
             AwsSecretAccessKey = null,
             Region = default,
@@ -157,8 +157,8 @@ public class PreSignedUnitTests
         };
         _connection = new Connection
         {
-            AuthenticationMethod = AuthenticationMethod.PreSignedURL,
-            PreSignedURL = " ",
+            AuthenticationMethod = AuthenticationMethod.PreSignedUrl,
+            PreSignedUrl = " ",
             AwsAccessKeyId = null,
             AwsSecretAccessKey = null,
             Region = default,

@@ -12,7 +12,7 @@ public class Connection
     /// Authentication method to use when connecting to AWS S3 bucket. Options are pre-signed URL or AWS Access Key ID+AWS Secret Access Key.
     /// </summary>
     /// <example>PreSignedURL</example>
-    [DefaultValue(AuthenticationMethod.AWSCredentials)]
+    [DefaultValue(AuthenticationMethod.AwsCredentials)]
     public AuthenticationMethod AuthenticationMethod { get; set; }
 
     /// <summary>
@@ -22,8 +22,8 @@ public class Connection
     /// <example>"https://bucket.s3.region.amazonaws.com/object/file.txt?X-Amz-Expires=120X-Amz-Algorithm...</example>
     [PasswordPropertyText]
     [DisplayFormat(DataFormatString = "Text")]
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.PreSignedURL)]
-    public string PreSignedURL { get; set; }
+    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.PreSignedUrl)]
+    public string PreSignedUrl { get; set; }
 
     #region AWSCredentials
 
@@ -33,7 +33,7 @@ public class Connection
     /// Multipart upload breaks the object into smaller parts, which are uploaded independently in parallel.
     /// </summary>
     /// <example>true</example>
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AWSCredentials)]
+    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AwsCredentials)]
     [DefaultValue(true)]
     public bool UseMultipartUpload { get; set; }
 
@@ -43,7 +43,7 @@ public class Connection
     /// <example>AKIAQWERTY7NJ5Q7NZ6Q</example>
     [DisplayFormat(DataFormatString = "Text")]
     [PasswordPropertyText]
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AWSCredentials)]
+    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AwsCredentials)]
     public string AwsAccessKeyId { get; set; }
 
     /// <summary>
@@ -52,7 +52,7 @@ public class Connection
     /// <example>TVh5hgd3uGY/2CqH+Kkrrg3dadbXLsYe0jC3h+WD</example>
     [DisplayFormat(DataFormatString = "Text")]
     [PasswordPropertyText]
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AWSCredentials)]
+    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AwsCredentials)]
     public string AwsSecretAccessKey { get; set; }
 
 
@@ -60,7 +60,7 @@ public class Connection
     /// AWS S3 bucket's region. Enabled when using AWSCredentials.
     /// </summary>
     /// <example>EuCentral1</example>
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AWSCredentials)]
+    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AwsCredentials)]
     public Region Region { get; set; }
     #endregion AWSCredentials
 
@@ -70,14 +70,14 @@ public class Connection
     /// Return object keys from S3 in prefix/filename-format. Enabled when using AWSCredentials.
     /// </summary>
     /// <example>false</example>
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AWSCredentials)]
+    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AwsCredentials)]
     public bool ReturnListOfObjectKeys { get; set; }
 
     /// <summary>
     /// Set to true to overwrite object(s) with the same path and name (object key). Enabled when using AWSCredentials.
     /// </summary>
     /// <example>false</example>
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AWSCredentials)]
+    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AwsCredentials)]
     public bool Overwrite { get; set; }
 
     /// <summary>

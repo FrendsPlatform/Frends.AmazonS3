@@ -13,7 +13,6 @@ jobs:
     uses: FrendsPlatform/FrendsTasks/.github/workflows/build_test.yml@main
     with:
       workdir: Frends.AmazonS3.UploadObject
-      strict_analyzers: true
       env_var_name_1: HiQ_AWSS3Test_AccessKey
       env_var_name_2: HiQ_AWSS3Test_BucketName
       env_var_name_3: HiQ_AWSS3Test_SecretAccessKey

@@ -51,8 +51,8 @@ public class AWSCredsUnitTestsMultipart
 
         _connection = new Connection
         {
-            AuthenticationMethod = AuthenticationMethod.AWSCredentials,
-            PreSignedURL = null,
+            AuthenticationMethod = AuthenticationMethod.AwsCredentials,
+            PreSignedUrl = null,
             AwsAccessKeyId = _accessKey,
             AwsSecretAccessKey = _secretAccessKey,
             Region = Region.EuCentral1,
