@@ -9,7 +9,7 @@ namespace Frends.AmazonS3.UploadObject.Definitions;
 public class Connection
 {
     /// <summary>
-    /// Authentication method to use when connecting to AWS S3 bucket. Options are pre-signed URL or AWS Access Key ID+AWS Secret Access Key.
+    /// Authentication method to use when connecting to AWS S3 bucket. Options are pre-signed URL, or AWS Access Key ID+AWS Secret Access Key.
     /// </summary>
     /// <example>PreSignedURL</example>
     [DefaultValue(AuthenticationMethod.AwsCredentials)]

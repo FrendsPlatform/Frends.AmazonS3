@@ -3,18 +3,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Frends.AmazonS3.UploadObject.Definitions;
 
-internal class StringWriterLoggerProvider : ILoggerProvider
+internal class StringWriterLoggerProvider(TextWriter writer) : ILoggerProvider
 {
-    private readonly TextWriter _writer;
-
-    public StringWriterLoggerProvider(TextWriter writer)
-    {
-        _writer = writer;
-    }
-
     public ILogger CreateLogger(string categoryName)
     {
-        return new StringWriterLogger(_writer, categoryName);
+        return new StringWriterLogger(writer, categoryName);
     }
 
     public void Dispose()

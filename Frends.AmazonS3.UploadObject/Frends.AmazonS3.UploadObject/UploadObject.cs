@@ -39,7 +39,7 @@ public class AmazonS3
         if (connection.GatherDebugLog)
         {
             sw = new StringWriter();
-            lf = ConfigureAWSSDKLogging(sw);
+            lf = ConfigureAwsSdkLogging(sw);
         }
         else
         {
@@ -108,7 +108,7 @@ public class AmazonS3
 
                 if (input.DeleteSource) DeleteSourceFile(file.FullName);
 
-                // Each file require their own presigned URL so no point to loop more than first file.
+                // Each file requires their own presigned URL so no point to loop more than the first file.
                 if (connection.AuthenticationMethod == AuthenticationMethod.PreSignedUrl) break;
             }
 
@@ -136,7 +136,7 @@ public class AmazonS3
         {
             if (connection.GatherDebugLog)
             {
-                UnconfigureAWSSDKLogging();
+                UnconfigureAwsSdkLogging();
             }
 
             sw?.Dispose();
@@ -146,14 +146,14 @@ public class AmazonS3
         }
     }
 
-    private static ILoggerFactory ConfigureAWSSDKLogging(StringWriter sw)
+    private static ILoggerFactory ConfigureAwsSdkLogging(StringWriter sw)
     {
         var lf = LoggerFactory.Create(builder => { builder.AddProvider(new StringWriterLoggerProvider(sw)); });
         lf.ConfigureAWSSDKLogging();
         return lf;
     }
 
-    private static void UnconfigureAWSSDKLogging()
+    private static void UnconfigureAwsSdkLogging()
     {
         Amazon.Runtime.Logging.AdaptorLoggerFactoryRegistry.DeregisterAdaptorLoggerFactory("ILogger");
     }
@@ -164,13 +164,12 @@ public class AmazonS3
         await using var fileStream = File.OpenRead(path);
         var fileStreamResponse = await new HttpClient().PutAsync(new Uri(connection.PreSignedUrl),
             new StreamContent(fileStream), cancellationToken);
-        var response = fileStreamResponse.EnsureSuccessStatusCode();
+        fileStreamResponse.EnsureSuccessStatusCode();
     }
 
-    private static async Task<PutObjectResponse> UploadFileToS3(FileInfo file, Connection connection, Input input,
+    private static async Task UploadFileToS3(FileInfo file, Connection connection, Input input,
         string path, CancellationToken cancellationToken)
     {
-        PutObjectResponse result;
         using var client = new AmazonS3Client(connection.AwsAccessKeyId, connection.AwsSecretAccessKey,
             RegionSelection(connection.Region));
         if (!connection.Overwrite)
@@ -200,9 +199,7 @@ public class AmazonS3
             CannedACL = (input.UseACL) ? GetS3CannedACL(input.ACL) : S3CannedACL.NoACL,
         };
 
-        result = await client.PutObjectAsync(putObjectRequest, cancellationToken);
-
-        return result;
+        await client.PutObjectAsync(putObjectRequest, cancellationToken);
     }
 
     private static async Task UploadMultipart(FileInfo file, Connection connection, Input input, string path,
@@ -251,7 +248,7 @@ public class AmazonS3
             };
             completeRequest.AddPartETags(uploadResponses);
 
-            var completeUploadResponse = await client.CompleteMultipartUploadAsync(completeRequest, cancellationToken);
+            await client.CompleteMultipartUploadAsync(completeRequest, cancellationToken);
         }
         catch (Exception)
         {
@@ -266,13 +263,13 @@ public class AmazonS3
             {
                 foreach (var part in listParts.Parts)
                 {
-                    AbortMultipartUploadRequest abortMPURequest = new()
+                    AbortMultipartUploadRequest abortMpuRequest = new()
                     {
                         BucketName = input.BucketName,
                         Key = path,
                         UploadId = uploadRequest.UploadId
                     };
-                    await client.AbortMultipartUploadAsync(abortMPURequest, cancellationToken);
+                    await client.AbortMultipartUploadAsync(abortMpuRequest, cancellationToken);
                 }
 
                 listParts = await client.ListPartsAsync(listPartsRequest, cancellationToken);
@@ -315,7 +312,7 @@ public class AmazonS3
             stream?.Close();
         }
 
-        // File is not locked.
+        // The File is not locked.
         return false;
     }
 

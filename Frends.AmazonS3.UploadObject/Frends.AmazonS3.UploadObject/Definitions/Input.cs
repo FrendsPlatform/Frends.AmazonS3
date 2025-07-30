@@ -25,7 +25,7 @@ public class Input
     public string FileMask { get; set; }
 
     /// <summary>
-    /// AWS S3 root directory. If directory does not exist, it will be created.
+    /// AWS S3 root directory. If the directory does not exist, it will be created.
     /// </summary>
     /// <example>directory/</example>
     [DisplayFormat(DataFormatString = "Text")]
@@ -39,7 +39,7 @@ public class Input
     public string BucketName { get; set; }
 
     /// <summary>
-    /// Set to true to upload object(s) from current directory only.
+    /// Set to true to upload object(s) from the current directory only.
     /// </summary>
     /// <example>false</example>
     public bool UploadFromCurrentDirectoryOnly { get; set; }
@@ -65,7 +65,7 @@ public class Input
     public long PartSize { get; set; }
 
     /// <summary>
-    /// Enable/disable AWS S3 access control list.
+    /// Enable/disable an AWS S3 access control list.
     /// Not supported when using multipart upload (Connection.UseMultipartUpload = true).
     /// </summary>
     /// <example>false</example>

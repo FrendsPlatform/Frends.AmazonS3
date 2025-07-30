@@ -13,9 +13,8 @@ using dotenv.net;
 namespace Frends.AmazonS3.UploadObject.Tests;
 
 [TestClass]
-public class AWSCredsUnitTests
+public class AwsCredentialsUnitTests
 {
-    public TestContext? TestContext { get; set; }
     private readonly string? _accessKey;
     private readonly string? _secretAccessKey;
     private readonly string? _bucketName;
@@ -24,7 +23,7 @@ public class AWSCredsUnitTests
     Input? _input;
     Options? _options;
 
-    public AWSCredsUnitTests()
+    public AwsCredentialsUnitTests()
     {
         DotEnv.Load();
         _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");

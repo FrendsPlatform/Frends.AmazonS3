@@ -13,7 +13,7 @@ using dotenv.net;
 namespace Frends.AmazonS3.UploadObject.Tests;
 
 [TestClass]
-public class AWSCredsUnitTestsMultipart
+public class AwsCredentialsUnitTestsMultipart
 {
     public TestContext? TestContext { get; set; }
     private readonly string? _accessKey;
@@ -24,7 +24,7 @@ public class AWSCredsUnitTestsMultipart
     private Input _input = new();
     private Options _options = new();
 
-    public AWSCredsUnitTestsMultipart()
+    public AwsCredentialsUnitTestsMultipart()
     {
         DotEnv.Load();
         _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
@@ -107,7 +107,7 @@ public class AWSCredsUnitTestsMultipart
     }
 
     [TestMethod]
-    public async Task AWSCreds_Upload()
+    public async Task AwsCredentials_Upload()
     {
         var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
         Assert.AreEqual(2, result.Objects.Count);
@@ -117,7 +117,7 @@ public class AWSCredsUnitTestsMultipart
     }
 
     [TestMethod]
-    public async Task AWSCreds_Missing_FailOnErrorResponse_False()
+    public async Task AwsCredentials_Missing_FailOnErrorResponse_False()
     {
         var connection = _connection;
         connection.AwsAccessKeyId = null;
@@ -137,7 +137,7 @@ public class AWSCredsUnitTestsMultipart
     }
 
     [TestMethod]
-    public async Task AWSCreds_Missing_ThrowErrorOnFailure_True()
+    public async Task AwsCredentials_Missing_ThrowErrorOnFailure_True()
     {
         var connection = _connection;
         connection.AwsAccessKeyId = null;
@@ -159,19 +159,17 @@ public class AWSCredsUnitTestsMultipart
         byte[] buffer = new byte[bufferSize];
         var random = new Random();
 
-        using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+        using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+        long bytesWritten = 0;
+
+        while (bytesWritten < targetSizeInBytes)
         {
-            long bytesWritten = 0;
+            random.NextBytes(buffer);
+            int bytesToWrite = (int)Math.Min(buffer.Length, targetSizeInBytes - bytesWritten);
+            fileStream.Write(buffer, 0, bytesToWrite);
+            bytesWritten += bytesToWrite;
 
-            while (bytesWritten < targetSizeInBytes)
-            {
-                random.NextBytes(buffer);
-                int bytesToWrite = (int)Math.Min(buffer.Length, targetSizeInBytes - bytesWritten);
-                fileStream.Write(buffer, 0, bytesToWrite);
-                bytesWritten += bytesToWrite;
-
-                Console.WriteLine($"Progress: {bytesWritten / (1024 * 1024)} MB / 6144 MB");
-            }
+            Console.WriteLine($"Progress: {bytesWritten / (1024 * 1024)} MB / 6144 MB");
         }
     }
 }
