@@ -480,7 +480,7 @@ public class AWSCredsUnitTests
         _options = new Options
         {
             ThrowErrorIfNoMatch = true,
-            ThrowErrorOnFailure = false,
+            ThrowErrorOnFailure = true,
             ErrorMessageOnFailure = ""
         };
 
@@ -612,7 +612,7 @@ public class AWSCredsUnitTests
         _options = new Options
         {
             ThrowErrorIfNoMatch = true,
-            ThrowErrorOnFailure = false,
+            ThrowErrorOnFailure = true,
             ErrorMessageOnFailure = ""
         };
 
