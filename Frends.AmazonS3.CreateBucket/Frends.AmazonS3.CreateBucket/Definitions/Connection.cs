@@ -25,14 +25,6 @@ public class Connection
     public string AwsSecretAccessKey { get; set; }
 
     /// <summary>
-    /// AWS S3 bucket's name.
-    /// See https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-s3-bucket-naming-requirements.html
-    /// </summary>
-    /// <example>bucket</example>
-    [DisplayFormat(DataFormatString = "Text")]
-    public string BucketName { get; set; }
-
-    /// <summary>
     /// AWS S3 bucket's region.
     /// </summary>
     /// <example>EuCentral1</example>
@@ -41,14 +33,7 @@ public class Connection
     /// <summary>
     /// Access control list.
     /// </summary>
-    /// <example>ACL.Private</example>
-    [DefaultValue(ACLs.Private)]
-    public ACLs ACL { get; set; }
-
-    /// <summary>
-    /// Specifies whether you want S3 Object Lock to be enabled for the new bucket.
-    /// </summary>
-    /// <example>false</example>
-    [DefaultValue(false)]
-    public bool ObjectLockEnabledForBucket { get; set; }
+    /// <example>Acl.Private</example>
+    [DefaultValue(Acls.Private)]
+    public Acls Acl { get; set; }
 }
