@@ -141,7 +141,7 @@ public class PreSignedUnitTests
     }
 
     [TestMethod]
-    public async Task PreSignedUnitTest_MissingURL_ThrowExceptionOnErrorResponse_true()
+    public async Task PreSignedUnitTest_MissingURL_FailOnErrorResponse_true()
     {
         _input = new Input
         {
@@ -175,7 +175,7 @@ public class PreSignedUnitTests
             ErrorMessageOnFailure = ""
         };
 
-        var ex = await Assert.ThrowsExceptionAsync<UploadException>(async () => await AmazonS3.UploadObject(_input, _connection, _options, default));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.UploadObject(_input, _connection, _options, default));
         Assert.IsTrue(ex.Message.Contains("Invalid URI: The format of the URI could not be determined"));
     }
 

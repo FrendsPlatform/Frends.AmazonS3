@@ -118,7 +118,7 @@ public class AWSCredsUnitTestsMultipart
     }
 
     [TestMethod]
-    public async Task AWSCreds_Missing_ThrowExceptionOnErrorResponse_False()
+    public async Task AWSCreds_Missing_FailOnErrorResponse_False()
     {
         var connection = _connection;
         connection.AwsAccessKeyId = null;
@@ -134,7 +134,7 @@ public class AWSCredsUnitTestsMultipart
 
         var result = await AmazonS3.UploadObject(_input, connection, options, default);
         Assert.AreEqual(0, result.Objects.Count);
-        Assert.IsFalse(result.Success, result.DebugLog);
+        Assert.IsFalse(result.Success);
         Assert.IsTrue(result.DebugLog.Contains("Please authenticate"));
     }
 
@@ -152,8 +152,8 @@ public class AWSCredsUnitTestsMultipart
             ErrorMessageOnFailure = ""
         };
 
-        var ex = await Assert.ThrowsExceptionAsync<UploadException>(async () => await AmazonS3.UploadObject(_input, connection, options, default));
-        Assert.IsTrue(ex.DebugLog.Contains("Please authenticate"));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.UploadObject(_input, connection, options, default));
+        Assert.IsTrue(ex.Message.Contains("Please authenticate"));
     }
 
     static void CreateDummyFile(string filePath, long targetSizeInBytes)

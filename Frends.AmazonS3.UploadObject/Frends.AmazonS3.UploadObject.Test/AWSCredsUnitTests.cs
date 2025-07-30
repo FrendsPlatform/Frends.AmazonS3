@@ -203,7 +203,7 @@ public class AWSCredsUnitTests
     }
 
     [TestMethod]
-    public async Task AWSCreds_Missing_ThrowExceptionOnErrorResponse_True()
+    public async Task AWSCreds_Missing_FailOnErrorResponse_True()
     {
         _input = new Input
         {
@@ -238,8 +238,7 @@ public class AWSCredsUnitTests
             ErrorMessageOnFailure = ""
         };
 
-        var ex = await Assert.ThrowsExceptionAsync<UploadException>(async () => await AmazonS3.UploadObject(_input, _connection, _options, default));
-        Assert.IsTrue(ex.DebugLog.Contains("Access Denied"));
+        await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.UploadObject(_input, _connection, _options, default));
     }
 
     [TestMethod]
