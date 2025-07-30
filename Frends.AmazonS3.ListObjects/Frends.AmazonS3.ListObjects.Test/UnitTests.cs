@@ -21,7 +21,7 @@ namespace Frends.AmazonS3.ListObjects.Test
     {
         private readonly string? _accessKey;
         private readonly string? _secretAccessKey;
-        private readonly string? _bucketName = "frends-listobjects-test-bucket";
+        private readonly string _bucketName;
         private IAmazonS3? _s3Client;
         private readonly List<string> _testFiles =
         [
@@ -40,6 +40,7 @@ namespace Frends.AmazonS3.ListObjects.Test
             DotEnv.Load(options: new DotEnvOptions(probeForEnv: true));
             _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
             _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
+            _bucketName = $"frends-listobjects-test-bucket-{Guid.NewGuid().ToString("n").Substring(0, 8)}";
         }
 
         [TestInitialize]
@@ -50,6 +51,7 @@ namespace Frends.AmazonS3.ListObjects.Test
             if (!await AmazonS3Util.DoesS3BucketExistV2Async(_s3Client, _bucketName))
             {
                 await _s3Client.PutBucketAsync(_bucketName);
+                await Task.Delay(1000);
 
                 foreach (var file in _testFiles)
                 {
@@ -59,6 +61,7 @@ namespace Frends.AmazonS3.ListObjects.Test
                         Key = file,
                         ContentBody = "test content"
                     });
+                    await Task.Delay(100);
                 }
             }
 
@@ -101,6 +104,14 @@ namespace Frends.AmazonS3.ListObjects.Test
                     }
 
                     await _s3Client.DeleteBucketAsync(_bucketName);
+
+                    await Task.Delay(1000);
+                    bool bucketStillExists = await AmazonS3Util.DoesS3BucketExistV2Async(_s3Client, _bucketName);
+
+                    if (bucketStillExists)
+                    {
+                        Console.WriteLine($"Warning: Bucket {_bucketName} still exists after deletion attempt.");
+                    }
                 }
             }
             catch (Exception ex)
