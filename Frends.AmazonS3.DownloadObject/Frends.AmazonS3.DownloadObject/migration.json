@@ -1,0 +1,78 @@
+﻿[
+  {
+    "Task": "Frends.AmazonS3.DownloadObject",
+    "Migrations": [
+      {
+        "Version": "3.0.0",
+        "Description": "Major refactoring - restructured parameters into Input, Connection, and Options classes with improved error handling",
+        "Migration": [
+          {
+            "Type": "Copy",
+            "Source": "Connection.BucketName",
+            "Target": "Input.BucketName"
+          },
+          {
+            "Type": "Copy",
+            "Source": "Connection.S3Directory",
+            "Target": "Input.SourceDirectory"
+          },
+          {
+            "Type": "Copy",
+            "Source": "Connection.SearchPattern",
+            "Target": "Input.SearchPattern"
+          },
+          {
+            "Type": "Copy",
+            "Source": "Connection.DownloadFromCurrentDirectoryOnly",
+            "Target": "Input.DownloadFromCurrentDirectoryOnly"
+          },
+          {
+            "Type": "Copy",
+            "Source": "Connection.DestinationDirectory",
+            "Target": "Input.TargetDirectory"
+          },
+          {
+            "Type": "Copy",
+            "Source": "Connection.FileLockedRetries",
+            "Target": "Options.FileLockedRetries"
+          },
+          {
+            "Type": "Copy",
+            "Source": "Connection.DeleteSourceObject",
+            "Target": "Options.DeleteSourceObject"
+          },
+          {
+            "Type": "Copy",
+            "Source": "Connection.ThrowErrorIfNoMatch",
+            "Target": "Options.ThrowErrorIfNoMatch"
+          },
+          {
+            "Type": "Copy",
+            "Source": "Connection.DestinationFileExistsAction",
+            "Target": "Options.ActionOnExistingFile"
+          },
+          {
+            "Type": "Copy",
+            "Source": "Connection.AWSCredentials",
+            "Target": "Connection.AwsCredentials"
+          },
+          {
+            "Type": "Copy",
+            "Source": "Connection.PreSignedURL",
+            "Target": "Connection.PreSignedUrl"
+          },
+          {
+            "Type": "Set",
+            "Target": "Options.ThrowErrorOnFailure",
+            "Value": "false"
+          },
+          {
+            "Type": "Set",
+            "Target": "Options.ErrorMessageOnFailure",
+            "Value": "\"\""
+          }
+        ]
+      }
+    ]
+  }
+]
