@@ -62,6 +62,7 @@ public class Connection
     /// <example>EuCentral1</example>
     [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AwsCredentials)]
     public Region Region { get; set; }
+
     #endregion AWSCredentials
 
     #region options
@@ -96,7 +97,7 @@ public class Connection
     /// </summary>
     /// <example>10</example>
     public long PartSize { get; set; }
-    
+
     /// <summary>
     /// Enable/disable an AWS S3 access control list.
     /// Not supported when using multipart upload (Connection.UseMultipartUpload = true).
@@ -104,12 +105,13 @@ public class Connection
     /// <example>false</example>
     [DefaultValue(false)]
     public bool UseAcl { get; set; }
-    
+
     /// <summary>
     /// Access control list. Enabled when UseACL is true.
     /// </summary>
     /// <example>Private</example>
     [UIHint(nameof(UseAcl), "", true)]
     public ACLs Acl { get; set; }
+
     #endregion options
 }
