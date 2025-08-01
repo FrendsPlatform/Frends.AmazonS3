@@ -196,7 +196,7 @@ public class AmazonS3
             BucketName = input.BucketName,
             Key = path,
             FilePath = file.FullName,
-            CannedACL = (input.UseACL) ? GetS3CannedACL(input.ACL) : S3CannedACL.NoACL,
+            CannedACL = (connection.UseAcl) ? GetS3CannedACL(connection.Acl) : S3CannedACL.NoACL,
         };
 
         await client.PutObjectAsync(putObjectRequest, cancellationToken);
@@ -217,7 +217,7 @@ public class AmazonS3
             RegionSelection(connection.Region));
         var initResponse = await client.InitiateMultipartUploadAsync(initiateRequest, cancellationToken);
 
-        long partSizeInBytes = input.PartSize * (long)Math.Pow(2, 20);
+        long partSizeInBytes = connection.PartSize * (long)Math.Pow(2, 20);
         UploadPartRequest uploadRequest = null;
         try
         {

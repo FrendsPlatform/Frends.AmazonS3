@@ -79,9 +79,7 @@ public class AwsCredentialsUnitTests
         _input = new Input
         {
             SourceDirectory = Path.Combine(_dir, "AWS"),
-            ACL = default,
             FileMask = null,
-            UseACL = false,
             TargetDirectory = "Upload2023/",
             BucketName = _bucketName,
             UploadFromCurrentDirectoryOnly = false,
@@ -98,7 +96,9 @@ public class AwsCredentialsUnitTests
             Overwrite = false,
             ReturnListOfObjectKeys = false,
             UseMultipartUpload = false,
-            GatherDebugLog = true
+            GatherDebugLog = true,
+            Acl = default,
+            UseAcl = false,
         };
 
         _options = new Options
@@ -121,9 +121,7 @@ public class AwsCredentialsUnitTests
         _input = new Input
         {
             SourceDirectory = Path.Combine(_dir, "AWS"),
-            ACL = default,
             FileMask = null,
-            UseACL = false,
             TargetDirectory = "Upload2023/",
             BucketName = _bucketName,
             UploadFromCurrentDirectoryOnly = false,
@@ -141,6 +139,8 @@ public class AwsCredentialsUnitTests
             ReturnListOfObjectKeys = false,
             UseMultipartUpload = false,
             GatherDebugLog = false,
+            Acl = default,
+            UseAcl = false,
         };
 
         _options = new Options
@@ -163,9 +163,7 @@ public class AwsCredentialsUnitTests
         _input = new Input
         {
             SourceDirectory = Path.Combine(_dir, "AWS"),
-            ACL = default,
             FileMask = null,
-            UseACL = false,
             TargetDirectory = "Upload2023/",
             BucketName = _bucketName,
             UploadFromCurrentDirectoryOnly = false,
@@ -183,6 +181,8 @@ public class AwsCredentialsUnitTests
             ReturnListOfObjectKeys = false,
             UseMultipartUpload = false,
             GatherDebugLog = true,
+            Acl = default,
+            UseAcl = false,
         };
 
         _options = new Options
@@ -204,9 +204,7 @@ public class AwsCredentialsUnitTests
         _input = new Input
         {
             SourceDirectory = Path.Combine(_dir, "AWS"),
-            ACL = default,
             FileMask = null,
-            UseACL = false,
             TargetDirectory = "Upload2023/",
             BucketName = _bucketName,
             UploadFromCurrentDirectoryOnly = false,
@@ -224,6 +222,8 @@ public class AwsCredentialsUnitTests
             ReturnListOfObjectKeys = false,
             UseMultipartUpload = false,
             GatherDebugLog = true,
+            Acl = default,
+            UseAcl = false,
         };
 
         _options = new Options
@@ -233,7 +233,8 @@ public class AwsCredentialsUnitTests
             ErrorMessageOnFailure = ""
         };
 
-        await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.UploadObject(_input, _connection, _options, default));
+        await Assert.ThrowsExceptionAsync<Exception>(async () =>
+            await AmazonS3.UploadObject(_input, _connection, _options, default));
     }
 
     [TestMethod]
@@ -242,9 +243,7 @@ public class AwsCredentialsUnitTests
         _input = new Input
         {
             SourceDirectory = Path.Combine(_dir, "AWS"),
-            ACL = default,
             FileMask = null,
-            UseACL = false,
             TargetDirectory = "Upload2023/",
             BucketName = _bucketName,
             UploadFromCurrentDirectoryOnly = true,
@@ -262,6 +261,8 @@ public class AwsCredentialsUnitTests
             ReturnListOfObjectKeys = false,
             UseMultipartUpload = false,
             GatherDebugLog = true,
+            Acl = default,
+            UseAcl = false,
         };
 
         _options = new Options
@@ -284,9 +285,7 @@ public class AwsCredentialsUnitTests
         _input = new Input
         {
             SourceDirectory = Path.Combine(_dir, "AWS"),
-            ACL = default,
             FileMask = null,
-            UseACL = false,
             TargetDirectory = "Upload2023/",
             BucketName = _bucketName,
             UploadFromCurrentDirectoryOnly = false,
@@ -304,6 +303,8 @@ public class AwsCredentialsUnitTests
             ReturnListOfObjectKeys = false,
             UseMultipartUpload = false,
             GatherDebugLog = true,
+            Acl = default,
+            UseAcl = false,
         };
 
         _options = new Options
@@ -326,9 +327,7 @@ public class AwsCredentialsUnitTests
         _input = new Input
         {
             SourceDirectory = Path.Combine(_dir, "AWS"),
-            ACL = default,
             FileMask = null,
-            UseACL = false,
             TargetDirectory = "Upload2023/",
             BucketName = _bucketName,
             UploadFromCurrentDirectoryOnly = false,
@@ -346,6 +345,8 @@ public class AwsCredentialsUnitTests
             ReturnListOfObjectKeys = false,
             UseMultipartUpload = false,
             GatherDebugLog = true,
+            Acl = default,
+            UseAcl = false,
         };
 
         _options = new Options
@@ -368,9 +369,7 @@ public class AwsCredentialsUnitTests
         _input = new Input
         {
             SourceDirectory = Path.Combine(_dir, "AWS"),
-            ACL = default,
             FileMask = null,
-            UseACL = false,
             TargetDirectory = "Upload2023/",
             BucketName = _bucketName,
             UploadFromCurrentDirectoryOnly = false,
@@ -388,6 +387,8 @@ public class AwsCredentialsUnitTests
             Overwrite = true,
             UseMultipartUpload = false,
             GatherDebugLog = true,
+            Acl = default,
+            UseAcl = false,
         };
 
         _options = new Options
@@ -412,9 +413,7 @@ public class AwsCredentialsUnitTests
         _input = new Input
         {
             SourceDirectory = Path.Combine(_dir, "AWS"),
-            ACL = default,
             FileMask = fileName,
-            UseACL = false,
             TargetDirectory = "Upload2023/",
             BucketName = _bucketName,
             UploadFromCurrentDirectoryOnly = false,
@@ -432,6 +431,8 @@ public class AwsCredentialsUnitTests
             Overwrite = false,
             UseMultipartUpload = false,
             GatherDebugLog = true,
+            Acl = default,
+            UseAcl = false,
         };
 
         _options = new Options
@@ -455,9 +456,7 @@ public class AwsCredentialsUnitTests
         _input = new Input
         {
             SourceDirectory = Path.Combine(_dir, "AWS"),
-            ACL = default,
             FileMask = "notafile*",
-            UseACL = false,
             TargetDirectory = "Upload2023/",
             BucketName = _bucketName,
             UploadFromCurrentDirectoryOnly = false,
@@ -474,6 +473,8 @@ public class AwsCredentialsUnitTests
             ReturnListOfObjectKeys = false,
             Overwrite = false,
             UseMultipartUpload = false,
+            Acl = default,
+            UseAcl = false,
         };
 
         _options = new Options
@@ -483,7 +484,8 @@ public class AwsCredentialsUnitTests
             ErrorMessageOnFailure = ""
         };
 
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.UploadObject(_input, _connection, _options, default));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () =>
+            await AmazonS3.UploadObject(_input, _connection, _options, default));
         Assert.IsTrue(ex.Message.Contains($"No files match the filemask '{_input.FileMask}' within supplied path."));
     }
 
@@ -492,19 +494,14 @@ public class AwsCredentialsUnitTests
     {
         // Public ACLs like PublicRead, PublicReadWrite and AuthenticatedRead are
         // excluded from automated unit tests due to security
-        var acls = new List<ACLs> { ACLs.Private, ACLs.BucketOwnerRead, ACLs.BucketOwnerFullControl, ACLs.LogDeliveryWrite };
+        var acls = new List<ACLs>
+            { ACLs.Private, ACLs.BucketOwnerRead, ACLs.BucketOwnerFullControl, ACLs.LogDeliveryWrite };
 
-        _connection = new Connection
+        _options = new Options
         {
-            AuthenticationMethod = AuthenticationMethod.AwsCredentials,
-            PreSignedUrl = null,
-            AwsAccessKeyId = _accessKey,
-            AwsSecretAccessKey = _secretAccessKey,
-            Region = Region.EuCentral1,
-            Overwrite = false,
-            ReturnListOfObjectKeys = false,
-            UseMultipartUpload = false,
-            GatherDebugLog = true
+            ThrowErrorIfNoMatch = false,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
         };
 
         foreach (var acl in acls)
@@ -512,9 +509,7 @@ public class AwsCredentialsUnitTests
             _input = new Input
             {
                 SourceDirectory = Path.Combine(_dir, "AWS"),
-                ACL = acl,
                 FileMask = null,
-                UseACL = true,
                 TargetDirectory = "Upload2023/",
                 BucketName = _bucketName,
                 UploadFromCurrentDirectoryOnly = false,
@@ -522,11 +517,19 @@ public class AwsCredentialsUnitTests
                 DeleteSource = false,
             };
 
-            _options = new Options
+            _connection = new Connection
             {
-                ThrowErrorIfNoMatch = false,
-                ThrowErrorOnFailure = false,
-                ErrorMessageOnFailure = ""
+                AuthenticationMethod = AuthenticationMethod.AwsCredentials,
+                PreSignedUrl = null,
+                AwsAccessKeyId = _accessKey,
+                AwsSecretAccessKey = _secretAccessKey,
+                Region = Region.EuCentral1,
+                Overwrite = false,
+                ReturnListOfObjectKeys = false,
+                UseMultipartUpload = false,
+                GatherDebugLog = true,
+                Acl = acl,
+                UseAcl = true,
             };
 
             var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
@@ -546,9 +549,7 @@ public class AwsCredentialsUnitTests
         _input = new Input
         {
             SourceDirectory = Path.Combine(_dir, "AWS", "EmptyFolder"),
-            ACL = default,
             FileMask = null,
-            UseACL = false,
             TargetDirectory = "Upload2023/",
             BucketName = _bucketName,
             UploadFromCurrentDirectoryOnly = false,
@@ -566,6 +567,8 @@ public class AwsCredentialsUnitTests
             ReturnListOfObjectKeys = false,
             UseMultipartUpload = false,
             GatherDebugLog = true,
+            Acl = default,
+            UseAcl = false,
         };
 
         _options = new Options
@@ -587,9 +590,7 @@ public class AwsCredentialsUnitTests
         _input = new Input
         {
             SourceDirectory = Path.Combine(_dir, "AWS", "EmptyFolder"),
-            ACL = default,
             FileMask = null,
-            UseACL = false,
             TargetDirectory = "Upload2023/",
             BucketName = _bucketName,
             UploadFromCurrentDirectoryOnly = false,
@@ -606,6 +607,8 @@ public class AwsCredentialsUnitTests
             Overwrite = false,
             ReturnListOfObjectKeys = false,
             UseMultipartUpload = false,
+            Acl = default,
+            UseAcl = false,
         };
 
         _options = new Options
@@ -615,8 +618,8 @@ public class AwsCredentialsUnitTests
             ErrorMessageOnFailure = ""
         };
 
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.UploadObject(_input, _connection, _options, default));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () =>
+            await AmazonS3.UploadObject(_input, _connection, _options, default));
         Assert.IsTrue(ex.Message.Contains($"No files match the filemask '*' within supplied path."));
     }
-
 }

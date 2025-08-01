@@ -67,11 +67,6 @@
                         "Target": "Options.ThrowErrorIfNoMatch"
                     },
                     {
-                        "Type": "Copy",
-                        "Source": "Connection.ThrowExceptionOnErrorResponse",
-                        "Target": "Options.FailOnErrorResponse"
-                    },
-                    {
                         "Type": "Set",
                         "Target": "Options.ThrowErrorOnFailure",
                         "Value": "false"

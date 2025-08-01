@@ -38,11 +38,8 @@ public class AwsCredentialsUnitTestsMultipart
         _input = new Input
         {
             SourceDirectory = Path.Combine(_dir, "AWS"),
-            ACL = default,
             FileMask = null,
-            UseACL = false,
             TargetDirectory = "Upload2023/",
-            PartSize = 100,
             BucketName = _bucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
@@ -59,7 +56,10 @@ public class AwsCredentialsUnitTestsMultipart
             Overwrite = false,
             ReturnListOfObjectKeys = false,
             UseMultipartUpload = true,
-            GatherDebugLog = true
+            GatherDebugLog = true,
+            Acl = default,
+            UseAcl = false,
+            PartSize = 100,
         };
 
         _options = new Options

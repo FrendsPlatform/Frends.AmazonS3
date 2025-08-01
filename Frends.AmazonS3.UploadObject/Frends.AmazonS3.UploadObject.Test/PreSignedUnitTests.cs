@@ -63,9 +63,7 @@ public class PreSignedUnitTests
         _input = new Input
         {
             SourceDirectory = Path.Combine(_dir, "AWS"),
-            ACL = default,
             FileMask = null,
-            UseACL = false,
             TargetDirectory = null,
             BucketName = null,
             UploadFromCurrentDirectoryOnly = false,
@@ -82,7 +80,9 @@ public class PreSignedUnitTests
             Overwrite = false,
             ReturnListOfObjectKeys = false,
             UseMultipartUpload = false,
-            GatherDebugLog = false
+            GatherDebugLog = false,
+            Acl = default,
+            UseAcl = false,
         };
         _options = new Options
         {
@@ -104,9 +104,7 @@ public class PreSignedUnitTests
         _input = new Input
         {
             SourceDirectory = Path.Combine(_dir, "AWS"),
-            ACL = default,
             FileMask = null,
-            UseACL = false,
             TargetDirectory = null,
             BucketName = null,
             UploadFromCurrentDirectoryOnly = false,
@@ -123,6 +121,8 @@ public class PreSignedUnitTests
             Overwrite = false,
             ReturnListOfObjectKeys = false,
             UseMultipartUpload = false,
+            Acl = default,
+            UseAcl = false,
         };
 
         _options = new Options
@@ -144,9 +144,7 @@ public class PreSignedUnitTests
         _input = new Input
         {
             SourceDirectory = Path.Combine(_dir, "AWS"),
-            ACL = default,
             FileMask = null,
-            UseACL = false,
             TargetDirectory = null,
             BucketName = null,
             UploadFromCurrentDirectoryOnly = false,
@@ -163,6 +161,8 @@ public class PreSignedUnitTests
             Overwrite = false,
             ReturnListOfObjectKeys = false,
             UseMultipartUpload = false,
+            Acl = default,
+            UseAcl = false,
         };
 
         _options = new Options
