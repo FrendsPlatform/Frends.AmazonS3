@@ -40,12 +40,12 @@ public enum AuthenticationMethod
     /// <summary>
     /// AwsAccessKeyId+AwsSecretAccessKey.
     /// </summary>
-    AWSCredentials,
+    AwsCredentials,
 
     /// <summary>
     /// Pre-signed URL.
     /// </summary>
-    PreSignedURL
+    PreSignedUrl
 }
 
 /// <summary>

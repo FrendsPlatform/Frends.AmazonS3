@@ -1,26 +1,24 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-	<TargetFrameworks>net6.0</TargetFrameworks>
-	<Version>2.0.0</Version>
-	<Authors>Frends</Authors>
-	<Copyright>Frends</Copyright>
-	<Company>Frends</Company>
-	<Product>Frends</Product>
-	<PackageTags>Frends</PackageTags>
-	<PackageLicenseExpression>MIT</PackageLicenseExpression>
-	<GenerateDocumentationFile>true</GenerateDocumentationFile>
-	<Description>Frends Task for uploading objects to Amazon S3.</Description>
-	<PackageProjectUrl>https://frends.com/</PackageProjectUrl>
-	<RepositoryUrl>https://github.com/FrendsPlatform/Frends.AmazonS3</RepositoryUrl>
+    <TargetFramework>net8.0</TargetFramework>
+    <Version>3.0.0</Version>
+    <Authors>Frends</Authors>
+    <Copyright>Frends</Copyright>
+    <Company>Frends</Company>
+    <Product>Frends</Product>
+    <PackageTags>Frends</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Description>Frends Task for uploading objects to Amazon S3.</Description>
+    <PackageProjectUrl>https://frends.com/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/FrendsPlatform/Frends.AmazonS3</RepositoryUrl>
   </PropertyGroup>
-	
   <ItemGroup>
-	  <None Include="FrendsTaskMetadata.json" Pack="true" PackagePath="/">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+    <None Include="FrendsTaskMetadata.json" Pack="true" PackagePath="/">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
-  
   <ItemGroup>
     <PackageReference Include="AWSSDK.Core" Version="4.0.0.5" />
     <PackageReference Include="AWSSDK.Extensions.Logging.ILoggerAdaptor" Version="4.0.0" />
@@ -28,5 +26,8 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.3" />
   </ItemGroup>
-
+  <ItemGroup>
+    <Content Include="migration.json" PackagePath="/" Pack="true" />
+    <Content Include="../CHANGELOG.md" PackagePath="/" Pack="true" />
+  </ItemGroup>
 </Project>

@@ -13,7 +13,7 @@ public class Input
     /// </summary>
     /// <example>c:\temp, \\network\folder</example>
     [DisplayFormat(DataFormatString = "Text")]
-    public string FilePath { get; set; }
+    public string SourceDirectory { get; set; }
 
     /// <summary>
     /// Windows-style filemask. Empty field = all objects (*).
@@ -25,32 +25,34 @@ public class Input
     public string FileMask { get; set; }
 
     /// <summary>
-    /// AWS S3 root directory. If directory does not exist, it will be created.
+    /// AWS S3 root directory. If the directory does not exist, it will be created.
     /// </summary>
     /// <example>directory/</example>
     [DisplayFormat(DataFormatString = "Text")]
-    public string S3Directory { get; set; }
+    public string TargetDirectory { get; set; }
 
     /// <summary>
-    /// Specifies the size (in MB) of individual parts into which large files are divided when Connection.UseMultipartUpload = true.
-    /// Each part is limited to a minimum of 5 MB and a maximum of 5 TB in Amazon S3.
-    /// Recommended part sizes typically range from 10 MB to 100 MB for optimal performance.
+    /// AWS S3 bucket's name.
     /// </summary>
-    /// <example>10</example>
-    public long PartSize { get; set; }
+    /// <example>Bucket</example>
+    [DisplayFormat(DataFormatString = "Text")]
+    public string BucketName { get; set; }
 
     /// <summary>
-    /// Enable/disable AWS S3 access control list.
-    /// Not supported when using multipart upload (Connection.UseMultipartUpload = true).
+    /// Set to true to upload object(s) from the current directory only.
     /// </summary>
     /// <example>false</example>
-    [DefaultValue(false)]
-    public bool UseACL { get; set; }
+    public bool UploadFromCurrentDirectoryOnly { get; set; }
 
     /// <summary>
-    /// Access control list. Enabled when UseACL is true.
+    /// Set to true to create subdirectories to S3 bucket.
     /// </summary>
-    /// <example>Private</example>
-    [UIHint(nameof(UseACL), "", true)]
-    public ACLs ACL { get; set; }
+    /// <example>false</example>
+    public bool PreserveFolderStructure { get; set; }
+
+    /// <summary>
+    /// Delete local source object(s) after upload.
+    /// </summary>
+    /// <example>false</example>
+    public bool DeleteSource { get; set; }
 }

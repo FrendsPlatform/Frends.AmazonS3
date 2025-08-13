@@ -4,17 +4,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Frends.AmazonS3.UploadObject.Definitions;
 
-internal class StringWriterLogger : ILogger
+internal class StringWriterLogger(TextWriter writer, string category) : ILogger
 {
-    private readonly TextWriter _writer;
-    private readonly string _category;
     private readonly object _syncRoot = new();
-
-    public StringWriterLogger(TextWriter writer, string category)
-    {
-        _writer = writer;
-        _category = category;
-    }
 
     public IDisposable BeginScope<TState>(TState state) => null;
 
@@ -30,9 +22,9 @@ internal class StringWriterLogger : ILogger
         var message = formatter(state, exception);
         lock (_syncRoot)
         {
-            _writer.WriteLine($"[{logLevel}] {_category}: {message}");
+            writer.WriteLine($"[{logLevel}] {category}: {message}");
             if (exception != null)
-                _writer.WriteLine(exception);
+                writer.WriteLine(exception);
         }
     }
 }

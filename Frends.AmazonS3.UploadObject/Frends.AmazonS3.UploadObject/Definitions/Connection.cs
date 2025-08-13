@@ -9,10 +9,10 @@ namespace Frends.AmazonS3.UploadObject.Definitions;
 public class Connection
 {
     /// <summary>
-    /// Authentication method to use when connecting to AWS S3 bucket. Options are pre-signed URL or AWS Access Key ID+AWS Secret Access Key.
+    /// Authentication method to use when connecting to AWS S3 bucket. Options are pre-signed URL, or AWS Access Key ID+AWS Secret Access Key.
     /// </summary>
     /// <example>PreSignedURL</example>
-    [DefaultValue(AuthenticationMethod.AWSCredentials)]
+    [DefaultValue(AuthenticationMethod.AwsCredentials)]
     public AuthenticationMethod AuthenticationMethod { get; set; }
 
     /// <summary>
@@ -22,8 +22,8 @@ public class Connection
     /// <example>"https://bucket.s3.region.amazonaws.com/object/file.txt?X-Amz-Expires=120X-Amz-Algorithm...</example>
     [PasswordPropertyText]
     [DisplayFormat(DataFormatString = "Text")]
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.PreSignedURL)]
-    public string PreSignedURL { get; set; }
+    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.PreSignedUrl)]
+    public string PreSignedUrl { get; set; }
 
     #region AWSCredentials
 
@@ -33,7 +33,7 @@ public class Connection
     /// Multipart upload breaks the object into smaller parts, which are uploaded independently in parallel.
     /// </summary>
     /// <example>true</example>
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AWSCredentials)]
+    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AwsCredentials)]
     [DefaultValue(true)]
     public bool UseMultipartUpload { get; set; }
 
@@ -43,7 +43,7 @@ public class Connection
     /// <example>AKIAQWERTY7NJ5Q7NZ6Q</example>
     [DisplayFormat(DataFormatString = "Text")]
     [PasswordPropertyText]
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AWSCredentials)]
+    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AwsCredentials)]
     public string AwsAccessKeyId { get; set; }
 
     /// <summary>
@@ -52,58 +52,34 @@ public class Connection
     /// <example>TVh5hgd3uGY/2CqH+Kkrrg3dadbXLsYe0jC3h+WD</example>
     [DisplayFormat(DataFormatString = "Text")]
     [PasswordPropertyText]
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AWSCredentials)]
+    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AwsCredentials)]
     public string AwsSecretAccessKey { get; set; }
 
-    /// <summary>
-    /// AWS S3 bucket's name. Enabled when using AWSCredentials.
-    /// </summary>
-    /// <example>Bucket</example>
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AWSCredentials)]
-    [DisplayFormat(DataFormatString = "Text")]
-    public string BucketName { get; set; }
 
     /// <summary>
     /// AWS S3 bucket's region. Enabled when using AWSCredentials.
     /// </summary>
     /// <example>EuCentral1</example>
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AWSCredentials)]
+    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AwsCredentials)]
     public Region Region { get; set; }
+
     #endregion AWSCredentials
 
     #region options
-    /// <summary>
-    /// Set to true to upload object(s) from current directory only.
-    /// </summary>
-    /// <example>false</example>
-    public bool UploadFromCurrentDirectoryOnly { get; set; }
-
-    /// <summary>
-    /// Set to true to create subdirectories to S3 bucket. Enabled when UploadFromCurrentDirectoryOnly = false and using AWSCredentials.
-    /// </summary>
-    /// <example>false</example>
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AWSCredentials)]
-    public bool PreserveFolderStructure { get; set; }
 
     /// <summary>
     /// Return object keys from S3 in prefix/filename-format. Enabled when using AWSCredentials.
     /// </summary>
     /// <example>false</example>
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AWSCredentials)]
+    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AwsCredentials)]
     public bool ReturnListOfObjectKeys { get; set; }
 
     /// <summary>
     /// Set to true to overwrite object(s) with the same path and name (object key). Enabled when using AWSCredentials.
     /// </summary>
     /// <example>false</example>
-    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AWSCredentials)]
+    [UIHint(nameof(AuthenticationMethod), "", AuthenticationMethod.AwsCredentials)]
     public bool Overwrite { get; set; }
-
-    /// <summary>
-    /// Delete local source object(s) after upload.
-    /// </summary>
-    /// <example>false</example>
-    public bool DeleteSource { get; set; }
 
     /// <summary>
     /// Whether to gather AWS SDK debug log.
@@ -115,16 +91,27 @@ public class Connection
     public bool GatherDebugLog { get; set; }
 
     /// <summary>
-    /// Throw error if there are no object(s) in the path matching the filemask.
+    /// Specifies the size (in MB) of individual parts into which large files are divided when Connection.UseMultipartUpload = true.
+    /// Each part is limited to a minimum of 5 MB and a maximum of 5 TB in Amazon S3.
+    /// Recommended part sizes typically range from 10 MB to 100 MB for optimal performance.
     /// </summary>
-    /// <example>false</example>
-    public bool ThrowErrorIfNoMatch { get; set; }
+    /// <example>10</example>
+    public long PartSize { get; set; }
 
     /// <summary>
-    /// Throws exception if error occures in upload.
+    /// Enable/disable an AWS S3 access control list.
+    /// Not supported when using multipart upload (Connection.UseMultipartUpload = true).
     /// </summary>
     /// <example>false</example>
     [DefaultValue(false)]
-    public bool ThrowExceptionOnErrorResponse { get; set; }
+    public bool UseAcl { get; set; }
+
+    /// <summary>
+    /// Access control list. Enabled when UseACL is true.
+    /// </summary>
+    /// <example>Private</example>
+    [UIHint(nameof(UseAcl), "", true)]
+    public ACLs Acl { get; set; }
+
     #endregion options
 }

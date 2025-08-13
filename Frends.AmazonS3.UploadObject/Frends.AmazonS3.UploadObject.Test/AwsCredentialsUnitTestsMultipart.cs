@@ -13,7 +13,7 @@ using dotenv.net;
 namespace Frends.AmazonS3.UploadObject.Tests;
 
 [TestClass]
-public class AWSCredsUnitTestsMultipart
+public class AwsCredentialsUnitTestsMultipart
 {
     public TestContext? TestContext { get; set; }
     private readonly string? _accessKey;
@@ -22,8 +22,9 @@ public class AWSCredsUnitTestsMultipart
     private readonly string _dir = Path.Combine(Environment.CurrentDirectory);
     private Connection _connection = new();
     private Input _input = new();
+    private Options _options = new();
 
-    public AWSCredsUnitTestsMultipart()
+    public AwsCredentialsUnitTestsMultipart()
     {
         DotEnv.Load();
         _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
@@ -36,30 +37,36 @@ public class AWSCredsUnitTestsMultipart
     {
         _input = new Input
         {
-            FilePath = Path.Combine(_dir, "AWS"),
-            ACL = default,
+            SourceDirectory = Path.Combine(_dir, "AWS"),
             FileMask = null,
-            UseACL = false,
-            S3Directory = "Upload2023/",
-            PartSize = 100
+            TargetDirectory = "Upload2023/",
+            BucketName = _bucketName,
+            UploadFromCurrentDirectoryOnly = false,
+            PreserveFolderStructure = false,
+            DeleteSource = false,
         };
 
         _connection = new Connection
         {
-            AuthenticationMethod = AuthenticationMethod.AWSCredentials,
-            PreSignedURL = null,
+            AuthenticationMethod = AuthenticationMethod.AwsCredentials,
+            PreSignedUrl = null,
             AwsAccessKeyId = _accessKey,
             AwsSecretAccessKey = _secretAccessKey,
-            BucketName = _bucketName,
             Region = Region.EuCentral1,
-            UploadFromCurrentDirectoryOnly = false,
             Overwrite = false,
-            PreserveFolderStructure = false,
             ReturnListOfObjectKeys = false,
-            DeleteSource = false,
-            ThrowErrorIfNoMatch = false,
             UseMultipartUpload = true,
-            GatherDebugLog = true
+            GatherDebugLog = true,
+            Acl = default,
+            UseAcl = false,
+            PartSize = 100,
+        };
+
+        _options = new Options
+        {
+            ThrowErrorIfNoMatch = false,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
         };
 
         Directory.CreateDirectory(Path.Combine(_dir, "AWS"));
@@ -100,38 +107,50 @@ public class AWSCredsUnitTestsMultipart
     }
 
     [TestMethod]
-    public async Task AWSCreds_Upload()
+    public async Task AwsCredentials_Upload()
     {
-        var result = await AmazonS3.UploadObject(_connection, _input, default);
-        Assert.AreEqual(2, result.UploadedObjects.Count);
+        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
+        Assert.AreEqual(2, result.Objects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
-        Assert.IsTrue(result.UploadedObjects.Any(x => x.Contains("test1.txt")));
+        Assert.IsTrue(result.Objects.Any(x => x.Contains("test1.txt")));
     }
 
     [TestMethod]
-    public async Task AWSCreds_Missing_ThrowExceptionOnErrorResponse_False()
+    public async Task AwsCredentials_Missing_FailOnErrorResponse_False()
     {
         var connection = _connection;
         connection.AwsAccessKeyId = null;
         connection.AwsSecretAccessKey = "";
 
-        var result = await AmazonS3.UploadObject(connection, _input, default);
-        Assert.AreEqual(0, result.UploadedObjects.Count);
-        Assert.IsFalse(result.Success, result.DebugLog);
+        var options = new Options
+        {
+            ThrowErrorIfNoMatch = false,
+            ThrowErrorOnFailure = false,
+            ErrorMessageOnFailure = ""
+        };
+
+        var result = await AmazonS3.UploadObject(_input, connection, options, default);
+        Assert.AreEqual(0, result.Objects.Count);
+        Assert.IsFalse(result.Success);
         Assert.IsTrue(result.DebugLog.Contains("Please authenticate"));
     }
 
     [TestMethod]
-    public async Task AWSCreds_Missing_ThrowExceptionOnErrorResponse_True()
+    public async Task AwsCredentials_Missing_ThrowErrorOnFailure_True()
     {
         var connection = _connection;
         connection.AwsAccessKeyId = null;
         connection.AwsSecretAccessKey = "";
-        connection.ThrowExceptionOnErrorResponse = true;
+        var options = new Options
+        {
+            ThrowErrorIfNoMatch = false,
+            ThrowErrorOnFailure = true,
+            ErrorMessageOnFailure = ""
+        };
 
-        var ex = await Assert.ThrowsExceptionAsync<UploadException>(async () => await AmazonS3.UploadObject(connection, _input, default));
-        Assert.IsTrue(ex.DebugLog.Contains("Please authenticate"));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.UploadObject(_input, connection, options, default));
+        Assert.IsTrue(ex.Message.Contains("Please authenticate"));
     }
 
     static void CreateDummyFile(string filePath, long targetSizeInBytes)
@@ -140,19 +159,17 @@ public class AWSCredsUnitTestsMultipart
         byte[] buffer = new byte[bufferSize];
         var random = new Random();
 
-        using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+        using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+        long bytesWritten = 0;
+
+        while (bytesWritten < targetSizeInBytes)
         {
-            long bytesWritten = 0;
+            random.NextBytes(buffer);
+            int bytesToWrite = (int)Math.Min(buffer.Length, targetSizeInBytes - bytesWritten);
+            fileStream.Write(buffer, 0, bytesToWrite);
+            bytesWritten += bytesToWrite;
 
-            while (bytesWritten < targetSizeInBytes)
-            {
-                random.NextBytes(buffer);
-                int bytesToWrite = (int)Math.Min(buffer.Length, targetSizeInBytes - bytesWritten);
-                fileStream.Write(buffer, 0, bytesToWrite);
-                bytesWritten += bytesToWrite;
-
-                Console.WriteLine($"Progress: {bytesWritten / (1024 * 1024)} MB / 6144 MB");
-            }
+            Console.WriteLine($"Progress: {bytesWritten / (1024 * 1024)} MB / 6144 MB");
         }
     }
 }
