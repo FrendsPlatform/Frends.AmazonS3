@@ -17,11 +17,18 @@ public class Result
     /// List of downloaded objects.
     /// </summary>
     /// <example>{ "File.txt", "C:\temp\File.txt", true, false, "Additional information" }</example>
-    public List<SingleResultObject> Data { get; private set; }
+    public List<SingleResultObject> Objects { get; private set; }
 
-    internal Result(bool success, List<SingleResultObject> data)
+    /// <summary>
+    /// Error information if operation failed.
+    /// </summary>
+    /// <example>{ "An error occurred", { "ErrorCode": 500 } }</example>
+    public Error Error { get; private set; }
+
+    internal Result(bool success, List<SingleResultObject> objects, Error error = null)
     {
         Success = success;
-        Data = data;
+        Objects = objects;
+        Error = error;
     }
 }
