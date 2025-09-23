@@ -254,6 +254,8 @@ public class AmazonS3
         {
             ListPartsRequest listPartsRequest = new()
             {
+                BucketName = input.BucketName,
+                Key = path,
                 UploadId = uploadRequest.UploadId
             };
 
