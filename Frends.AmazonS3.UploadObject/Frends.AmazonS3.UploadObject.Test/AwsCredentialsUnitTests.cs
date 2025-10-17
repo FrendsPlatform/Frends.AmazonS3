@@ -73,14 +73,17 @@ public class AwsCredentialsUnitTests
         }
     }
 
+    [DataTestMethod]
+    [DataRow("Upload2023")]
+    [DataRow("Upload2023/")]
     [TestMethod]
-    public async Task AWSCreds_Upload()
+    public async Task AWSCreds_Upload(string targetDirectory)
     {
         _input = new Input
         {
             SourceDirectory = Path.Combine(_dir, "AWS"),
             FileMask = null,
-            TargetDirectory = "Upload2023/",
+            TargetDirectory = targetDirectory,
             BucketName = _bucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,

@@ -51,6 +51,11 @@ public class AmazonS3
             if (!Directory.Exists(input.SourceDirectory))
                 throw new ArgumentException(@"Source directory not found. ", input.SourceDirectory);
 
+            if (!string.IsNullOrEmpty(input.TargetDirectory) && !input.TargetDirectory.EndsWith("/"))
+            {
+                input.TargetDirectory += "/";
+            }
+
             var localRoot = new DirectoryInfo(input.SourceDirectory);
 
             // If filemask is not set, get all files.
