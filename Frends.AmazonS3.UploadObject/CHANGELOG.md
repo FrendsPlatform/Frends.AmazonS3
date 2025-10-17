@@ -1,5 +1,9 @@
 ﻿# Changelog
 
+## [3.1.0] - 2025-10-17
+### Fixed
+- Fixed TargetDirectory to handle trailing slash.
+
 ## [3.0.0] - 2025-07-23
 
 - [Breaking] Renamed `FilePath` to `SourceDirectory` in Input class for better clarity
