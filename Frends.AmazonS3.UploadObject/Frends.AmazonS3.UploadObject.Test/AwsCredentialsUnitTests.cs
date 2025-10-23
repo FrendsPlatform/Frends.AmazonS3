@@ -76,7 +76,6 @@ public class AwsCredentialsUnitTests
     [DataTestMethod]
     [DataRow("Upload2023")]
     [DataRow("Upload2023/")]
-    [TestMethod]
     public async Task AWSCreds_Upload(string targetDirectory)
     {
         _input = new Input

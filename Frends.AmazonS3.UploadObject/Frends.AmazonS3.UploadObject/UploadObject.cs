@@ -51,9 +51,11 @@ public class AmazonS3
             if (!Directory.Exists(input.SourceDirectory))
                 throw new ArgumentException(@"Source directory not found. ", input.SourceDirectory);
 
-            if (!string.IsNullOrEmpty(input.TargetDirectory) && !input.TargetDirectory.EndsWith("/"))
+            var targetDirectory = input.TargetDirectory;
+
+            if (!string.IsNullOrEmpty(targetDirectory) && !targetDirectory.EndsWith('/'))
             {
-                input.TargetDirectory += "/";
+                targetDirectory += "/";
             }
 
             var localRoot = new DirectoryInfo(input.SourceDirectory);
@@ -80,7 +82,7 @@ public class AmazonS3
                     if (subfolders.StartsWith('/'))
                         subfolders = subfolders.Remove(0, 1);
 
-                    var fullPath = input.TargetDirectory + subfolders + file.Name;
+                    var fullPath = targetDirectory + subfolders + file.Name;
 
                     if (connection.AuthenticationMethod is AuthenticationMethod.PreSignedUrl)
                         await UploadFilePreSignedUrl(connection, file.FullName, cancellationToken);
@@ -101,14 +103,14 @@ public class AmazonS3
                     else
                     {
                         if (connection.UseMultipartUpload)
-                            await UploadMultipart(file, connection, input, input.TargetDirectory + file.Name,
+                            await UploadMultipart(file, connection, input, targetDirectory + file.Name,
                                 cancellationToken);
                         else
-                            await UploadFileToS3(file, connection, input, input.TargetDirectory + file.Name,
+                            await UploadFileToS3(file, connection, input, targetDirectory + file.Name,
                                 cancellationToken);
                     }
 
-                    result.Add(connection.ReturnListOfObjectKeys ? input.TargetDirectory + file.Name : file.FullName);
+                    result.Add(connection.ReturnListOfObjectKeys ? targetDirectory + file.Name : file.FullName);
                 }
 
                 if (input.DeleteSource) DeleteSourceFile(file.FullName);
