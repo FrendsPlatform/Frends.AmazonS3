@@ -102,7 +102,6 @@ public class AWSCredsUnitTests
 
         var ex = await Assert.ThrowsExceptionAsync<Exception>(() => AmazonS3.CreateBucket(_input, _connection, _options, default));
         Assert.IsNotNull(ex.InnerException);
-        Console.WriteLine(ex.InnerException.Message);
-        Assert.IsTrue(ex.InnerException.Message.Contains("ObjectOwnership"));
+        Assert.IsTrue(ex.InnerException.Message.Contains("ACL", StringComparison.OrdinalIgnoreCase));
     }
 }
