@@ -20,10 +20,15 @@
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
   </ItemGroup>
+
+  <ItemGroup>
+	  <Content Include="migration.json" PackagePath="/" Pack="true"/>
+	  <Content Include="../CHANGELOG.md" PackagePath="/" Pack="true"/>
+  </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="AWSSDK.Core" Version="3.7.200.5" />
-    <PackageReference Include="AWSSDK.S3" Version="3.7.201.3" />
+    <PackageReference Include="AWSSDK.Core" Version="4.0.3.5" />
+    <PackageReference Include="AWSSDK.S3" Version="4.0.14.2" />
   </ItemGroup>
 
 </Project>

@@ -35,6 +35,8 @@ public class AWSCredsUnitTests
             ObjectLockEnabled = false,
             ThrowErrorOnFailure = true,
         };
+
+        _bucketName = $"bucket-test-{Guid.NewGuid().ToString("N").Substring(0, 8)}".ToLower();
     }
 
     [TestCleanup]
@@ -67,7 +69,6 @@ public class AWSCredsUnitTests
     public async Task CreateBucket_SuccessTest()
     {
         var acl = Acls.Private;
-        _bucketName = $"ritteambuckettest{acl.ToString().ToLower()}";
         _input.BucketName = _bucketName;
         _connection.Acl = acl;
 
@@ -80,7 +81,6 @@ public class AWSCredsUnitTests
     public async Task CreateBucket_BucketAlreadyExistsTest()
     {
         var acl = Acls.Private;
-        _bucketName = $"ritteambuckettest{acl.ToString().ToLower()}";
         _input.BucketName = _bucketName;
         _connection.Acl = acl;
 
@@ -97,12 +97,11 @@ public class AWSCredsUnitTests
     public async Task CreateBucket_ExceptionHandlingTest()
     {
         var acl = Acls.PublicRead;
-        _bucketName = $"ritteambuckettest{acl.ToString().ToLower()}";
         _input.BucketName = _bucketName;
         _connection.Acl = acl;
 
-        var ex = await Assert.ThrowsExceptionAsync<AmazonS3Exception>(() => AmazonS3.CreateBucket(_input, _connection, _options, default));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => AmazonS3.CreateBucket(_input, _connection, _options, default));
         Assert.IsNotNull(ex.InnerException);
-        Assert.AreEqual("Access Denied", ex.InnerException.Message);
+        Assert.IsTrue(ex.InnerException.Message.Contains("ObjectOwnership"));
     }
 }

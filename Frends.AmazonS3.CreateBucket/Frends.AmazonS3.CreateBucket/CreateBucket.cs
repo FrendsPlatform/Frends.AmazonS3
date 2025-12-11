@@ -3,6 +3,7 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Util;
 using Frends.AmazonS3.CreateBucket.Definitions;
+using Frends.AmazonS3.CreateBucket.Helpers;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -16,28 +17,6 @@ namespace Frends.AmazonS3.CreateBucket;
 /// </summary>
 public class AmazonS3
 {
-    /// <summary>
-    /// Error handling
-    /// </summary>
-    private static class ErrorHandler
-    {
-        internal static Result Handle(Exception ex, bool throwError, string customMessage)
-        {
-            var error = new Error
-            {
-                Message = $"{customMessage} {ex.Message}",
-                AdditionalInfo = ex
-            };
-            if (throwError)
-                if (ex is AmazonS3Exception amazonEx)
-                    throw new AmazonS3Exception(error.Message, amazonEx);
-                else
-                    throw new Exception(error.Message, ex);
-
-            return new Result(false, null, null, error);
-        }
-    }
-
     /// <summary>
     /// Create AWS S3 Bucket.
     /// [Documentation](https://tasks.frends.com/tasks/frends-tasks/Frends.AmazonS3.CreateBucket)
@@ -70,11 +49,11 @@ public class AmazonS3
                     BucketName = bucketName
                 };
                 var response = await s3Client.GetBucketLocationAsync(getBucketLocationRequest, cancellationToken);
-                return new Result(true, response.Location.ToString(), bucketName);
+                return new Result { Success = true, BucketLocation = response.Location.ToString(), BucketName = bucketName };
             }
             else
             {
-                return new Result(true, $"Bucket already exists.", bucketName);
+                return new Result { Success = true, BucketLocation = $"Bucket already exists.", BucketName = bucketName };
             }
         }
         catch (AmazonS3Exception e)

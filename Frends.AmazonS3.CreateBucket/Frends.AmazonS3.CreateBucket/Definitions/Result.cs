@@ -3,24 +3,6 @@
 namespace Frends.AmazonS3.CreateBucket.Definitions;
 
 /// <summary>
-/// Error that occurred during the task.
-/// </summary>
-public class Error
-{
-    /// <summary>
-    /// Summary of the error.
-    /// </summary>
-    /// <example>Unable to join strings.</example>
-    public string Message { get; set; }
-
-    /// <summary>
-    /// Additional information about the error.
-    /// </summary>
-    /// <example>object { Exception Exception }</example>
-    public object AdditionalInfo { get; set; }
-}
-
-/// <summary>
 /// Task's result.
 /// </summary>
 public class Result
@@ -29,14 +11,14 @@ public class Result
     /// Operation complete without errors.
     /// </summary>
     /// <example>true</example>
-    public bool Success { get; private set; }
+    public bool Success { get; set; }
 
     /// <summary>
     /// Region the bucket resides in.
     /// Return "Bucket already exists" if bucket already exists.
     /// </summary>
     /// <example>eu-central-1</example>
-    public string BucketLocation { get; private set; }
+    public string BucketLocation { get; set; }
 
     /// <summary>
     /// AWS S3 bucket's name.
@@ -44,20 +26,11 @@ public class Result
     /// </summary>
     /// <example>bucket</example>
     [DisplayFormat(DataFormatString = "Text")]
-    public string BucketName { get; private set; }
+    public string BucketName { get; set; }
 
     /// <summary>
     /// Error that occurred during task execution.
     /// </summary>
     /// <example>object { string Message, object { Exception Exception } AdditionalInfo }</example>
-    public Error Error { get; private set; }
-
-    internal Result(bool success, string bucketLocation, string bucketName, Error error = null)
-    {
-        Success = success;
-        BucketLocation = bucketLocation;
-        BucketName = bucketName;
-        Error = error;
-
-    }
+    public Error Error { get; set; }
 }
