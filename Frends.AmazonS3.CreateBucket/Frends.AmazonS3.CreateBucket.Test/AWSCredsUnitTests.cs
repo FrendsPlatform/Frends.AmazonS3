@@ -94,7 +94,7 @@ public class AWSCredsUnitTests
     }
 
     [TestMethod]
-    public async Task CreateBucket_ExceptionHandlingTest()
+    public async Task CreateBucket_ExceptionHandlingTestThrow()
     {
         var acl = Acls.PublicRead;
         _input.BucketName = _bucketName;
@@ -103,5 +103,19 @@ public class AWSCredsUnitTests
         var ex = await Assert.ThrowsExceptionAsync<Exception>(() => AmazonS3.CreateBucket(_input, _connection, _options, default));
         Assert.IsNotNull(ex.InnerException);
         Assert.IsTrue(ex.InnerException.Message.Contains("ACL", StringComparison.OrdinalIgnoreCase));
+    }
+
+
+    [TestMethod]
+    public async Task CreateBucket_ExceptionHandlingTestResultFalse()
+    {
+        var acl = Acls.PublicRead;
+        _input.BucketName = _bucketName;
+        _connection.Acl = acl;
+        _options.ThrowErrorOnFailure = false;
+
+        var result = await AmazonS3.CreateBucket(_input, _connection, _options, default);
+        Assert.IsFalse(result.Success);
+        Assert.IsTrue(result.Error.Message.Contains("ACL", StringComparison.OrdinalIgnoreCase));
     }
 }
