@@ -8,7 +8,7 @@ namespace Frends.AmazonS3.DownloadObject.Definitions;
 public class Options
 {
     /// <summary>
-    /// Delete S3 source object after download.
+    /// Delete the S3 source object after download.
     /// Subfolders will also be deleted if they are part of the object's key and there are no objects left.
     /// Create subfolders manually to make sure they won't be deleted.
     /// </summary>
@@ -24,7 +24,7 @@ public class Options
     public bool ThrowErrorIfNoMatch { get; set; }
 
     /// <summary>
-    /// Actions if destination file already exists.
+    /// Actions if a destination file already exists.
     /// </summary>
     /// <example>Info</example>
     [DefaultValue(DestinationFileExistsActions.Info)]
@@ -41,14 +41,14 @@ public class Options
     /// <summary>
     /// Throw an error on failure.
     /// </summary>
-    /// <example>false</example>
-    [DefaultValue(false)]
-    public bool ThrowErrorOnFailure { get; set; }
+    /// <example>true</example>
+    [DefaultValue(true)]
+    public bool ThrowErrorOnFailure { get; set; } = true;
 
     /// <summary>
     /// Error message to display on failure.
     /// </summary>
-    /// <example></example>
+    /// <example>Can't download an object</example>
     [DefaultValue("")]
     public string ErrorMessageOnFailure { get; set; }
 }

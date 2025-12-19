@@ -2,7 +2,7 @@ name: DownloadObject_build_test
 
 on:
   push:
-    branches-ignore: 
+    branches-ignore:
       - main
     paths:
       - 'Frends.AmazonS3.DownloadObject/**'

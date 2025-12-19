@@ -1,9 +1,4 @@
-﻿using Amazon;
-using Amazon.S3;
-using Amazon.S3.Model;
-using Frends.AmazonS3.DownloadObject.Definitions;
-using Frends.AmazonS3.DownloadObject.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -13,13 +8,18 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Amazon;
+using Amazon.S3;
+using Amazon.S3.Model;
+using Frends.AmazonS3.DownloadObject.Definitions;
+using Frends.AmazonS3.DownloadObject.Helpers;
 
 namespace Frends.AmazonS3.DownloadObject;
 
 /// <summary>
 /// Amazon S3 Task.
 /// </summary>
-public class AmazonS3
+public static class AmazonS3
 {
     private static readonly HttpClient Client = new();
 
@@ -42,31 +42,33 @@ public class AmazonS3
             {
                 var mask = new Regex(input.SearchPattern.Replace(".", "[.]").Replace("*", ".*").Replace("?", "."));
                 var targetPath = input.SourceDirectory + input.SearchPattern;
-                using (AmazonS3Client client = new(connection.AwsAccessKeyId, connection.AwsSecretAccessKey, RegionSelection(connection.Region)))
+
+                using AmazonS3Client client = new(connection.AwsAccessKeyId, connection.AwsSecretAccessKey, RegionSelection(connection.Region));
+
+                var clientRequest = new ListObjectsV2Request
                 {
-                    var clientRequest = new ListObjectsV2Request
-                    {
-                        BucketName = input.BucketName,
-                        Delimiter = null,
-                        Encoding = null,
-                        FetchOwner = false,
-                        MaxKeys = 1000,
-                        Prefix = string.IsNullOrWhiteSpace(input.SourceDirectory) ? null : input.SourceDirectory,
-                        StartAfter = null
-                    };
+                    BucketName = input.BucketName,
+                    Delimiter = null,
+                    Encoding = null,
+                    FetchOwner = false,
+                    MaxKeys = 1000,
+                    Prefix = string.IsNullOrWhiteSpace(input.SourceDirectory) ? null : input.SourceDirectory,
+                    StartAfter = null,
+                };
 
-                    var allObjectsResponse = await client.ListObjectsV2Async(clientRequest, cancellationToken);
-                    foreach (var fileObject in allObjectsResponse.S3Objects)
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
-                        if (mask.IsMatch(fileObject.Key.Split('/').Last()) && (targetPath.Split('/').Length == fileObject.Key.Split('/').Length || !input.DownloadFromCurrentDirectoryOnly) && !fileObject.Key.EndsWith("/") && fileObject.Key.StartsWith(input.SourceDirectory))
-                        {
-                            var path = Path.Combine(input.TargetDirectory, fileObject.Key.Split('/').Last());
+                var allObjectsResponse = await client.ListObjectsV2Async(clientRequest, cancellationToken);
 
-                            var request = new GetObjectRequest { BucketName = input.BucketName, Key = fileObject.Key };
-                            var response = await client.GetObjectAsync(request, cancellationToken);
-                            result.Add(await WriteToFile(response, null, client, fileObject, options, path, cancellationToken));
-                        }
+                foreach (var fileObject in allObjectsResponse.S3Objects)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    if (mask.IsMatch(fileObject.Key.Split('/').Last()) && (targetPath.Split('/').Length == fileObject.Key.Split('/').Length || !input.DownloadFromCurrentDirectoryOnly) && !fileObject.Key.EndsWith("/") && fileObject.Key.StartsWith(input.SourceDirectory))
+                    {
+                        var path = Path.Combine(input.TargetDirectory, fileObject.Key.Split('/').Last());
+
+                        var request = new GetObjectRequest { BucketName = input.BucketName, Key = fileObject.Key };
+                        var response = await client.GetObjectAsync(request, cancellationToken);
+                        result.Add(await WriteToFile(response, null, client, fileObject, options, path, cancellationToken));
                     }
                 }
             }
@@ -76,14 +78,14 @@ public class AmazonS3
                     throw new Exception("AWS pre-signed URL required.");
 
                 var responseStream = await Client.GetStreamAsync(connection.PreSignedUrl, cancellationToken);
-                var nameFromURI = Regex.Match(connection.PreSignedUrl, @"[^\/]+(?=\?)");
-                var fileName = nameFromURI.Value;
+                var nameFromUri = Regex.Match(connection.PreSignedUrl, @"[^\/]+(?=\?)");
+                var fileName = nameFromUri.Value;
                 var path = Path.Combine(input.TargetDirectory, fileName);
 
                 if (responseStream != null)
                     result.Add(await WriteToFile(null, responseStream, null, null, options, path, cancellationToken));
 
-                responseStream.Dispose();
+                await responseStream.DisposeAsync();
             }
 
             if (result.Count == 0 && options.ThrowErrorIfNoMatch)
@@ -111,9 +113,10 @@ public class AmazonS3
                     case DestinationFileExistsActions.Overwrite:
                         if (!FileLocked(options.FileLockedRetries, fullPath, cancellationToken))
                             File.Delete(fullPath);
+
                         break;
                     case DestinationFileExistsActions.Info:
-                        return new SingleResultObject(file, fullPath, false, sourceDeleted, "Object skipped because file already exists in destination.");
+                        return new SingleResultObject(file, fullPath, false, false, "Object skipped because file already exists in destination.");
                     case DestinationFileExistsActions.Error:
                         throw new Exception($"File {fullPath} already exists");
                 }
@@ -124,17 +127,19 @@ public class AmazonS3
 
             if (getObjectResponse != null || preSignedStream != null)
             {
-                using var outFile = File.Create(fullPath);
+                await using var outFile = File.Create(fullPath);
 
                 if (getObjectResponse != null)
-                    getObjectResponse.ResponseStream.CopyTo(outFile);
+                    await getObjectResponse.ResponseStream.CopyToAsync(outFile, cancellationToken);
                 else preSignedStream?.CopyTo(outFile);
             }
             else
+            {
                 throw new Exception("Write failed because the stream is empty.");
+            }
 
             if (options.DeleteSourceObject && getObjectResponse != null)
-                sourceDeleted = await DeleteSourceFile(amazonS3Client, getObjectResponse.BucketName, fileObject.Key, cancellationToken);
+                sourceDeleted = await DeleteSourceFile(amazonS3Client, getObjectResponse.BucketName, fileObject?.Key, cancellationToken);
 
             return new SingleResultObject(file, fullPath, options.ActionOnExistingFile is DestinationFileExistsActions.Overwrite, sourceDeleted, null);
         }
@@ -152,6 +157,7 @@ public class AmazonS3
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 using FileStream inputStream = File.Open(fullPath, FileMode.Open, FileAccess.Read, FileShare.None);
+
                 if (inputStream.Length > 0)
                     return false;
                 else
@@ -173,12 +179,12 @@ public class AmazonS3
             var deleteObjectRequest = new DeleteObjectRequest
             {
                 BucketName = bucketName,
-                Key = key
+                Key = key,
             };
 
             var deleted = await client.DeleteObjectAsync(deleteObjectRequest, cancellationToken);
 
-            return string.IsNullOrEmpty(deleted.DeleteMarker) ? false : bool.Parse(deleted.DeleteMarker);
+            return !string.IsNullOrEmpty(deleted.DeleteMarker) && bool.Parse(deleted.DeleteMarker);
         }
         catch (Exception ex)
         {

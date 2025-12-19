@@ -1,57 +1,59 @@
-using Amazon;
-using Amazon.S3;
-using Amazon.S3.Model;
-using Frends.AmazonS3.DownloadObject.Definitions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Amazon;
+using Amazon.S3;
+using Amazon.S3.Model;
+using Frends.AmazonS3.DownloadObject.Definitions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Frends.AmazonS3.DownloadObject.Tests;
+
+using System.Threading;
 
 [TestClass]
 public class UnitTests
 {
-    private readonly string? _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
-    private readonly string? _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
-    private readonly string? _bucketName = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_BucketName");
-    private readonly string _dir = Path.Combine(Environment.CurrentDirectory); // .\Frends.AmazonS3.DownloadObject\Frends.AmazonS3.DownloadObject.Test\bin\Debug\net6.0\
+    private readonly string accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
+    private readonly string secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
+    private readonly string bucketName = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_BucketName");
+    private readonly string dir = Path.Combine(Environment.CurrentDirectory); // .\Frends.AmazonS3.DownloadObject\Frends.AmazonS3.DownloadObject.Test\bin\Debug\net6.0\
 
-    private Connection _connection = new();
-    private Input _input = new();
-    private Options _options = new();
+    private Connection defaultConnection = new();
+    private Input defaultInput = new();
+    private Options defaultOptions = new();
 
     [TestInitialize]
     public async Task Initialize()
     {
-        _connection = new Connection()
+        defaultConnection = new Connection()
         {
             AuthenticationMethod = AuthenticationMethods.AwsCredentials,
-            AwsAccessKeyId = _accessKey,
-            AwsSecretAccessKey = _secretAccessKey,
+            AwsAccessKeyId = accessKey,
+            AwsSecretAccessKey = secretAccessKey,
             Region = Region.EuCentral1,
             PreSignedUrl = null,
         };
 
-        _options = new Options()
+        defaultOptions = new Options()
         {
             DeleteSourceObject = true,
             ThrowErrorIfNoMatch = true,
             ActionOnExistingFile = DestinationFileExistsActions.Overwrite,
             FileLockedRetries = 0,
             ThrowErrorOnFailure = false,
-            ErrorMessageOnFailure = ""
+            ErrorMessageOnFailure = string.Empty,
         };
 
-        _input = new Input()
+        defaultInput = new Input()
         {
-            BucketName = _bucketName,
+            BucketName = bucketName,
             SourceDirectory = "DownloadTest/",
             SearchPattern = "*",
             DownloadFromCurrentDirectoryOnly = true,
-            TargetDirectory = @$"{_dir}\Download",
+            TargetDirectory = @$"{dir}\Download",
         };
 
         await CreateTestFiles();
@@ -60,8 +62,8 @@ public class UnitTests
     [TestCleanup]
     public void CleanUp()
     {
-        Directory.Delete($@"{_dir}\Download", true);
-        Directory.Delete($@"{_dir}\DownloadTestFiles", true);
+        Directory.Delete($@"{dir}\Download", true);
+        Directory.Delete($@"{dir}\DownloadTestFiles", true);
     }
 
     [TestMethod]
@@ -72,18 +74,18 @@ public class UnitTests
         var connection = new Connection
         {
             AuthenticationMethod = AuthenticationMethods.PreSignedUrl,
-            PreSignedUrl = CreatePreSignedURL(setS3Key),
-            AwsAccessKeyId = _connection.AwsAccessKeyId,
-            AwsSecretAccessKey = _connection.AwsSecretAccessKey,
-            Region = _connection.Region
+            PreSignedUrl = CreatePreSignedUrl(setS3Key),
+            AwsAccessKeyId = defaultConnection.AwsAccessKeyId,
+            AwsSecretAccessKey = defaultConnection.AwsSecretAccessKey,
+            Region = defaultConnection.Region,
         };
 
-        var result = await AmazonS3.DownloadObject(_input, connection, _options, default);
+        var result = await AmazonS3.DownloadObject(defaultInput, connection, defaultOptions, CancellationToken.None);
         Assert.IsNotNull(result.Objects);
         Assert.IsTrue(result.Success);
         Assert.AreEqual(1, result.Objects.Count);
         Assert.IsTrue(result.Objects.Any(x => x.ObjectName != null));
-        Assert.IsTrue(File.Exists(@$"{_dir}\Download\Testfile.txt"));
+        Assert.IsTrue(File.Exists(@$"{dir}\Download\Testfile.txt"));
     }
 
     [TestMethod]
@@ -94,18 +96,18 @@ public class UnitTests
         var connection = new Connection
         {
             AuthenticationMethod = AuthenticationMethods.PreSignedUrl,
-            PreSignedUrl = CreatePreSignedURL(setS3Key),
-            AwsAccessKeyId = _connection.AwsAccessKeyId,
-            AwsSecretAccessKey = _connection.AwsSecretAccessKey,
-            Region = _connection.Region
+            PreSignedUrl = CreatePreSignedUrl(setS3Key),
+            AwsAccessKeyId = defaultConnection.AwsAccessKeyId,
+            AwsSecretAccessKey = defaultConnection.AwsSecretAccessKey,
+            Region = defaultConnection.Region,
         };
 
-        var result = await AmazonS3.DownloadObject(_input, connection, _options, default);
+        var result = await AmazonS3.DownloadObject(defaultInput, connection, defaultOptions, CancellationToken.None);
         Assert.IsNotNull(result.Objects);
         Assert.IsTrue(result.Success);
         Assert.AreEqual(1, result.Objects.Count);
         Assert.IsTrue(result.Objects.Any(x => x.ObjectName != null));
-        Assert.IsTrue(File.Exists(@$"{_dir}\Download\Testfile.txt"));
+        Assert.IsTrue(File.Exists(@$"{dir}\Download\Testfile.txt"));
     }
 
     [TestMethod]
@@ -116,13 +118,13 @@ public class UnitTests
         var connection = new Connection
         {
             AuthenticationMethod = AuthenticationMethods.PreSignedUrl,
-            PreSignedUrl = CreatePreSignedURL(setS3Key),
-            AwsAccessKeyId = _connection.AwsAccessKeyId,
-            AwsSecretAccessKey = _connection.AwsSecretAccessKey,
-            Region = _connection.Region
+            PreSignedUrl = CreatePreSignedUrl(setS3Key),
+            AwsAccessKeyId = defaultConnection.AwsAccessKeyId,
+            AwsSecretAccessKey = defaultConnection.AwsSecretAccessKey,
+            Region = defaultConnection.Region,
         };
 
-        var result = await AmazonS3.DownloadObject(_input, connection, _options, default);
+        var result = await AmazonS3.DownloadObject(defaultInput, connection, defaultOptions, CancellationToken.None);
         Assert.IsNotNull(result.Objects);
         Assert.IsTrue(result.Success);
         Assert.AreEqual(1, result.Objects.Count);
@@ -139,29 +141,29 @@ public class UnitTests
         var connection = new Connection
         {
             AuthenticationMethod = AuthenticationMethods.PreSignedUrl,
-            PreSignedUrl = CreatePreSignedURL(setS3Key),
-            AwsAccessKeyId = _connection.AwsAccessKeyId,
-            AwsSecretAccessKey = _connection.AwsSecretAccessKey,
-            Region = _connection.Region
+            PreSignedUrl = CreatePreSignedUrl(setS3Key),
+            AwsAccessKeyId = defaultConnection.AwsAccessKeyId,
+            AwsSecretAccessKey = defaultConnection.AwsSecretAccessKey,
+            Region = defaultConnection.Region,
         };
 
         var options = new Options
         {
             ActionOnExistingFile = DestinationFileExistsActions.Info,
-            DeleteSourceObject = _options.DeleteSourceObject,
-            ThrowErrorIfNoMatch = _options.ThrowErrorIfNoMatch,
-            FileLockedRetries = _options.FileLockedRetries,
-            ThrowErrorOnFailure = _options.ThrowErrorOnFailure,
-            ErrorMessageOnFailure = _options.ErrorMessageOnFailure
+            DeleteSourceObject = defaultOptions.DeleteSourceObject,
+            ThrowErrorIfNoMatch = defaultOptions.ThrowErrorIfNoMatch,
+            FileLockedRetries = defaultOptions.FileLockedRetries,
+            ThrowErrorOnFailure = defaultOptions.ThrowErrorOnFailure,
+            ErrorMessageOnFailure = defaultOptions.ErrorMessageOnFailure,
         };
 
-        var result = await AmazonS3.DownloadObject(_input, connection, options, default);
+        var result = await AmazonS3.DownloadObject(defaultInput, connection, options, CancellationToken.None);
         Assert.IsNotNull(result.Objects);
         Assert.IsTrue(result.Success);
         Assert.AreEqual(1, result.Objects.Count);
         Assert.IsTrue(result.Objects.Any(x => x.ObjectName != null));
         Assert.IsTrue(result.Objects.Any(x => x.Info.Contains("Object skipped because file already exists in destination")));
-        Assert.IsTrue(File.Exists(@$"{_dir}\Download\Overwrite.txt"));
+        Assert.IsTrue(File.Exists(@$"{dir}\Download\Overwrite.txt"));
         Assert.IsFalse(CompareFiles());
     }
 
@@ -169,32 +171,32 @@ public class UnitTests
     public async Task PreSignedURL_Error_Exists_Test()
     {
         var setS3Key = $"DownloadTest/Testfile.txt";
-        File.WriteAllText(@$"{_dir}\Download\Testfile.txt", "I exist");
+        await File.WriteAllTextAsync(@$"{dir}\Download\Testfile.txt", "I exist");
 
         var connection = new Connection
         {
             AuthenticationMethod = AuthenticationMethods.PreSignedUrl,
-            PreSignedUrl = CreatePreSignedURL(setS3Key),
-            AwsAccessKeyId = _connection.AwsAccessKeyId,
-            AwsSecretAccessKey = _connection.AwsSecretAccessKey,
-            Region = _connection.Region
+            PreSignedUrl = CreatePreSignedUrl(setS3Key),
+            AwsAccessKeyId = defaultConnection.AwsAccessKeyId,
+            AwsSecretAccessKey = defaultConnection.AwsSecretAccessKey,
+            Region = defaultConnection.Region,
         };
 
         var options = new Options
         {
             ActionOnExistingFile = DestinationFileExistsActions.Error,
-            DeleteSourceObject = _options.DeleteSourceObject,
-            ThrowErrorIfNoMatch = _options.ThrowErrorIfNoMatch,
-            FileLockedRetries = _options.FileLockedRetries,
-            ThrowErrorOnFailure = _options.ThrowErrorOnFailure,
-            ErrorMessageOnFailure = _options.ErrorMessageOnFailure
+            DeleteSourceObject = defaultOptions.DeleteSourceObject,
+            ThrowErrorIfNoMatch = defaultOptions.ThrowErrorIfNoMatch,
+            FileLockedRetries = defaultOptions.FileLockedRetries,
+            ThrowErrorOnFailure = defaultOptions.ThrowErrorOnFailure,
+            ErrorMessageOnFailure = defaultOptions.ErrorMessageOnFailure,
         };
 
-        var result = await AmazonS3.DownloadObject(_input, connection, options, default);
+        var result = await AmazonS3.DownloadObject(defaultInput, connection, options, CancellationToken.None);
         Assert.IsFalse(result.Success);
         Assert.IsNotNull(result.Error);
         Assert.IsTrue(result.Error.Message.Contains("already exists"));
-        Assert.IsTrue(File.Exists(@$"{_dir}\Download\Testfile.txt"));
+        Assert.IsTrue(File.Exists(@$"{dir}\Download\Testfile.txt"));
     }
 
     [TestMethod]
@@ -203,13 +205,13 @@ public class UnitTests
         var connection = new Connection
         {
             AuthenticationMethod = AuthenticationMethods.PreSignedUrl,
-            PreSignedUrl = "",
-            AwsAccessKeyId = _connection.AwsAccessKeyId,
-            AwsSecretAccessKey = _connection.AwsSecretAccessKey,
-            Region = _connection.Region
+            PreSignedUrl = string.Empty,
+            AwsAccessKeyId = defaultConnection.AwsAccessKeyId,
+            AwsSecretAccessKey = defaultConnection.AwsSecretAccessKey,
+            Region = defaultConnection.Region,
         };
 
-        var result = await AmazonS3.DownloadObject(_input, connection, _options, default);
+        var result = await AmazonS3.DownloadObject(defaultInput, connection, defaultOptions, CancellationToken.None);
         Assert.IsFalse(result.Success);
         Assert.IsNotNull(result.Error);
         Assert.IsTrue(result.Error.Message.Contains("AWS pre-signed URL required."));
@@ -223,22 +225,22 @@ public class UnitTests
         var connection = new Connection
         {
             AuthenticationMethod = AuthenticationMethods.PreSignedUrl,
-            PreSignedUrl = CreatePreSignedURL(setS3Key),
-            AwsAccessKeyId = _connection.AwsAccessKeyId,
-            AwsSecretAccessKey = _connection.AwsSecretAccessKey,
-            Region = _connection.Region
+            PreSignedUrl = CreatePreSignedUrl(setS3Key),
+            AwsAccessKeyId = defaultConnection.AwsAccessKeyId,
+            AwsSecretAccessKey = defaultConnection.AwsSecretAccessKey,
+            Region = defaultConnection.Region,
         };
 
         var input = new Input
         {
-            BucketName = _input.BucketName,
-            SourceDirectory = _input.SourceDirectory,
-            SearchPattern = _input.SearchPattern,
-            DownloadFromCurrentDirectoryOnly = _input.DownloadFromCurrentDirectoryOnly,
-            TargetDirectory = ""
+            BucketName = defaultInput.BucketName,
+            SourceDirectory = defaultInput.SourceDirectory,
+            SearchPattern = defaultInput.SearchPattern,
+            DownloadFromCurrentDirectoryOnly = defaultInput.DownloadFromCurrentDirectoryOnly,
+            TargetDirectory = string.Empty,
         };
 
-        var result = await AmazonS3.DownloadObject(input, connection, _options, default);
+        var result = await AmazonS3.DownloadObject(input, connection, defaultOptions, CancellationToken.None);
         Assert.IsFalse(result.Success);
         Assert.IsNotNull(result.Error);
         Assert.IsTrue(result.Error.Message.Contains("Path cannot be the empty"));
@@ -251,42 +253,42 @@ public class UnitTests
 
         foreach (var action in destinationFileExistsActions)
         {
-            Directory.Delete($@"{_dir}\Download", true);
+            Directory.Delete($@"{dir}\Download", true);
 
             var connection = new Connection
             {
-                AuthenticationMethod = _connection.AuthenticationMethod,
-                AwsAccessKeyId = _connection.AwsAccessKeyId,
-                AwsSecretAccessKey = _connection.AwsSecretAccessKey,
-                Region = _connection.Region,
-                PreSignedUrl = _connection.PreSignedUrl
+                AuthenticationMethod = defaultConnection.AuthenticationMethod,
+                AwsAccessKeyId = defaultConnection.AwsAccessKeyId,
+                AwsSecretAccessKey = defaultConnection.AwsSecretAccessKey,
+                Region = defaultConnection.Region,
+                PreSignedUrl = defaultConnection.PreSignedUrl,
             };
 
             var options = new Options
             {
                 ActionOnExistingFile = action,
                 DeleteSourceObject = false,
-                ThrowErrorIfNoMatch = _options.ThrowErrorIfNoMatch,
-                FileLockedRetries = _options.FileLockedRetries,
-                ThrowErrorOnFailure = _options.ThrowErrorOnFailure,
-                ErrorMessageOnFailure = _options.ErrorMessageOnFailure
+                ThrowErrorIfNoMatch = defaultOptions.ThrowErrorIfNoMatch,
+                FileLockedRetries = defaultOptions.FileLockedRetries,
+                ThrowErrorOnFailure = defaultOptions.ThrowErrorOnFailure,
+                ErrorMessageOnFailure = defaultOptions.ErrorMessageOnFailure,
             };
 
             var input = new Input
             {
-                BucketName = _input.BucketName,
-                SourceDirectory = _input.SourceDirectory,
-                SearchPattern = _input.SearchPattern,
+                BucketName = defaultInput.BucketName,
+                SourceDirectory = defaultInput.SourceDirectory,
+                SearchPattern = defaultInput.SearchPattern,
                 DownloadFromCurrentDirectoryOnly = false,
-                TargetDirectory = _input.TargetDirectory
+                TargetDirectory = defaultInput.TargetDirectory,
             };
 
-            var result = await AmazonS3.DownloadObject(input, connection, options, default);
+            var result = await AmazonS3.DownloadObject(input, connection, options, CancellationToken.None);
             Assert.IsNotNull(result.Objects, $"method: {action}");
             Assert.IsTrue(result.Success, $"method: {action}");
             Assert.AreEqual(4, result.Objects.Count, $"method: {action}");
             Assert.IsTrue(result.Objects.Any(x => x.ObjectName != null), $"method: {action}");
-            Assert.IsTrue(File.Exists(@$"{_dir}\Download\DownloadFromCurrentDirectoryOnly.txt"), $"method: {action}");
+            Assert.IsTrue(File.Exists(@$"{dir}\Download\DownloadFromCurrentDirectoryOnly.txt"), $"method: {action}");
         }
     }
 
@@ -295,168 +297,167 @@ public class UnitTests
     {
         var connection = new Connection
         {
-            AuthenticationMethod = _connection.AuthenticationMethod,
-            AwsAccessKeyId = _connection.AwsAccessKeyId,
-            AwsSecretAccessKey = _connection.AwsSecretAccessKey,
-            Region = _connection.Region,
-            PreSignedUrl = _connection.PreSignedUrl
+            AuthenticationMethod = defaultConnection.AuthenticationMethod,
+            AwsAccessKeyId = defaultConnection.AwsAccessKeyId,
+            AwsSecretAccessKey = defaultConnection.AwsSecretAccessKey,
+            Region = defaultConnection.Region,
+            PreSignedUrl = defaultConnection.PreSignedUrl,
         };
 
         var options = new Options
         {
             ActionOnExistingFile = DestinationFileExistsActions.Info,
-            DeleteSourceObject = _options.DeleteSourceObject,
-            ThrowErrorIfNoMatch = _options.ThrowErrorIfNoMatch,
-            FileLockedRetries = _options.FileLockedRetries,
-            ThrowErrorOnFailure = _options.ThrowErrorOnFailure,
-            ErrorMessageOnFailure = _options.ErrorMessageOnFailure
+            DeleteSourceObject = defaultOptions.DeleteSourceObject,
+            ThrowErrorIfNoMatch = defaultOptions.ThrowErrorIfNoMatch,
+            FileLockedRetries = defaultOptions.FileLockedRetries,
+            ThrowErrorOnFailure = defaultOptions.ThrowErrorOnFailure,
+            ErrorMessageOnFailure = defaultOptions.ErrorMessageOnFailure,
         };
 
         var input = new Input
         {
-            BucketName = _input.BucketName,
-            SourceDirectory = _input.SourceDirectory,
-            SearchPattern = _input.SearchPattern,
+            BucketName = defaultInput.BucketName,
+            SourceDirectory = defaultInput.SourceDirectory,
+            SearchPattern = defaultInput.SearchPattern,
             DownloadFromCurrentDirectoryOnly = false,
-            TargetDirectory = _input.TargetDirectory
+            TargetDirectory = defaultInput.TargetDirectory,
         };
 
-        var result = await AmazonS3.DownloadObject(input, connection, options, default);
+        var result = await AmazonS3.DownloadObject(input, connection, options, CancellationToken.None);
         Assert.IsNotNull(result.Objects);
         Assert.IsTrue(result.Success);
         Assert.AreEqual(4, result.Objects.Count);
         Assert.IsTrue(result.Objects.Any(x => x.ObjectName != null));
-        Assert.IsTrue(File.Exists(@$"{_dir}\Download\Overwrite.txt"));
-        Assert.IsTrue(File.Exists(@$"{_dir}\Download\Testfile.txt"));
+        Assert.IsTrue(File.Exists(@$"{dir}\Download\Overwrite.txt"));
+        Assert.IsTrue(File.Exists(@$"{dir}\Download\Testfile.txt"));
         Assert.IsFalse(CompareFiles());
     }
-
 
     [TestMethod]
     public async Task AWSCreds_DownloadFiles_Error_Exists_Test()
     {
         var connection = new Connection
         {
-            AuthenticationMethod = _connection.AuthenticationMethod,
-            AwsAccessKeyId = _connection.AwsAccessKeyId,
-            AwsSecretAccessKey = _connection.AwsSecretAccessKey,
-            Region = _connection.Region,
-            PreSignedUrl = _connection.PreSignedUrl
+            AuthenticationMethod = defaultConnection.AuthenticationMethod,
+            AwsAccessKeyId = defaultConnection.AwsAccessKeyId,
+            AwsSecretAccessKey = defaultConnection.AwsSecretAccessKey,
+            Region = defaultConnection.Region,
+            PreSignedUrl = defaultConnection.PreSignedUrl,
         };
 
         var options = new Options
         {
             ActionOnExistingFile = DestinationFileExistsActions.Error,
-            DeleteSourceObject = _options.DeleteSourceObject,
-            ThrowErrorIfNoMatch = _options.ThrowErrorIfNoMatch,
-            FileLockedRetries = _options.FileLockedRetries,
-            ThrowErrorOnFailure = _options.ThrowErrorOnFailure,
-            ErrorMessageOnFailure = _options.ErrorMessageOnFailure
+            DeleteSourceObject = defaultOptions.DeleteSourceObject,
+            ThrowErrorIfNoMatch = defaultOptions.ThrowErrorIfNoMatch,
+            FileLockedRetries = defaultOptions.FileLockedRetries,
+            ThrowErrorOnFailure = defaultOptions.ThrowErrorOnFailure,
+            ErrorMessageOnFailure = defaultOptions.ErrorMessageOnFailure,
         };
 
-        var result = await AmazonS3.DownloadObject(_input, connection, options, default);
+        var result = await AmazonS3.DownloadObject(defaultInput, connection, options, CancellationToken.None);
         Assert.IsFalse(result.Success);
         Assert.IsNotNull(result.Error);
         Assert.IsTrue(result.Error.Message.Contains("already exists"));
-        Assert.IsTrue(File.Exists(@$"{_dir}\Download\Overwrite.txt"));
+        Assert.IsTrue(File.Exists(@$"{dir}\Download\Overwrite.txt"));
         Assert.IsFalse(CompareFiles());
     }
 
     [TestMethod]
     public async Task AWSCreds_DeleteSource_Test()
     {
-        Directory.Delete($@"{_dir}\Download", true);
+        Directory.Delete($@"{dir}\Download", true);
         var connection = new Connection
         {
-            AuthenticationMethod = _connection.AuthenticationMethod,
-            AwsAccessKeyId = _connection.AwsAccessKeyId,
-            AwsSecretAccessKey = _connection.AwsSecretAccessKey,
-            Region = _connection.Region,
-            PreSignedUrl = _connection.PreSignedUrl
+            AuthenticationMethod = defaultConnection.AuthenticationMethod,
+            AwsAccessKeyId = defaultConnection.AwsAccessKeyId,
+            AwsSecretAccessKey = defaultConnection.AwsSecretAccessKey,
+            Region = defaultConnection.Region,
+            PreSignedUrl = defaultConnection.PreSignedUrl,
         };
 
         var options = new Options
         {
             DeleteSourceObject = true,
-            ActionOnExistingFile = _options.ActionOnExistingFile,
-            ThrowErrorIfNoMatch = _options.ThrowErrorIfNoMatch,
-            FileLockedRetries = _options.FileLockedRetries,
-            ThrowErrorOnFailure = _options.ThrowErrorOnFailure,
-            ErrorMessageOnFailure = _options.ErrorMessageOnFailure
+            ActionOnExistingFile = defaultOptions.ActionOnExistingFile,
+            ThrowErrorIfNoMatch = defaultOptions.ThrowErrorIfNoMatch,
+            FileLockedRetries = defaultOptions.FileLockedRetries,
+            ThrowErrorOnFailure = defaultOptions.ThrowErrorOnFailure,
+            ErrorMessageOnFailure = defaultOptions.ErrorMessageOnFailure,
         };
 
-        var result = await AmazonS3.DownloadObject(_input, connection, options, default);
+        var result = await AmazonS3.DownloadObject(defaultInput, connection, options, CancellationToken.None);
         Assert.IsNotNull(result.Objects);
         Assert.IsTrue(result.Success);
         Assert.AreEqual(3, result.Objects.Count);
         Assert.IsTrue(result.Objects.Any(x => x.ObjectName != null));
-        Assert.IsTrue(File.Exists(@$"{_dir}\Download\Overwrite.txt"));
-        Assert.IsTrue(File.Exists(@$"{_dir}\Download\Testfile.txt"));
+        Assert.IsTrue(File.Exists(@$"{dir}\Download\Overwrite.txt"));
+        Assert.IsTrue(File.Exists(@$"{dir}\Download\Testfile.txt"));
         Assert.IsFalse(await FileExistsInS3("DownloadTest/testikansio/"));
     }
 
     [TestMethod]
     public async Task AWSCreds_Pattern_Test()
     {
-        Directory.Delete($@"{_dir}\Download", true);
+        Directory.Delete($@"{dir}\Download", true);
         var connection = new Connection
         {
-            AuthenticationMethod = _connection.AuthenticationMethod,
-            AwsAccessKeyId = _connection.AwsAccessKeyId,
-            AwsSecretAccessKey = _connection.AwsSecretAccessKey,
-            Region = _connection.Region,
-            PreSignedUrl = _connection.PreSignedUrl
+            AuthenticationMethod = defaultConnection.AuthenticationMethod,
+            AwsAccessKeyId = defaultConnection.AwsAccessKeyId,
+            AwsSecretAccessKey = defaultConnection.AwsSecretAccessKey,
+            Region = defaultConnection.Region,
+            PreSignedUrl = defaultConnection.PreSignedUrl,
         };
 
         var input = new Input
         {
-            BucketName = _input.BucketName,
-            SourceDirectory = _input.SourceDirectory,
+            BucketName = defaultInput.BucketName,
+            SourceDirectory = defaultInput.SourceDirectory,
             SearchPattern = "Testfi*",
-            DownloadFromCurrentDirectoryOnly = _input.DownloadFromCurrentDirectoryOnly,
-            TargetDirectory = _input.TargetDirectory
+            DownloadFromCurrentDirectoryOnly = defaultInput.DownloadFromCurrentDirectoryOnly,
+            TargetDirectory = defaultInput.TargetDirectory,
         };
 
-        var result = await AmazonS3.DownloadObject(input, connection, _options, default);
+        var result = await AmazonS3.DownloadObject(input, connection, defaultOptions, CancellationToken.None);
         Assert.IsNotNull(result.Objects);
         Assert.IsTrue(result.Success);
         Assert.AreEqual(1, result.Objects.Count);
         Assert.IsTrue(result.Objects.Any(x => x.ObjectName != null));
-        Assert.IsTrue(File.Exists(@$"{_dir}\Download\Testfile.txt"));
-        Assert.IsFalse(File.Exists(@$"{_dir}\Download\Overwrite.txt"));
-        Assert.IsFalse(File.Exists(@$"{_dir}\Download\DownloadFromCurrentDirectoryOnly.txt"));
+        Assert.IsTrue(File.Exists(@$"{dir}\Download\Testfile.txt"));
+        Assert.IsFalse(File.Exists(@$"{dir}\Download\Overwrite.txt"));
+        Assert.IsFalse(File.Exists(@$"{dir}\Download\DownloadFromCurrentDirectoryOnly.txt"));
     }
 
     [TestMethod]
     public async Task AWSCreds_DownloadFromCurrentDirectoryOnly_Test()
     {
-        Directory.Delete($@"{_dir}\Download", true);
+        Directory.Delete($@"{dir}\Download", true);
         var connection = new Connection
         {
-            AuthenticationMethod = _connection.AuthenticationMethod,
-            AwsAccessKeyId = _connection.AwsAccessKeyId,
-            AwsSecretAccessKey = _connection.AwsSecretAccessKey,
-            Region = _connection.Region,
-            PreSignedUrl = _connection.PreSignedUrl
+            AuthenticationMethod = defaultConnection.AuthenticationMethod,
+            AwsAccessKeyId = defaultConnection.AwsAccessKeyId,
+            AwsSecretAccessKey = defaultConnection.AwsSecretAccessKey,
+            Region = defaultConnection.Region,
+            PreSignedUrl = defaultConnection.PreSignedUrl,
         };
 
         var input = new Input
         {
-            BucketName = _input.BucketName,
-            SourceDirectory = _input.SourceDirectory,
-            SearchPattern = _input.SearchPattern,
+            BucketName = defaultInput.BucketName,
+            SourceDirectory = defaultInput.SourceDirectory,
+            SearchPattern = defaultInput.SearchPattern,
             DownloadFromCurrentDirectoryOnly = true,
-            TargetDirectory = _input.TargetDirectory
+            TargetDirectory = defaultInput.TargetDirectory,
         };
 
-        var result = await AmazonS3.DownloadObject(input, connection, _options, default);
+        var result = await AmazonS3.DownloadObject(input, connection, defaultOptions, CancellationToken.None);
         Assert.IsNotNull(result.Objects);
         Assert.IsTrue(result.Success);
         Assert.AreEqual(3, result.Objects.Count);
         Assert.IsTrue(result.Objects.Any(x => x.ObjectName != null));
-        Assert.IsTrue(File.Exists(@$"{_dir}\Download\Overwrite.txt"));
-        Assert.IsTrue(File.Exists(@$"{_dir}\Download\Testfile.txt"));
-        Assert.IsFalse(File.Exists(@$"{_dir}\Download\DownloadFromCurrentDirectoryOnly.txt"));
+        Assert.IsTrue(File.Exists(@$"{dir}\Download\Overwrite.txt"));
+        Assert.IsTrue(File.Exists(@$"{dir}\Download\Testfile.txt"));
+        Assert.IsFalse(File.Exists(@$"{dir}\Download\DownloadFromCurrentDirectoryOnly.txt"));
     }
 
     [TestMethod]
@@ -464,23 +465,23 @@ public class UnitTests
     {
         var connection = new Connection
         {
-            AuthenticationMethod = _connection.AuthenticationMethod,
-            AwsAccessKeyId = _connection.AwsAccessKeyId,
-            AwsSecretAccessKey = _connection.AwsSecretAccessKey,
-            Region = _connection.Region,
-            PreSignedUrl = _connection.PreSignedUrl
+            AuthenticationMethod = defaultConnection.AuthenticationMethod,
+            AwsAccessKeyId = defaultConnection.AwsAccessKeyId,
+            AwsSecretAccessKey = defaultConnection.AwsSecretAccessKey,
+            Region = defaultConnection.Region,
+            PreSignedUrl = defaultConnection.PreSignedUrl,
         };
 
         var input = new Input
         {
-            BucketName = _input.BucketName,
-            SourceDirectory = _input.SourceDirectory,
+            BucketName = defaultInput.BucketName,
+            SourceDirectory = defaultInput.SourceDirectory,
             SearchPattern = "nofile",
-            DownloadFromCurrentDirectoryOnly = _input.DownloadFromCurrentDirectoryOnly,
-            TargetDirectory = _input.TargetDirectory
+            DownloadFromCurrentDirectoryOnly = defaultInput.DownloadFromCurrentDirectoryOnly,
+            TargetDirectory = defaultInput.TargetDirectory,
         };
 
-        var result = await AmazonS3.DownloadObject(input, connection, _options, default);
+        var result = await AmazonS3.DownloadObject(input, connection, defaultOptions, CancellationToken.None);
         Assert.IsFalse(result.Success);
         Assert.IsNotNull(result.Error);
         Assert.IsTrue(result.Error.Message.Contains("No matches found with search pattern"));
@@ -491,26 +492,26 @@ public class UnitTests
     {
         var connection = new Connection
         {
-            AuthenticationMethod = _connection.AuthenticationMethod,
+            AuthenticationMethod = defaultConnection.AuthenticationMethod,
             AwsAccessKeyId = "invalid",
-            AwsSecretAccessKey = _connection.AwsSecretAccessKey,
-            Region = _connection.Region,
-            PreSignedUrl = _connection.PreSignedUrl
+            AwsSecretAccessKey = defaultConnection.AwsSecretAccessKey,
+            Region = defaultConnection.Region,
+            PreSignedUrl = defaultConnection.PreSignedUrl,
         };
 
         var options = new Options
         {
             ThrowErrorOnFailure = true,
             ErrorMessageOnFailure = "Custom error message for testing",
-            ActionOnExistingFile = _options.ActionOnExistingFile,
-            DeleteSourceObject = _options.DeleteSourceObject,
-            ThrowErrorIfNoMatch = _options.ThrowErrorIfNoMatch,
-            FileLockedRetries = _options.FileLockedRetries
+            ActionOnExistingFile = defaultOptions.ActionOnExistingFile,
+            DeleteSourceObject = defaultOptions.DeleteSourceObject,
+            ThrowErrorIfNoMatch = defaultOptions.ThrowErrorIfNoMatch,
+            FileLockedRetries = defaultOptions.FileLockedRetries,
         };
 
         try
         {
-            await AmazonS3.DownloadObject(_input, connection, options, default);
+            await AmazonS3.DownloadObject(defaultInput, connection, options, CancellationToken.None);
             Assert.Fail("Expected exception was not thrown");
         }
         catch (Exception ex)
@@ -524,26 +525,26 @@ public class UnitTests
     {
         var connection = new Connection
         {
-            AuthenticationMethod = _connection.AuthenticationMethod,
+            AuthenticationMethod = defaultConnection.AuthenticationMethod,
             AwsAccessKeyId = "invalid",
-            AwsSecretAccessKey = _connection.AwsSecretAccessKey,
-            Region = _connection.Region,
-            PreSignedUrl = _connection.PreSignedUrl
+            AwsSecretAccessKey = defaultConnection.AwsSecretAccessKey,
+            Region = defaultConnection.Region,
+            PreSignedUrl = defaultConnection.PreSignedUrl,
         };
 
         var options = new Options
         {
             ThrowErrorOnFailure = true,
-            ErrorMessageOnFailure = "",
-            ActionOnExistingFile = _options.ActionOnExistingFile,
-            DeleteSourceObject = _options.DeleteSourceObject,
-            ThrowErrorIfNoMatch = _options.ThrowErrorIfNoMatch,
-            FileLockedRetries = _options.FileLockedRetries
+            ErrorMessageOnFailure = string.Empty,
+            ActionOnExistingFile = defaultOptions.ActionOnExistingFile,
+            DeleteSourceObject = defaultOptions.DeleteSourceObject,
+            ThrowErrorIfNoMatch = defaultOptions.ThrowErrorIfNoMatch,
+            FileLockedRetries = defaultOptions.FileLockedRetries,
         };
 
         try
         {
-            await AmazonS3.DownloadObject(_input, connection, options, default);
+            await AmazonS3.DownloadObject(defaultInput, connection, options, CancellationToken.None);
             Assert.Fail("Expected exception was not thrown");
         }
         catch (Exception ex)
@@ -559,24 +560,24 @@ public class UnitTests
     {
         var connection = new Connection
         {
-            AuthenticationMethod = _connection.AuthenticationMethod,
+            AuthenticationMethod = defaultConnection.AuthenticationMethod,
             AwsAccessKeyId = "invalid",
-            AwsSecretAccessKey = _connection.AwsSecretAccessKey,
-            Region = _connection.Region,
-            PreSignedUrl = _connection.PreSignedUrl
+            AwsSecretAccessKey = defaultConnection.AwsSecretAccessKey,
+            Region = defaultConnection.Region,
+            PreSignedUrl = defaultConnection.PreSignedUrl,
         };
 
         var options = new Options
         {
             ThrowErrorOnFailure = false,
-            ErrorMessageOnFailure = _options.ErrorMessageOnFailure,
-            ActionOnExistingFile = _options.ActionOnExistingFile,
-            DeleteSourceObject = _options.DeleteSourceObject,
-            ThrowErrorIfNoMatch = _options.ThrowErrorIfNoMatch,
-            FileLockedRetries = _options.FileLockedRetries
+            ErrorMessageOnFailure = defaultOptions.ErrorMessageOnFailure,
+            ActionOnExistingFile = defaultOptions.ActionOnExistingFile,
+            DeleteSourceObject = defaultOptions.DeleteSourceObject,
+            ThrowErrorIfNoMatch = defaultOptions.ThrowErrorIfNoMatch,
+            FileLockedRetries = defaultOptions.FileLockedRetries,
         };
 
-        var result = await AmazonS3.DownloadObject(_input, connection, options, default);
+        var result = await AmazonS3.DownloadObject(defaultInput, connection, options, CancellationToken.None);
         Assert.IsFalse(result.Success);
         Assert.IsNotNull(result.Error);
         Assert.IsTrue(result.Error.Message.Contains("The AWS Access Key Id you provided does not exist") ||
@@ -585,25 +586,25 @@ public class UnitTests
         Assert.IsNotNull(result.Error.AdditionalInfo);
     }
 
-    private string CreatePreSignedURL(string key)
+    private string CreatePreSignedUrl(string key)
     {
-        AmazonS3Client? client = new(_accessKey, _secretAccessKey, RegionEndpoint.EUCentral1);
+        AmazonS3Client client = new(accessKey, secretAccessKey, RegionEndpoint.EUCentral1);
         GetPreSignedUrlRequest request = new()
         {
-            BucketName = _bucketName,
+            BucketName = bucketName,
             Key = key,
             Verb = HttpVerb.GET,
-            Expires = DateTime.UtcNow.AddMinutes(2)
+            Expires = DateTime.UtcNow.AddMinutes(2),
         };
         return client.GetPreSignedURL(request);
     }
 
-    private async Task<bool> CreateTestFiles()
+    private async Task CreateTestFiles()
     {
-        var file1 = $@"{_dir}\Download\Overwrite.txt";
-        var file2 = $@"{_dir}\DownloadTestFiles\Overwrite.txt";
-        var file3 = $@"{_dir}\DownloadTestFiles\Testfile.txt";
-        var file4 = $@"{_dir}\DownloadTestFiles\DownloadFromCurrentDirectoryOnly\DownloadFromCurrentDirectoryOnly.txt";
+        var file1 = $@"{dir}\Download\Overwrite.txt";
+        var file2 = $@"{dir}\DownloadTestFiles\Overwrite.txt";
+        var file3 = $@"{dir}\DownloadTestFiles\Testfile.txt";
+        var file4 = $@"{dir}\DownloadTestFiles\DownloadFromCurrentDirectoryOnly\DownloadFromCurrentDirectoryOnly.txt";
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
         var file5 = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "Test.pdf");
@@ -611,50 +612,49 @@ public class UnitTests
 
         var files = new List<string> { file1, file2, file3, file4, file5 };
 
-        Directory.CreateDirectory($@"{_dir}\Download");
-        Directory.CreateDirectory($@"{_dir}\DownloadTestFiles\DownloadFromCurrentDirectoryOnly");
-        File.AppendAllText(file1, "To Be Overwriten");
-        File.AppendAllText(file2, $"Overwrite complete {DateTime.UtcNow}");
-        File.AppendAllText(file3, $"Test {DateTime.UtcNow}");
-        File.AppendAllText(file4, $"This should exists if DownloadFromCurrentDirectoryOnly = true.  {DateTime.UtcNow}");
+        Directory.CreateDirectory($@"{dir}\Download");
+        Directory.CreateDirectory($@"{dir}\DownloadTestFiles\DownloadFromCurrentDirectoryOnly");
+        await File.AppendAllTextAsync(file1, "To Be Overwriten");
+        await File.AppendAllTextAsync(file2, $"Overwrite complete {DateTime.UtcNow}");
+        await File.AppendAllTextAsync(file3, $"Test {DateTime.UtcNow}");
+        await File.AppendAllTextAsync(file4, $"This should exists if DownloadFromCurrentDirectoryOnly = true.  {DateTime.UtcNow}");
 
-        return await UploadFileToS3(files);
+        await UploadFileToS3(files);
     }
 
-    private async Task<bool> UploadFileToS3(List<string> files)
+    private async Task UploadFileToS3(List<string> files)
     {
-        var client = new AmazonS3Client(_accessKey, _secretAccessKey, RegionEndpoint.EUCentral1);
+        var client = new AmazonS3Client(accessKey, secretAccessKey, RegionEndpoint.EUCentral1);
 
         foreach (var x in files)
         {
             var putObjectRequest = new PutObjectRequest
             {
-                BucketName = _bucketName,
+                BucketName = bucketName,
                 Key = x.Contains("DownloadFromCurrentDirectoryOnly") ? "DownloadTest/DownloadFromCurrentDirectoryOnly/DownloadFromCurrentDirectoryOnly.txt" : $"DownloadTest/{Path.GetFileName(x)}",
                 FilePath = x,
             };
             await client.PutObjectAsync(putObjectRequest);
         }
-        return true;
     }
 
     private bool CompareFiles()
     {
-        string mainFile = File.ReadAllText($@"{_dir}\Download\Overwrite.txt");
+        string mainFile = File.ReadAllText($@"{dir}\Download\Overwrite.txt");
         return mainFile.Contains("Overwrite complete") && !mainFile.Contains("To Be Overwriten");
     }
 
     private async Task<bool> FileExistsInS3(string key)
     {
-        var client = new AmazonS3Client(_accessKey, _secretAccessKey, RegionEndpoint.EUCentral1);
+        var client = new AmazonS3Client(accessKey, secretAccessKey, RegionEndpoint.EUCentral1);
 
         var request = new ListObjectsRequest
         {
-            BucketName = _bucketName,
+            BucketName = bucketName,
             Prefix = key,
         };
         ListObjectsResponse response = await client.ListObjectsAsync(request);
         client.Dispose();
-        return (response != null && response.S3Objects != null && response.S3Objects.Count > 0);
+        return response is { S3Objects.Count: > 0 };
     }
 }

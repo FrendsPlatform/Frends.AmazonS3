@@ -1,6 +1,6 @@
-using Frends.AmazonS3.DownloadObject.Definitions;
 using System;
 using System.Collections.Generic;
+using Frends.AmazonS3.DownloadObject.Definitions;
 
 namespace Frends.AmazonS3.DownloadObject.Helpers;
 
@@ -26,7 +26,7 @@ public static class ErrorHandler
             throw new Exception(errorMessage);
         }
 
-        var error = new Error(exception.Message, new { StackTrace = exception.StackTrace, InnerException = exception.InnerException?.Message });
+        var error = new Error(exception.Message, new { exception.StackTrace, InnerException = exception.InnerException?.Message });
         return new Result(false, result, error);
     }
 }

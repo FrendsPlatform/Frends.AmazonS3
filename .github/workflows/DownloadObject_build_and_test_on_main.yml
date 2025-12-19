@@ -2,7 +2,7 @@ name: DownloadObject_build_main
 
 on:
   push:
-    branches:    
+    branches:
       - main
     paths:
       - 'Frends.AmazonS3.DownloadObject/**'

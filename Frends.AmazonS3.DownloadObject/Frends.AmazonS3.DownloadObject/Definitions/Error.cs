@@ -6,19 +6,7 @@ namespace Frends.AmazonS3.DownloadObject.Definitions;
 public class Error
 {
     /// <summary>
-    /// Error message.
-    /// </summary>
-    /// <example>An error occurred during processing</example>
-    public string Message { get; set; }
-
-    /// <summary>
-    /// Additional error information.
-    /// </summary>
-    /// <example>{ "ErrorCode": 500, "Details": "Connection timeout" }</example>
-    public dynamic AdditionalInfo { get; set; }
-
-    /// <summary>
-    /// Initializes a new instance of the Error class.
+    /// Initializes a new instance of the <see cref="Error"/> class.
     /// </summary>
     /// <param name="message">Error message</param>
     /// <param name="additionalInfo">Additional error information</param>
@@ -29,11 +17,14 @@ public class Error
     }
 
     /// <summary>
-    /// Parameterless constructor for Error class.
+    /// Error message.
     /// </summary>
-    public Error()
-    {
-        Message = string.Empty;
-        AdditionalInfo = null;
-    }
+    /// <example>An error occurred during processing</example>
+    public string Message { get; set; }
+
+    /// <summary>
+    /// Additional error information.
+    /// </summary>
+    /// <example>{ "ErrorCode": 500, "Details": "Connection timeout" }</example>
+    public dynamic AdditionalInfo { get; set; }
 }
