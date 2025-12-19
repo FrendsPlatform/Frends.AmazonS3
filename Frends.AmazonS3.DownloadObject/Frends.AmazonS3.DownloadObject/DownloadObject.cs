@@ -19,7 +19,7 @@ namespace Frends.AmazonS3.DownloadObject;
 /// <summary>
 /// Amazon S3 Task.
 /// </summary>
-public static class AmazonS3
+public static partial class AmazonS3
 {
     private static readonly HttpClient Client = new();
 
@@ -62,7 +62,7 @@ public static class AmazonS3
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    if (mask.IsMatch(fileObject.Key.Split('/').Last()) && (targetPath.Split('/').Length == fileObject.Key.Split('/').Length || !input.DownloadFromCurrentDirectoryOnly) && !fileObject.Key.EndsWith("/") && fileObject.Key.StartsWith(input.SourceDirectory))
+                    if (mask.IsMatch(fileObject.Key.Split('/').Last()) && (targetPath.Split('/').Length == fileObject.Key.Split('/').Length || !input.DownloadFromCurrentDirectoryOnly) && !fileObject.Key.EndsWith('/') && fileObject.Key.StartsWith(input.SourceDirectory))
                     {
                         var path = Path.Combine(input.TargetDirectory, fileObject.Key.Split('/').Last());
 
@@ -78,7 +78,7 @@ public static class AmazonS3
                     throw new Exception("AWS pre-signed URL required.");
 
                 var responseStream = await Client.GetStreamAsync(connection.PreSignedUrl, cancellationToken);
-                var nameFromUri = Regex.Match(connection.PreSignedUrl, @"[^\/]+(?=\?)");
+                var nameFromUri = RegexCatalog.ObjectNameFromUri().Match(connection.PreSignedUrl);
                 var fileName = nameFromUri.Value;
                 var path = Path.Combine(input.TargetDirectory, fileName);
 
