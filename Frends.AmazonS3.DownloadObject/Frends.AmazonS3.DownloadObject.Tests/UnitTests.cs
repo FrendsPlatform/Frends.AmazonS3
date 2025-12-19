@@ -237,13 +237,13 @@ public class UnitTests
             SourceDirectory = defaultInput.SourceDirectory,
             SearchPattern = defaultInput.SearchPattern,
             DownloadFromCurrentDirectoryOnly = defaultInput.DownloadFromCurrentDirectoryOnly,
-            TargetDirectory = $"{defaultInput.TargetDirectory}2",
+            TargetDirectory = string.Empty,
         };
 
         var result = await AmazonS3.DownloadObject(input, connection, defaultOptions, CancellationToken.None);
         Assert.IsFalse(result.Success);
         Assert.IsNotNull(result.Error);
-        Assert.IsTrue(result.Error.Message.Contains("Path cannot be the empty"), result.Error.Message);
+        Assert.IsTrue(result.Error.Message.Contains("The value cannot be an empty string."), result.Error.Message);
     }
 
     [TestMethod]
