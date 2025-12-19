@@ -243,7 +243,7 @@ public class UnitTests
         var result = await AmazonS3.DownloadObject(input, connection, defaultOptions, CancellationToken.None);
         Assert.IsFalse(result.Success);
         Assert.IsNotNull(result.Error);
-        Assert.IsTrue(result.Error.Message.Contains("Path cannot be the empty"));
+        Assert.IsTrue(result.Error.Message.Contains("Path cannot be the empty"), result.Error.Message);
     }
 
     [TestMethod]
