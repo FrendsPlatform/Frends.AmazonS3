@@ -1,4 +1,4 @@
-name: DownloadObject_build_test
+name: DownloadObject_test_on_push
 permissions:
   contents: read
 

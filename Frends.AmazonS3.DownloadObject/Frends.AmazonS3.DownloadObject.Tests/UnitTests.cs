@@ -237,7 +237,7 @@ public class UnitTests
             SourceDirectory = defaultInput.SourceDirectory,
             SearchPattern = defaultInput.SearchPattern,
             DownloadFromCurrentDirectoryOnly = defaultInput.DownloadFromCurrentDirectoryOnly,
-            TargetDirectory = string.Empty,
+            TargetDirectory = $"{defaultInput.TargetDirectory}2",
         };
 
         var result = await AmazonS3.DownloadObject(input, connection, defaultOptions, CancellationToken.None);
