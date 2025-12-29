@@ -3,7 +3,7 @@
 
 ## [3.2.0] - 2025-12-29
 ### Changed
-- Updated AWS SDK to version.
+- Updated AWS SDK version.
 
 ## [3.1.0] - 2025-10-17
 ### Fixed
