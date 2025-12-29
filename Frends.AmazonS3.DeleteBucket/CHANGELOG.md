@@ -1,5 +1,9 @@
 ﻿# Changelog
 
+## [2.1.0] - 2025-12-29
+### Changed
+- Updated AWS SDK version.
+
 ## [2.0.0] - 2025-07-16
 
 - **[Breaking]** Moved `Connection.BucketName` to `Input.BucketName` - update your processes to use the Input tab for bucket name configuration
