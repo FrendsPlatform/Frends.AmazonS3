@@ -22,6 +22,7 @@ public class Result
     /// <summary>
     /// Error information containing details about failed operations and objects that encountered errors. Null if all operations succeeded.
     /// </summary>
+    /// <example>{ Message: "Some objects could not be deleted.", AdditionalInfo: [ { BucketName: "my-bucket", Key: "Key3.txt", VersionId: null } ] }</example>
     public Error Error { get; private set; }
 
     /// <summary>

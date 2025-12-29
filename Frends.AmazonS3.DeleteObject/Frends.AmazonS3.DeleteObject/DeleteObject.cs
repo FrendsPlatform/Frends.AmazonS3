@@ -17,7 +17,7 @@ namespace Frends.AmazonS3.DeleteObject;
 /// <summary>
 /// Amazon S3 Task.
 /// </summary>
-public class AmazonS3
+public static class AmazonS3
 {
 
     /// For mem cleanup.

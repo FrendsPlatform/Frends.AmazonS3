@@ -17,8 +17,8 @@ public class Options
     /// <summary>
     /// If true, throws an exception when any delete operation fails. If false, returns a Result object with error information.
     /// </summary>
-    /// <example>false</example>
-    [DefaultValue(false)]
+    /// <example>true</example>
+    [DefaultValue(true)]
     public bool ThrowErrorOnFailure { get; set; }
 
     /// <summary>
