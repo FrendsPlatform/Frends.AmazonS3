@@ -1,4 +1,4 @@
-﻿namespace Frends.AmazonS3.DeleteObject.Definitions;
+namespace Frends.AmazonS3.DeleteObject.Definitions;
 
 /// <summary>
 /// AWS regions.
@@ -38,7 +38,7 @@ public enum Region
 public enum NotExistsHandler
 {
     /// <summary>
-    /// Task doesn't check if the object exists before the delete operation. Each delete operation will return versionid and success = true unless an exception occurs. 
+    /// Task doesn't check if the object exists before the delete operation. Each delete operation will return versionid and success = true unless an exception occurs.
     /// </summary>
     None,
 

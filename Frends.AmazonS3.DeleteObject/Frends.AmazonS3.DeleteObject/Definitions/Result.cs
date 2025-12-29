@@ -3,25 +3,35 @@
 namespace Frends.AmazonS3.DeleteObject.Definitions;
 
 /// <summary>
-/// Result.
+/// Result object containing the outcome of the delete operation(s).
 /// </summary>
 public class Result
 {
     /// <summary>
-    /// Task complete.
+    /// Indicates whether all delete operations completed successfully. False if any operations failed or objects were not found (depending on ActionOnObjectNotFound setting).
     /// </summary>
-    /// <example>True</example>
+    /// <example>true</example>
     public bool Success { get; private set; }
 
     /// <summary>
-    /// List of deleted objects.
+    /// List of objects that were processed during the delete operation. Includes both successfully deleted objects and skipped objects (when ActionOnObjectNotFound is set to Info).
     /// </summary>
-    /// <example>{ true, "Key1.txt", "etZwWf8lJPf_5MuzOyFzepWqA3eS3EIN", "" }, { false, "Key2.txt", "atZwWf8lJPf_5MuzOyFzepWqA3eS3EIN", "Object ExampleKey doesn't exist in ExampleBucket." }</example>
-    public List<SingleResultObject> Data { get; private set; }
+    /// <example>[ { BucketName: "my-bucket", Key: "Key1.txt", VersionId: "etZwWf8lJPf_5MuzOyFzepWqA3eS3EIN" }, { BucketName: "my-bucket", Key: "Key2.txt", VersionId: "atZwWf8lJPf_5MuzOyFzepWqA3eS3EIN" } ]</example>
+    public List<SingleResultObject> DeletedObjects { get; private set; }
 
-    internal Result(bool success, List<SingleResultObject> data)
+    /// <summary>
+    /// Error information containing details about failed operations and objects that encountered errors. Null if all operations succeeded.
+    /// </summary>
+    /// <example>{ Message: "Some objects could not be deleted.", AdditionalInfo: [ { BucketName: "my-bucket", Key: "Key3.txt", VersionId: null } ] }</example>
+    public Error Error { get; private set; }
+
+    /// <summary>
+    /// Initializes a new result indicating whether the delete operation succeeded, along with deleted items and any error info.
+    /// </summary>
+    public Result(bool success, List<SingleResultObject> deletedObjects, Error error = null)
     {
         Success = success;
-        Data = data;
+        DeletedObjects = deletedObjects;
+        Error = error;
     }
 }

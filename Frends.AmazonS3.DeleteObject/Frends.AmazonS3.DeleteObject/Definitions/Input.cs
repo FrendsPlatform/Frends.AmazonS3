@@ -8,28 +8,19 @@ namespace Frends.AmazonS3.DeleteObject.Definitions;
 public class Input
 {
     /// <summary>
-    /// AWS Access Key ID.
+    /// Array of S3 objects to be deleted. Each object contains bucket name, key, and optional version ID.
     /// </summary>
-    /// <example>AKIAQWERTY7NJ5Q7NZ6Q</example>
-    [PasswordPropertyText]
-    public string AwsAccessKeyId { get; set; }
-
-    /// <summary>
-    /// AWS Secret Access Key.
-    /// </summary>
-    /// <example>TVh5hgd3uGY/2CqH</example>
-    [PasswordPropertyText]
-    public string AwsSecretAccessKey { get; set; }
-
-    /// <summary>
-    /// The region to connect.
-    /// </summary>
-    /// <example>EuCentral1</example>
-    public Region Region { get; set; }
-
-    /// <summary>
-    /// Array of objects to be deleted.
-    /// </summary>
-    /// <example>[ ExampleBucket, ExampleKey, 1 ], [ ExampleBucket, ExampleKey, 'empty' ]</example>
+    /// <example>[ { BucketName: "ExampleBucket", Key: "ExampleKey", VersionId: "1" }, { BucketName: "ExampleBucket", Key: "ExampleKey2", VersionId: "" } ]</example>
+    [DefaultValue(null)]
     public S3ObjectArray[] Objects { get; set; }
+
+    /// <summary>
+    /// Defines how to handle objects that don't exist:
+    /// - None (Default): Task doesn't check if the object exists before deletion. Each delete operation will return version ID and be included in DeletedObjects unless an exception occurs.
+    /// - Info: Task will check if the object exists before each delete operation. Non-existing objects will be skipped and included in DeletedObjects with null version ID.
+    /// - Throw: Throw an exception if any object doesn't exist. Task will check all objects in Input.Objects before starting the delete process.
+    /// </summary>
+    /// <example>NotExistsHandler.None</example>
+    [DefaultValue(NotExistsHandler.None)]
+    public NotExistsHandler ActionOnObjectNotFound { get; set; }
 }
