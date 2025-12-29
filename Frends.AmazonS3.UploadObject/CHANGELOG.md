@@ -1,5 +1,10 @@
 ﻿# Changelog
 
+
+## [3.2.0] - 2025-12-29
+### Changed
+- Updated AWS SDK to version.
+
 ## [3.1.0] - 2025-10-17
 ### Fixed
 - Fixed TargetDirectory to handle trailing slash.
