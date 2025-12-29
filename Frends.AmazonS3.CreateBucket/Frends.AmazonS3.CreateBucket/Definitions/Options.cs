@@ -29,7 +29,7 @@ namespace Frends.AmazonS3.CreateBucket.Definitions
         /// </summary>
         /// <example>Custom error message for bucket creation failure.</example>
         [DisplayFormat(DataFormatString = "Text")]
-        [DefaultValue("Failed to create Amazon S3 bucket.")]
-        public string ErrorMessageOnFailure { get; set; } = "Failed to create Amazon S3 bucket.";
+        [DefaultValue("")]
+        public string ErrorMessageOnFailure { get; set; } = "";
     }
 }

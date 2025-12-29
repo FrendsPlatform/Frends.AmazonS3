@@ -15,7 +15,7 @@ namespace Frends.AmazonS3.CreateBucket;
 /// <summary>
 /// Amazon S3 Task.
 /// </summary>
-public class AmazonS3
+public static class AmazonS3
 {
     /// <summary>
     /// Create AWS S3 Bucket.

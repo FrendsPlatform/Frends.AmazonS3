@@ -16,9 +16,7 @@
   </PropertyGroup>
 	
   <ItemGroup>
-	  <None Include="FrendsTaskMetadata.json" Pack="true" PackagePath="/">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+	  <AdditionalFiles Include="FrendsTaskMetadata.json" Pack="true" PackagePath="/" CopyToOutputDirectory="PreserveNewest"/>
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +27,10 @@
   <ItemGroup>
     <PackageReference Include="AWSSDK.Core" Version="4.0.3.5" />
     <PackageReference Include="AWSSDK.S3" Version="4.0.14.2" />
+    <PackageReference Include="FrendsTaskAnalyzers" Version="1.*">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>
