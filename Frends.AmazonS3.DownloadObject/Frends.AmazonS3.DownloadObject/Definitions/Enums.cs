@@ -5,7 +5,7 @@
 /// </summary>
 public enum Region
 {
-#pragma warning disable CS1591 // AWS regions. No need for specific XML.
+#pragma warning disable SA1602 // AWS regions. No need for specific XML.
     AfSouth1,
     ApEast1,
     ApNortheast1,
@@ -28,8 +28,8 @@ public enum Region
     UsEast1,
     UsEast2,
     UsWest1,
-    UsWest2
-#pragma warning restore CS1591
+    UsWest2,
+#pragma warning restore SA1602
 }
 
 /// <summary>
@@ -40,12 +40,12 @@ public enum AuthenticationMethods
     /// <summary>
     /// AwsAccessKeyId+AwsSecretAccessKey.
     /// </summary>
-    AWSCredentials,
+    AwsCredentials,
 
     /// <summary>
     /// Pre-signed URL.
     /// </summary>
-    PreSignedURL
+    PreSignedUrl,
 }
 
 /// <summary>
@@ -59,12 +59,12 @@ public enum DestinationFileExistsActions
     Overwrite,
 
     /// <summary>
-    /// Skip this file and add notification to return.
+    /// Skip this file and add a notification to return.
     /// </summary>
     Info,
 
     /// <summary>
     /// Stop the process.
     /// </summary>
-    Error
+    Error,
 }

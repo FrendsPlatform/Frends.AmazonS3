@@ -5,6 +5,15 @@
 /// </summary>
 public class SingleResultObject
 {
+    internal SingleResultObject(string objectName, string fullPath, bool overwritten, bool sourceDeleted, string info)
+    {
+        ObjectName = objectName;
+        FullPath = fullPath;
+        Overwritten = overwritten;
+        SourceDeleted = sourceDeleted;
+        Info = info;
+    }
+
     /// <summary>
     /// Object's name.
     /// </summary>
@@ -18,13 +27,13 @@ public class SingleResultObject
     public string FullPath { get; private set; }
 
     /// <summary>
-    /// Original destination file was overwritten.
+    /// The original destination file was overwritten.
     /// </summary>
     /// <example>false</example>
     public bool Overwritten { get; private set; }
 
     /// <summary>
-    /// Source object was marked to be deleted.
+    /// The source object was marked to be deleted.
     /// </summary>
     /// <example>false</example>
     public bool SourceDeleted { get; private set; }
@@ -32,15 +41,6 @@ public class SingleResultObject
     /// <summary>
     /// Additional information of this object.
     /// </summary>
-    /// <example>Object skipped because file already exists in destination.</example>
+    /// <example>Object skipped because a file already exists in destination.</example>
     public string Info { get; private set; }
-
-    internal SingleResultObject(string objectName, string fullPath, bool overwritten, bool sourceDeleted, string info)
-    {
-        ObjectName = objectName;
-        FullPath = fullPath;
-        Overwritten = overwritten;
-        SourceDeleted = sourceDeleted;
-        Info = info;
-    }
 }

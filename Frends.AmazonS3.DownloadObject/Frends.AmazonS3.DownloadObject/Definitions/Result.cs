@@ -7,6 +7,13 @@ namespace Frends.AmazonS3.DownloadObject.Definitions;
 /// </summary>
 public class Result
 {
+    internal Result(bool success, List<SingleResultObject> objects, Error error = null)
+    {
+        Success = success;
+        Objects = objects;
+        Error = error;
+    }
+
     /// <summary>
     /// Task complete without errors.
     /// </summary>
@@ -17,11 +24,11 @@ public class Result
     /// List of downloaded objects.
     /// </summary>
     /// <example>{ "File.txt", "C:\temp\File.txt", true, false, "Additional information" }</example>
-    public List<SingleResultObject> Data { get; private set; }
+    public List<SingleResultObject> Objects { get; private set; }
 
-    internal Result(bool success, List<SingleResultObject> data)
-    {
-        Success = success;
-        Data = data;
-    }
+    /// <summary>
+    /// Error information if the operation failed.
+    /// </summary>
+    /// <example>{ "An error occurred", { "ErrorCode": 500 } }</example>
+    public Error Error { get; private set; }
 }

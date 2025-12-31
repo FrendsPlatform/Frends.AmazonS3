@@ -1,27 +1,79 @@
-# Changelog
+﻿# Changelog
+
+## [3.0.0] - 2025-07-17
+
+## [Breaking] Major refactoring - restructured parameters into Input, Connection, and Options classes with improved error handling
+
+### Breaking Changes
+
+- **Parameter Structure Reorganization**: Task parameters have been restructured into three main classes:
+    - **Input**: Contains core task parameters (BucketName, SourceDirectory, SearchPattern,
+      DownloadFromCurrentDirectoryOnly, TargetDirectory)
+    - **Connection**: Contains connection-related parameters (AwsCredentials, PreSignedUrl)
+    - **Options**: Contains optional configuration parameters (FileLockedRetries, DeleteSourceObject,
+      ThrowErrorIfNoMatch, ActionOnExistingFile, ThrowErrorOnFailure, ErrorMessageOnFailure)
+
+### Parameter Changes
+
+- **Moved to Input tab**:
+    - `Connection.BucketName` → `Input.BucketName`
+    - `Connection.S3Directory` → `Input.SourceDirectory` (renamed)
+    - `Connection.SearchPattern` → `Input.SearchPattern`
+    - `Connection.DownloadFromCurrentDirectoryOnly` → `Input.DownloadFromCurrentDirectoryOnly`
+    - `Connection.DestinationDirectory` → `Input.TargetDirectory` (renamed)
+
+- **Moved to Options tab**:
+    - `Connection.FileLockedRetries` → `Options.FileLockedRetries`
+    - `Connection.DeleteSourceObject` → `Options.DeleteSourceObject`
+    - `Connection.ThrowErrorIfNoMatch` → `Options.ThrowErrorIfNoMatch`
+    - `Connection.DestinationFileExistsAction` → `Options.ActionOnExistingFile` (renamed)
+
+- **Updated in Connection tab**:
+    - `Connection.AWSCredentials` → `Connection.AwsCredentials` (renamed)
+    - `Connection.PreSignedURL` → `Connection.PreSignedUrl` (renamed)
+
+### New Features
+
+- **Enhanced Error Handling**: Added comprehensive error handling with new Options properties:
+    - `ThrowErrorOnFailure` (bool, default: false) – Controls whether errors throw exceptions
+    - `ErrorMessageOnFailure` (string, default: "") - Custom error message for failures
+- **Improved Result Structure**:
+    - Renamed `Data` property to `Objects` in Result class
+    - Added structured `Error` property with `Message` and `AdditionalInfo` fields
 
 ## [2.2.0] - 2024-12-11
+
 ### Updated
+
 - Listing updated to newer version.
+
 ## [2.1.0] - 2023-05-10
+
 ### Fixed
+
 - Changed the way the Task handles downloaded objects to fix blank PDF files.
+
 ### Changed
+
 - Result change: List name change from 'Results' to 'Data'.
 - Input parameter name changed from to 'Connection'.
 
 - Memory leak fix.
 - SingleResultObject parameter changes:
-	- New parameters: Overwritten, SourceDeleted, Info.
-	- Removed parameter: ObjectData (replaced by Info).
+    - New parameters: Overwritten, SourceDeleted, Info.
+    - Removed parameter: ObjectData (replaced by Info).
 
 ## [2.0.0] - 2022-12-02
+
 ### Modified
+
 - Memory leak fix.
 - SingleResultObject parameter changes:
-	- New parameters: Overwritten, SourceDeleted, Info.
-	- Removed parameter: ObjectData (replaced by Info). 
+    - New parameters: Overwritten, SourceDeleted, Info.
+    - Removed parameter: ObjectData (replaced by Info).
 
 ## [1.0.0] - 2022-05-09
+
 ### Added
+
 - Initial implementation 
