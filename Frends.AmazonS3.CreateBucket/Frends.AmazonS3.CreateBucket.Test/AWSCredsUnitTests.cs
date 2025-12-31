@@ -16,6 +16,8 @@ public class AWSCredsUnitTests
     private readonly string? _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
     private readonly string? _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
     private Connection _connection = new();
+    private Options _options = new();
+    private Input _input = new();
     private string? _bucketName;
 
     [TestInitialize]
@@ -26,8 +28,15 @@ public class AWSCredsUnitTests
             AwsAccessKeyId = _accessKey,
             AwsSecretAccessKey = _secretAccessKey,
             Region = Region.EuCentral1,
-            ObjectLockEnabledForBucket = false
         };
+
+        _options = new Options
+        {
+            ObjectLockEnabled = false,
+            ThrowErrorOnFailure = true,
+        };
+
+        _bucketName = $"bucket-test-{Guid.NewGuid().ToString("N").Substring(0, 8)}".ToLower();
     }
 
     [TestCleanup]
@@ -59,12 +68,11 @@ public class AWSCredsUnitTests
     [TestMethod]
     public async Task CreateBucket_SuccessTest()
     {
-        var acl = ACLs.Private;
-        _bucketName = $"ritteambuckettest{acl.ToString().ToLower()}";
-        _connection.BucketName = _bucketName;
-        _connection.ACL = acl;
+        var acl = Acls.Private;
+        _input.BucketName = _bucketName;
+        _connection.Acl = acl;
 
-        var result = await AmazonS3.CreateBucket(_connection, default);
+        var result = await AmazonS3.CreateBucket(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.AreEqual("eu-central-1", result.BucketLocation);
     }
@@ -72,30 +80,42 @@ public class AWSCredsUnitTests
     [TestMethod]
     public async Task CreateBucket_BucketAlreadyExistsTest()
     {
-        var acl = ACLs.Private;
-        _bucketName = $"ritteambuckettest{acl.ToString().ToLower()}";
-        _connection.BucketName = _bucketName;
-        _connection.ACL = acl;
+        var acl = Acls.Private;
+        _input.BucketName = _bucketName;
+        _connection.Acl = acl;
 
-        var result = await AmazonS3.CreateBucket(_connection, default);
+        var result = await AmazonS3.CreateBucket(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.AreEqual("eu-central-1", result.BucketLocation);
 
-        var result2 = await AmazonS3.CreateBucket(_connection, default);
+        var result2 = await AmazonS3.CreateBucket(_input, _connection, _options, default);
         Assert.IsTrue(result2.Success);
         Assert.AreEqual("Bucket already exists.", result2.BucketLocation);
     }
 
     [TestMethod]
-    public async Task CreateBucket_ExceptionHandlingTest()
+    public async Task CreateBucket_ExceptionHandlingTestThrow()
     {
-        var acl = ACLs.PublicRead;
-        _bucketName = $"ritteambuckettest{acl.ToString().ToLower()}";
-        _connection.BucketName = _bucketName;
-        _connection.ACL = acl;
+        var acl = Acls.PublicRead;
+        _input.BucketName = _bucketName;
+        _connection.Acl = acl;
 
-        var ex = await Assert.ThrowsExceptionAsync<AmazonS3Exception>(() => AmazonS3.CreateBucket(_connection, default));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => AmazonS3.CreateBucket(_input, _connection, _options, default));
         Assert.IsNotNull(ex.InnerException);
-        Assert.AreEqual("Access Denied", ex.InnerException.Message);
+        Assert.IsTrue(ex.InnerException.Message.Contains("ACL", StringComparison.OrdinalIgnoreCase));
+    }
+
+
+    [TestMethod]
+    public async Task CreateBucket_ExceptionHandlingTestResultFalse()
+    {
+        var acl = Acls.PublicRead;
+        _input.BucketName = _bucketName;
+        _connection.Acl = acl;
+        _options.ThrowErrorOnFailure = false;
+
+        var result = await AmazonS3.CreateBucket(_input, _connection, _options, default);
+        Assert.IsFalse(result.Success);
+        Assert.IsTrue(result.Error.Message.Contains("ACL", StringComparison.OrdinalIgnoreCase));
     }
 }
