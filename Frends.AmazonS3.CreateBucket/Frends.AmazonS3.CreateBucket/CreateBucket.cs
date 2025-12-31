@@ -30,7 +30,7 @@ public static class AmazonS3
     {
         try
         {
-            using IAmazonS3 s3Client = new AmazonS3Client(connection.AwsAccessKeyId, connection.AwsSecretAccessKey, RegionSelection(connection.Region));
+            using AmazonS3Client s3Client = new AmazonS3Client(connection.AwsAccessKeyId, connection.AwsSecretAccessKey, RegionSelection(connection.Region));
             var bucketName = input.BucketName;
             if (!await AmazonS3Util.DoesS3BucketExistV2Async(s3Client, bucketName))
             {
