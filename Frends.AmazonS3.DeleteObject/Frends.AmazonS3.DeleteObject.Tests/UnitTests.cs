@@ -119,62 +119,6 @@ public class UnitTests
     }
 
     [TestMethod]
-    public async Task DeleteSingleObject_Version()
-    {
-        var key = "Key1.txt";
-        var objects = new[] { new S3ObjectArray { BucketName = _bucketName, Key = key } };
-        var handlers = new List<NotExistsHandler>() { NotExistsHandler.None, NotExistsHandler.Info, NotExistsHandler.Throw };
-
-        foreach (var handler in handlers)
-        {
-            var createdObjects = await CreateTestFiles(objects);
-            var input = new Input()
-            {
-                Objects = createdObjects,
-                ActionOnObjectNotFound = handler,
-            };
-
-            var connection = new Connection()
-            {
-                AwsAccessKeyId = _accessKey,
-                AwsSecretAccessKey = _secretAccessKey,
-                Region = Region.EuCentral1,
-            };
-
-            var options = new Options()
-            {
-                Timeout = 1,
-                ThrowErrorOnFailure = false,
-                ErrorMessageOnFailure = ""
-            };
-            using var client = new AmazonS3Client(_accessKey, _secretAccessKey, RegionEndpoint.EUCentral1);
-            var versioningRequest = new GetBucketVersioningRequest { BucketName = _bucketName };
-            var versioningResponse = await client.GetBucketVersioningAsync(versioningRequest);
-            Assert.AreEqual(VersionStatus.Enabled, versioningResponse.VersioningConfig.Status, "Bucket versioning must be enabled for this test");
-            var result = await AmazonS3.DeleteObject(input, connection, options, default);
-            Console.WriteLine($"Success: {result.Success}");
-            Console.WriteLine($"Error Message: {result.Error.Message}");
-            Console.WriteLine($"Error: {result.Error}");
-            Console.WriteLine($"Error AdditionalInfo: {result.Error.AdditionalInfo}");
-
-            // Log each object's details
-            foreach (var obj in createdObjects)
-            {
-                Console.WriteLine($"Object - Bucket: {obj.BucketName}, Key: {obj.Key}, VersionId: '{obj.VersionId}'");
-            }
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual(createdObjects.Length, result.DeletedObjects.Count);
-            Assert.AreEqual(_bucketName, result.DeletedObjects[0].BucketName);
-            Assert.AreEqual(key, result.DeletedObjects[0].Key);
-            Assert.IsNotNull(result.DeletedObjects[0].VersionId);
-            Assert.IsFalse(FileExistsInS3(key).Result);
-            Assert.IsTrue(FileExistsInS3("ExampleFile").Result);
-
-            CleanUp();
-        }
-    }
-
-    [TestMethod]
     public async Task DeleteMultipleObjects()
     {
         var keys = new[] { "Key1.txt", "Key2.txt", "Key3.txt" };

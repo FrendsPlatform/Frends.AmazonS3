@@ -16,6 +16,7 @@ jobs:
       env_var_name_1: HiQ_AWSS3Test_AccessKey
       env_var_name_2: HiQ_AWSS3Test_BucketName
       env_var_name_3: HiQ_AWSS3Test_SecretAccessKey
+      strict_analyzers: true
     secrets:
       badge_service_api_key: ${{ secrets.BADGE_SERVICE_API_KEY }}
       test_feed_api_key: ${{ secrets.TASKS_TEST_FEED_API_KEY }}
