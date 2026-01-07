@@ -1,6 +1,6 @@
 ﻿# Changelog
 
-## [2.0.0] - 2025-07-16
+## [2.0.0] - 2026-01-07
 
 ### Added
 - New Connection tab with AWS connection parameters (AwsAccessKeyId, AwsSecretAccessKey, Region)

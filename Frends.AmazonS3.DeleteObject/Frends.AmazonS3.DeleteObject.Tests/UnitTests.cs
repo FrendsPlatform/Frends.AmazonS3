@@ -8,7 +8,6 @@ using Frends.AmazonS3.DeleteObject.Definitions;
 using Frends.AmazonS3.DeleteObject.Helpers;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Amazon.S3.Util;
 namespace Frends.AmazonS3.DeleteObject.Tests;
 
 [TestClass]
