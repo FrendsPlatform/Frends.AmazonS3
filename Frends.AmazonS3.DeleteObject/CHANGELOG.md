@@ -4,7 +4,7 @@
 
 ### Added
 - New Connection tab with AWS connection parameters (AwsAccessKeyId, AwsSecretAccessKey, Region)
-- ThrowErrorOnFailure option in Options tab with default value false
+- ThrowErrorOnFailure option in Options tab with default value true
 - ErrorMessageOnFailure option in Options tab for custom error messages
 - BucketName property in SingleResultObject class
 - Error class with Message and AdditionalInfo properties
