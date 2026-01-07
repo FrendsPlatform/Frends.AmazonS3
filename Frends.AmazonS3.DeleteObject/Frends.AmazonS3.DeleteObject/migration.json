@@ -1,0 +1,43 @@
+﻿[
+    {
+        "Task": "Frends.AmazonS3.DeleteObject",
+        "Migrations": [
+            {
+                "Version": "2.0.0",
+                "Description": "Major refactoring: moved connection parameters to Connection tab, reorganized parameters, updated error handling, and improved result structure",
+                "Migration": [
+                    {
+                        "Type": "Copy",
+                        "Source": "Input.AwsAccessKeyId",
+                        "Target": "Connection.AwsAccessKeyId"
+                    },
+                    {
+                        "Type": "Copy",
+                        "Source": "Input.AwsSecretAccessKey",
+                        "Target": "Connection.AwsSecretAccessKey"
+                    },
+                    {
+                        "Type": "Copy",
+                        "Source": "Input.Region",
+                        "Target": "Connection.Region"
+                    },
+                    {
+                        "Type": "Copy",
+                        "Source": "Options.NotExistsHandler",
+                        "Target": "Input.ActionOnObjectNotFound"
+                    },
+                    {
+                        "Type": "Set",
+                        "Target": "Options.ThrowErrorOnFailure",
+                        "Value": "false"
+                    },
+                    {
+                        "Type": "Set",
+                        "Target": "Options.ErrorMessageOnFailure",
+                        "Value": "\"\""
+                    }
+                ]
+            }
+        ]
+    }
+]

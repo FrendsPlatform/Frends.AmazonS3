@@ -3,22 +3,28 @@
 namespace Frends.AmazonS3.DeleteObject.Definitions;
 
 /// <summary>
-/// Options parameters.
+/// Optional parameters for controlling task behavior and error handling.
 /// </summary>
 public class Options
 {
     /// <summary>
-    /// (Default) None: Task doesn't check if the object exists before the delete operation. Each delete operation will return versionid and success = true unless an exception occurs.
-    /// Info: Task will check if the object exists before each delete operation, and nonexisting objects will be skipped. Each skipped operation will return success = false and an error message.
-    /// Throw: Throw an exception if the object doesn't exists. Task will check all objects listed in Input.Objects before continuing to delete process.
+    /// Timeout in seconds for S3 operations. If an operation takes longer than this value, it will be cancelled.
     /// </summary>
-    /// <example>NotExistsHandler.None</example>
-    [DefaultValue(NotExistsHandler.None)]
-    public NotExistsHandler NotExistsHandler { get; set; }
+    /// <example>30</example>
+    [DefaultValue(30)]
+    public int Timeout { get; set; }
 
     /// <summary>
-    /// Timeout in seconds.
+    /// If true, throws an exception when any delete operation fails. If false, returns a Result object with error information.
     /// </summary>
-    /// <example>5</example>
-    public int Timeout { get; set; }
+    /// <example>true</example>
+    [DefaultValue(true)]
+    public bool ThrowErrorOnFailure { get; set; } = true;
+
+    /// <summary>
+    /// Custom error message to use when operations fail. If empty, default error messages will be used.
+    /// </summary>
+    /// <example>"Custom delete operation failed"</example>
+    [DefaultValue("")]
+    public string ErrorMessageOnFailure { get; set; }
 }
