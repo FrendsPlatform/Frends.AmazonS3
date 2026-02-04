@@ -1,0 +1,7 @@
+﻿{
+  "Tasks": [
+    {
+      "TaskMethod": "Frends.AmazonS3.ListObjectVersions.AmazonS3.ListObjectVersions"
+    }
+  ]
+}

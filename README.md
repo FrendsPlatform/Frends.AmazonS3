@@ -10,6 +10,7 @@ Frends tasks for Amazon S3 operations.
 - [Frends.AmazonS3.DeleteObject](Frends.AmazonS3.DeleteObject/README.md)
 - [Frends.AmazonS3.CreateBucket](Frends.AmazonS3.CreateBucket/README.md)
 - [Frends.AmazonS3.DeleteBucket](Frends.AmazonS3.DeleteBucket/README.md)
+- [Frends.AmazonS3.ListObjectVersions](Frends.AmazonS3.ListObjectVersions/README.md)
 
 # Contributing
 When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.
