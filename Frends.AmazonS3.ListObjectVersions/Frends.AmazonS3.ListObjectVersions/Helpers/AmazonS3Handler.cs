@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -56,6 +57,7 @@ internal static class AmazonS3Handler
             throw new Exception("Versioning is not enabled on bucket.");
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Simple enum mapping.")]
     internal static RegionEndpoint RegionSelection(Region region)
     {
         return region switch
