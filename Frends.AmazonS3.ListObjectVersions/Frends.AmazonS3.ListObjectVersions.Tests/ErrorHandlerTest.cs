@@ -1,30 +1,30 @@
 ﻿using System;
 using System.Threading;
-using Frends.AmazonS3.ListObjectVersions.Definitions;
+using System.Threading.Tasks;
 using NUnit.Framework;
 
 namespace Frends.AmazonS3.ListObjectVersions.Tests;
 
-// TODO: Adjust the test to use a real invalid Input scenario (e.g., missing or malformed data)
 [TestFixture]
-public class ErrorHandlerTest
+public class ErrorHandlerTest : TestBase
 {
     private const string CustomErrorMessage = "CustomErrorMessage";
 
     [Test]
     public void Should_Throw_Error_When_ThrowErrorOnFailure_Is_True()
     {
-        var ex = Assert.Throws<Exception>(() =>
-           AmazonS3.ListObjectVersions(DefaultInput(), DefaultConnection(), DefaultOptions(), CancellationToken.None));
+        var ex = Assert.ThrowsAsync<Exception>(() =>
+            AmazonS3.ListObjectVersions(DefaultInput(), DefaultConnection(), DefaultOptions(), CancellationToken.None));
         Assert.That(ex, Is.Not.Null);
     }
 
     [Test]
-    public void Should_Return_Failed_Result_When_ThrowErrorOnFailure_Is_False()
+    public async Task Should_Return_Failed_Result_When_ThrowErrorOnFailure_Is_False()
     {
         var options = DefaultOptions();
         options.ThrowErrorOnFailure = false;
-        var result = AmazonS3.ListObjectVersions(DefaultInput(), DefaultConnection(), options, CancellationToken.None);
+        var result =
+            await AmazonS3.ListObjectVersions(DefaultInput(), DefaultConnection(), options, CancellationToken.None);
         Assert.That(result.Success, Is.False);
     }
 
@@ -33,22 +33,9 @@ public class ErrorHandlerTest
     {
         var options = DefaultOptions();
         options.ErrorMessageOnFailure = CustomErrorMessage;
-        var ex = Assert.Throws<Exception>(() =>
+        var ex = Assert.ThrowsAsync<Exception>(() =>
             AmazonS3.ListObjectVersions(DefaultInput(), DefaultConnection(), options, CancellationToken.None));
         Assert.That(ex, Is.Not.Null);
         Assert.That(ex.Message, Contains.Substring(CustomErrorMessage));
     }
-
-    private static Input DefaultInput() => new()
-    {
-        Repeat = -1, // Invalid value to cause an exception
-    };
-
-    private static Connection DefaultConnection() => new();
-
-    private static Options DefaultOptions() => new()
-    {
-        ThrowErrorOnFailure = true,
-        ErrorMessageOnFailure = string.Empty,
-    };
 }

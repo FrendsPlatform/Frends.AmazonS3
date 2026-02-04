@@ -9,12 +9,18 @@ namespace Frends.AmazonS3.ListObjectVersions.Definitions;
 public class Options
 {
     /// <summary>
-    /// Delimiter to use between the repeated strings.
+    /// Limits the response to keys that begin with the specified prefix.
     /// </summary>
-    /// <example>,</example>
-    [DisplayFormat(DataFormatString = "Text")]
-    [DefaultValue(" ")]
-    public string Delimiter { get; set; }
+    /// <example>bucket/object1/object2</example>
+    public string Prefix { get; set; }
+
+    /// <summary>
+    /// Sets the maximum number of keys returned in one response.
+    /// The response might contain fewer keys but will never contain more than this value.
+    /// </summary>
+    /// <example>1000</example>
+    [DefaultValue(1000)]
+    public int MaxKeys { get; set; } = 1000;
 
     /// <summary>
     /// Whether to throw an error on failure.

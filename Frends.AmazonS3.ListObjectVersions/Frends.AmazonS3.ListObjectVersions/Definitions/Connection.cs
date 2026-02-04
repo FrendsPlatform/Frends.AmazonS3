@@ -1,9 +1,6 @@
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 
 namespace Frends.AmazonS3.ListObjectVersions.Definitions;
-
-// TODO: Remove this class if the task does not make connections
 
 /// <summary>
 /// Connection parameters.
@@ -11,10 +8,22 @@ namespace Frends.AmazonS3.ListObjectVersions.Definitions;
 public class Connection
 {
     /// <summary>
-    /// Connection string to the target service (e.g., database, API endpoint).
+    /// AWS Access Key ID used for authentication with AWS services.
     /// </summary>
-    /// <example>Host=127.0.0.1;Port=5432</example>
-    [DisplayFormat(DataFormatString = "Text")]
-    [DefaultValue("")]
-    public string ConnectionString { get; set; } = string.Empty;
+    /// <example>AKIAQWERTY7NJ5Q7NZ6Q</example>
+    [PasswordPropertyText]
+    public string AwsAccessKeyId { get; set; }
+
+    /// <summary>
+    /// AWS Secret Access Key used for authentication with AWS services.
+    /// </summary>
+    /// <example>TVh5hgd3uGY/2CqH+Kkrrg3dadbXLsYe0jC3h+WD</example>
+    [PasswordPropertyText]
+    public string AwsSecretAccessKey { get; set; }
+
+    /// <summary>
+    /// AWS Region where the S3 bucket is located.
+    /// </summary>
+    /// <example>EuCentral1</example>
+    public Region Region { get; set; }
 }

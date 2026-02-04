@@ -1,4 +1,6 @@
-﻿namespace Frends.AmazonS3.ListObjectVersions.Definitions;
+﻿using System.Collections.Generic;
+
+namespace Frends.AmazonS3.ListObjectVersions.Definitions;
 
 /// <summary>
 /// Result of the task.
@@ -9,13 +11,19 @@ public class Result
     /// Indicates if the task completed successfully.
     /// </summary>
     /// <example>true</example>
-    public bool Success { get; set; }
+    public bool Success { get; set; } = true;
 
     /// <summary>
-    /// Input string repeated the specified number of times.
+    /// List of objects retrieved from the S3 bucket. Empty list if operation failed.
     /// </summary>
-    /// <example>foobar,foobar</example>
-    public string Output { get; set; }
+    /// /// <example>[{}, {}]</example>
+    public List<BucketObjectVersions> Objects { get; set; } = [];
+
+    /// <summary>
+    /// Indicates if the response was truncated.
+    /// </summary>
+    /// <example>true</example>
+    public bool ResponseTruncated { get; set; }
 
     /// <summary>
     /// Error that occurred during task execution.

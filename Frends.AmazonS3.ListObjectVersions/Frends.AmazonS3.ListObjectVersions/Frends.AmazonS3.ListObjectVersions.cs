@@ -1,7 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+using Amazon.S3;
 using Frends.AmazonS3.ListObjectVersions.Definitions;
 using Frends.AmazonS3.ListObjectVersions.Helpers;
 
@@ -21,8 +22,7 @@ public static class AmazonS3
     /// <param name="options">Additional parameters.</param>
     /// <param name="cancellationToken">A cancellation token provided by Frends Platform.</param>
     /// <returns>object { bool Success, string Output, object Error { string Message, Exception AdditionalInfo } }</returns>
-    // TODO: Remove Connection parameter if the task does not make connections
-    public static Result ListObjectVersions(
+    public static async Task<Result> ListObjectVersions(
         [PropertyTab] Input input,
         [PropertyTab] Connection connection,
         [PropertyTab] Options options,
@@ -30,24 +30,19 @@ public static class AmazonS3
     {
         try
         {
-            // TODO: Do something with connection parameters, e.g., connect to a service.
-            _ = connection.ConnectionString;
-
-            // Cancellation token should be provided to methods that support it
-            // and checked during long-running operations, e.g., loops
-            cancellationToken.ThrowIfCancellationRequested();
-
-            if (input.Repeat < 0)
-                throw new Exception("Repeat count cannot be negative.");
-
-            var output = string.Join(options.Delimiter, Enumerable.Repeat(input.Content, input.Repeat));
-
-            return new Result
+            if (string.IsNullOrWhiteSpace(connection.AwsSecretAccessKey) ||
+                string.IsNullOrWhiteSpace(connection.AwsAccessKeyId))
             {
-                Success = true,
-                Output = output,
-                Error = null,
-            };
+                throw new ArgumentException("AWS credentials missing.", nameof(connection));
+            }
+
+            var region = AmazonS3Handler.RegionSelection(connection.Region);
+            using var client = new AmazonS3Client(connection.AwsAccessKeyId, connection.AwsSecretAccessKey, region);
+            await AmazonS3Handler.CheckVersioningSetup(client, input, cancellationToken).ConfigureAwait(false);
+            var result = await AmazonS3Handler.ListObjectVersions(client, input, options, cancellationToken)
+                .ConfigureAwait(false);
+
+            return result;
         }
         catch (Exception ex)
         {
