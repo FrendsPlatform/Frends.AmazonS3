@@ -21,7 +21,7 @@ public class BucketObjectVersions
     /// Entity tag (ETag) - a hash of the object used for change detection.
     /// </summary>
     /// <example>2b9338cfb801ca193ee45d49acc2ba99</example>
-    public string Etag { get; set; }
+    public string ETag { get; set; }
 
     /// <summary>
     /// Version ID of an object.

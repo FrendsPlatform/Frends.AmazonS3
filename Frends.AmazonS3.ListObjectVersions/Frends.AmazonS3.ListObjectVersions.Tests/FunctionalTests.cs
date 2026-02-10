@@ -57,27 +57,30 @@ public class FunctionalTests : TestBase
         {
             if (s3Client != null && await AmazonS3Util.DoesS3BucketExistV2Async(s3Client, BucketName))
             {
-                var listResponse = await s3Client.ListObjectsV2Async(new ListObjectsV2Request
+                var listResponse = await s3Client.ListVersionsAsync(new ListVersionsRequest
                 {
                     BucketName = BucketName,
                 });
 
-                if (listResponse.S3Objects.Count != 0)
+                var objectsToDelete = listResponse.Versions
+                    .Select(v => new KeyVersion
+                    {
+                        Key = v.Key,
+                        VersionId = v.VersionId,
+                    })
+                    .ToList();
+
+                if (objectsToDelete.Count != 0)
                 {
                     var deleteRequest = new DeleteObjectsRequest
                     {
                         BucketName = BucketName,
-                        Objects =
-                        [
-                            .. listResponse.S3Objects.Select(x => new KeyVersion
-                            {
-                                Key = x.Key,
-                            }),
-                        ],
+                        Objects = objectsToDelete,
                     };
                     await s3Client.DeleteObjectsAsync(deleteRequest);
                 }
 
+                await Task.Delay(1000);
                 await s3Client.DeleteBucketAsync(BucketName);
 
                 await Task.Delay(1000);
@@ -144,7 +147,7 @@ public class FunctionalTests : TestBase
 
         Assert.That(result.Success, Is.True);
         Assert.That(result.Objects, Is.Not.Null);
-        Assert.That(result.Objects.Count, Is.EqualTo(2));
+        Assert.That(result.Objects.Count, Is.EqualTo(testFiles.Length + 1));
         Assert.That(result.Error, Is.Null);
     }
 

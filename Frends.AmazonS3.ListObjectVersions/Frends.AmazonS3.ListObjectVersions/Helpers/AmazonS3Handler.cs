@@ -26,15 +26,21 @@ internal static class AmazonS3Handler
             Prefix = string.IsNullOrWhiteSpace(options.Prefix) ? null : options.Prefix,
         };
 
-        var response = await client.ListVersionsAsync(request, cancellationToken).ConfigureAwait(false);
-        result.Objects.AddRange(response.Versions.Select(entry => new BucketObjectVersions
+        while (true)
         {
-            BucketName = entry.BucketName,
-            Etag = entry.ETag,
-            Key = entry.Key,
-            Version = entry.VersionId,
-        }));
-        result.ResponseTruncated = response.IsTruncated ?? false;
+            var response = await client.ListVersionsAsync(request, cancellationToken).ConfigureAwait(false);
+            result.Objects.AddRange(response.Versions.Select(entry => new BucketObjectVersions
+            {
+                BucketName = entry.BucketName,
+                ETag = entry.ETag,
+                Key = entry.Key,
+                Version = entry.VersionId,
+            }));
+
+            if (response.IsTruncated != true) break;
+            request.KeyMarker = response.NextKeyMarker;
+            request.VersionIdMarker = response.NextVersionIdMarker;
+        }
 
         return result;
     }

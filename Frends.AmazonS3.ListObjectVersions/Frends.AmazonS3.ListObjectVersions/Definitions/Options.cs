@@ -17,6 +17,7 @@ public class Options
     /// <summary>
     /// Sets the maximum number of keys returned in one response.
     /// The response might contain fewer keys but will never contain more than this value.
+    /// Multiple responses will be merged into one result.
     /// </summary>
     /// <example>1000</example>
     [DefaultValue(1000)]

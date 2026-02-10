@@ -16,14 +16,8 @@ public class Result
     /// <summary>
     /// List of objects retrieved from the S3 bucket. Empty list if operation failed.
     /// </summary>
-    /// /// <example>[{}, {}]</example>
+    /// <example>[{}, {}]</example>
     public List<BucketObjectVersions> Objects { get; set; } = [];
-
-    /// <summary>
-    /// Indicates if the response was truncated.
-    /// </summary>
-    /// <example>true</example>
-    public bool ResponseTruncated { get; set; }
 
     /// <summary>
     /// Error that occurred during task execution.
