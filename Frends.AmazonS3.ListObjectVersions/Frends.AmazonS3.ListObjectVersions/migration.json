@@ -1,0 +1,12 @@
+﻿[
+  {
+    "Task": "Frends.AmazonS3.ListObjectVersions",
+    "Migrations": [
+      {
+        "Version": "1.0.0",
+        "Description": "",
+        "Migration": []
+      }
+    ]
+  }
+]

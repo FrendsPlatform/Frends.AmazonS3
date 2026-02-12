@@ -1,0 +1,25 @@
+name: ListObjectVersions_test_on_main
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'Frends.AmazonS3.ListObjectVersions/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: FrendsPlatform/FrendsTasks/.github/workflows/linux_build_main.yml@main
+    with:
+      workdir: Frends.AmazonS3.ListObjectVersions
+      dotnet_version: 8.0.x
+      strict_analyzers: true
+      env_var_name_1: ACCESS_KEY
+      env_var_name_2: SECRET_ACCESS_KEY
+    secrets:
+      badge_service_api_key: ${{ secrets.BADGE_SERVICE_API_KEY }}
+      env_var_value_1: ${{ secrets.ACCESS_KEY }}
+      env_var_value_2: ${{ secrets.SECRET_ACCESS_KEY }}
