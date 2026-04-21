@@ -259,28 +259,22 @@ public class AmazonS3
         }
         catch (Exception)
         {
-            ListPartsRequest listPartsRequest = new()
+            try
             {
-                UploadId = uploadRequest.UploadId
-            };
-
-            var listParts = await client.ListPartsAsync(listPartsRequest, cancellationToken);
-
-            while (listParts.Parts.Count > 0)
-            {
-                foreach (var part in listParts.Parts)
+                var abortMpuRequest = new AbortMultipartUploadRequest
                 {
-                    AbortMultipartUploadRequest abortMpuRequest = new()
-                    {
-                        BucketName = input.BucketName,
-                        Key = path,
-                        UploadId = uploadRequest.UploadId
-                    };
-                    await client.AbortMultipartUploadAsync(abortMpuRequest, cancellationToken);
-                }
+                    BucketName = input.BucketName,
+                    Key = path,
+                    UploadId = initResponse.UploadId
+                };
 
-                listParts = await client.ListPartsAsync(listPartsRequest, cancellationToken);
+                await client.AbortMultipartUploadAsync(abortMpuRequest, cancellationToken);
             }
+            catch
+            {
+                // Swallow abort errors so the original exception is rethrown below.
+            }
+            throw;
         }
     }
 

@@ -1,5 +1,8 @@
 ﻿# Changelog
 
+## [3.3.0] - 2026-04-21
+### Fixed
+- Fixed missing BucketName/Key in abort cleanup, simplified loop to a single abort call, added throw to stop swallowing exceptions and set default multipart part size to 10 MB.
 
 ## [3.2.0] - 2025-12-29
 ### Changed
