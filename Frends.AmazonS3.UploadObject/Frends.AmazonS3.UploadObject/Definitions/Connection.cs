@@ -96,7 +96,8 @@ public class Connection
     /// Recommended part sizes typically range from 10 MB to 100 MB for optimal performance.
     /// </summary>
     /// <example>10</example>
-    public long PartSize { get; set; }
+    [DefaultValue(10)]
+    public long PartSize { get; set; } = 10;
 
     /// <summary>
     /// Enable/disable an AWS S3 access control list.
