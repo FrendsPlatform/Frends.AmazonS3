@@ -1,8 +1,8 @@
 ﻿# Changelog
 
-## [3.3.0] - 2025-10-17
+## [3.3.0] - 2026-04-21
 ### Fixed
--Fixed missing BucketName/Key in abort cleanup, simplified loop to a single abort call, and added throw to stop swallowing exceptions.
+- Fixed missing BucketName/Key in abort cleanup, simplified loop to a single abort call, and added throw to stop swallowing exceptions.
 
 ## [3.2.0] - 2025-12-29
 ### Changed

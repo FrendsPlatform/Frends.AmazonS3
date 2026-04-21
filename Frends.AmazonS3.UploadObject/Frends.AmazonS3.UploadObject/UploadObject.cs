@@ -259,7 +259,7 @@ public class AmazonS3
         }
         catch (Exception)
         {
-            if (initResponse != null)
+            try
             {
                 var abortMpuRequest = new AbortMultipartUploadRequest
                 {
@@ -270,7 +270,10 @@ public class AmazonS3
 
                 await client.AbortMultipartUploadAsync(abortMpuRequest, cancellationToken);
             }
-
+            catch
+            {
+                // Swallow abort errors so the original exception is rethrown below.
+            }
             throw;
         }
     }
