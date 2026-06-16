@@ -14,7 +14,7 @@ namespace Frends.AmazonS3.ListObjects
     /// <summary>
     /// Amazon S3 task.
     /// </summary>
-    public class AmazonS3
+    public static class AmazonS3
     {
         /// <summary>
         /// Lists objects from specified AWS S3 Bucket.
@@ -32,6 +32,10 @@ namespace Frends.AmazonS3.ListObjects
                 if (string.IsNullOrWhiteSpace(connection.AwsSecretAccessKey) || string.IsNullOrWhiteSpace(connection.AwsAccessKeyId))
                 {
                     return ErrorHandler.HandleCredentialsError("AWS credentials missing.", options);
+                }
+                if (string.IsNullOrWhiteSpace(input.BucketName))
+                {
+                    return ErrorHandler.HandleCredentialsError("Bucket name is missing.", options);
                 }
 
                 var region = RegionSelection(connection.Region);
@@ -61,6 +65,15 @@ namespace Frends.AmazonS3.ListObjects
             do
             {
                 var response = await client.ListObjectsV2Async(request, cancellationToken);
+                if(response is null ) throw new Exception("Received null response from S3 ListObjectsV2Async call.");
+                if(response.HttpStatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    throw new Exception($"Error listing objects: {response.HttpStatusCode}");
+                }
+                if(response.S3Objects is null)
+                {
+                    throw new Exception("S3Objects property was null in S3 ListObjectsV2Async response.");
+                }
 
                 foreach (var item in response.S3Objects)
                 {
@@ -69,12 +82,13 @@ namespace Frends.AmazonS3.ListObjects
                     {
                         BucketName = item.BucketName,
                         Key = item.Key,
-                        Size = (long)item.Size,
+                        Size = item.Size ?? 0,
                         Etag = item.ETag,
-                        LastModified = (DateTime)item.LastModified
+                        LastModified = item.LastModified,
                     });
                 }
 
+                if (response.IsTruncated is null) throw new Exception("IsTruncated flag was not set in S3 ListObjectsV2Async response.");
                 if ((bool)response.IsTruncated)
                     request.ContinuationToken = response.NextContinuationToken;
                 else
