@@ -33,7 +33,7 @@ namespace Frends.AmazonS3.ListObjects.Test
 
         Connection? _connection = null;
         Input? _input = null;
-        Options? _options = null;
+        Options? _options;
 
         public ListObjectsTest()
         {
