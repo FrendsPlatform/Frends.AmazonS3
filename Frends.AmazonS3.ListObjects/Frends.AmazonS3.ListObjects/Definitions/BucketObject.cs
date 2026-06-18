@@ -35,7 +35,7 @@ namespace Frends.AmazonS3.ListObjects.Definitions
         /// The date and time the object was last modified.
         /// </summary>
         /// <example>2022-04-22T00:16:40+02:00</example>
-        public DateTime LastModified { get; set; }
+        public DateTime? LastModified { get; set; }
 
     }
 }

@@ -1,5 +1,11 @@
 ﻿# Changelog
 
+## [2.2.0] - 2026-06-16		
+### Changed
+- Updated AWSSDK.Core nuget package from 4.0.3.5 to 4.0.8
+- Updated AWSSDK.S3 nuget package from 4.0.14.2 to 4.0.24.1
+- Introduce more null checks to avoid unexpected exceptions
+
 ## [2.1.0] - 2025-12-29		
 ### Changed		  
 - Updated AWS SDK version.		
