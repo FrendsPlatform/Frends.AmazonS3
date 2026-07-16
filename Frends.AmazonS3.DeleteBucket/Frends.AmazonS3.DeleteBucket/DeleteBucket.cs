@@ -15,7 +15,7 @@ namespace Frends.AmazonS3.DeleteBucket;
 /// <summary>
 /// Amazon S3 Task.
 /// </summary>
-public class AmazonS3
+public static class AmazonS3
 {
     /// <summary>
     /// Delete AWS S3 Bucket.
