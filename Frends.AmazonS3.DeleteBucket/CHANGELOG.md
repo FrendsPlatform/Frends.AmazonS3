@@ -1,5 +1,9 @@
 ﻿# Changelog
 
+## [2.2.0] - 2026-07-16
+### Changed
+- Made the task class static to comply with Frends task analyzer requirements (FT0004).
+
 ## [2.1.0] - 2025-12-29
 ### Changed
 - Updated AWS SDK version.
