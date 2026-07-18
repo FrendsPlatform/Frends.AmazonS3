@@ -10,22 +10,26 @@ namespace Frends.AmazonS3.ListObjects.Definitions
         /// <summary>
         /// List of objects retrieved from the S3 bucket. Empty list if operation failed.
         /// </summary>
+        /// <example>[ { BucketName: "my-bucket", Key: "folder/file.txt", ... } ]</example>
         public List<BucketObject> Objects { get; private set; }
 
         /// <summary>
         /// Indicates whether the operation was successful.
         /// </summary>
+        /// <example>true</example>
         public bool Success { get; private set; }
 
         /// <summary>
         /// Error information if the operation failed.
         /// </summary>
+        /// <example>object { Error Message, dynamic AdditionalInfo }</example>
         public Error Error { get; private set; }
 
         /// <summary>
         /// Error message if the operation failed. Returns empty string if operation succeeded.
         /// Provided for backward compatibility - use Error property for detailed error information.
         /// </summary>
+        /// <example>Unable to list objects.</example>
         public string ErrorMessage => Error?.Message ?? string.Empty;
 
         /// <summary>

@@ -8,11 +8,13 @@ namespace Frends.AmazonS3.ListObjects.Definitions
         /// <summary>
         /// The primary error message describing what went wrong.
         /// </summary>
+        /// <example>Unable to list objects.</example>
         public string Message { get; set; }
 
         /// <summary>
         /// Additional error information such as stack traces, error codes, or other diagnostic data.
         /// </summary>
+        /// <example>object { Exception AdditionalInfo }</example>
         public dynamic AdditionalInfo { get; set; }
 
         /// <summary>
