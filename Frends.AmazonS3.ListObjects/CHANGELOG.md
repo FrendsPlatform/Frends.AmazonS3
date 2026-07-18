@@ -1,5 +1,10 @@
 ﻿# Changelog
 
+## [3.0.0] - 2026-07-18
+### Changed
+- **[Breaking]** The parameter order of the ListObjects task has been updated to follow the standard Frends parameter order: Input, Connection, Options. This may require reconfiguring the task in existing processes.
+- Added missing documentation examples for result and error output properties.
+
 ## [2.2.0] - 2026-06-16		
 ### Changed
 - Updated AWSSDK.Core nuget package from 4.0.3.5 to 4.0.8

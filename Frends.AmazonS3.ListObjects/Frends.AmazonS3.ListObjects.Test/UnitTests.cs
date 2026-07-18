@@ -152,7 +152,7 @@ namespace Frends.AmazonS3.ListObjects.Test
                 ErrorMessageOnFailure = ""
             };
 
-            var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
+            var result = await AmazonS3.ListObjects(_input, _connection, _options, default);
 
             if (result.Success && result.Objects != null)
             {
@@ -196,7 +196,7 @@ namespace Frends.AmazonS3.ListObjects.Test
                 ErrorMessageOnFailure = ""
             };
 
-            var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
+            var result = await AmazonS3.ListObjects(_input, _connection, _options, default);
 
             if (result.Success && result.Objects != null)
             {
@@ -240,7 +240,7 @@ namespace Frends.AmazonS3.ListObjects.Test
                 ErrorMessageOnFailure = ""
             };
 
-            var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
+            var result = await AmazonS3.ListObjects(_input, _connection, _options, default);
 
             if (result.Success && result.Objects != null)
             {
@@ -284,7 +284,7 @@ namespace Frends.AmazonS3.ListObjects.Test
                 ErrorMessageOnFailure = ""
             };
 
-            var ex = Assert.ThrowsExactly<AggregateException>(() => AmazonS3.ListObjects(_connection, _input, _options, default).Result);
+            var ex = Assert.ThrowsExactly<AggregateException>(() => AmazonS3.ListObjects(_input, _connection, _options, default).Result);
 
             Assert.IsNotNull(ex.InnerException, "AggregateException should contain an inner exception");
             Assert.IsTrue(ex.InnerException!.Message.Contains("AWS credentials missing."));
@@ -318,7 +318,7 @@ namespace Frends.AmazonS3.ListObjects.Test
                 ErrorMessageOnFailure = ""
             };
 
-            var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
+            var result = await AmazonS3.ListObjects(_input, _connection, _options, default);
             Assert.IsFalse(result.Success);
             Assert.IsTrue(result.ErrorMessage.Contains("AWS credentials missing."));
             Assert.IsNotNull(result.Objects);
@@ -355,7 +355,7 @@ namespace Frends.AmazonS3.ListObjects.Test
                 ErrorMessageOnFailure = "Custom authentication error occurred"
             };
 
-            var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
+            var result = await AmazonS3.ListObjects(_input, _connection, _options, default);
             Assert.IsFalse(result.Success);
             StringAssert.Contains(result.ErrorMessage, "Custom authentication error occurred");
             Assert.IsNotNull(result.Objects);
@@ -672,7 +672,7 @@ namespace Frends.AmazonS3.ListObjects.Test
                 ErrorMessageOnFailure = ""
             };
 
-            var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
+            var result = await AmazonS3.ListObjects(_input, _connection, _options, default);
 
             // Should handle the error gracefully when bucket doesn't exist
             Assert.IsFalse(result.Success);
@@ -701,7 +701,7 @@ namespace Frends.AmazonS3.ListObjects.Test
 
             _options = new Options(); // Use default values
 
-            var result = await AmazonS3.ListObjects(_connection, _input, _options, default);
+            var result = await AmazonS3.ListObjects(_input, _connection, _options, default);
 
             if (_accessKey != null && _secretAccessKey != null && _bucketName != null)
             {
