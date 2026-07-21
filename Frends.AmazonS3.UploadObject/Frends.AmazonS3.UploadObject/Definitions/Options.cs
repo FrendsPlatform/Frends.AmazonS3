@@ -16,9 +16,9 @@ public class Options
     /// <summary>
     /// Throw error on failure.
     /// </summary>
-    /// <example>false</example>
-    [DefaultValue(false)]
-    public bool ThrowErrorOnFailure { get; set; }
+    /// <example>true</example>
+    [DefaultValue(true)]
+    public bool ThrowErrorOnFailure { get; set; } = true;
 
     /// <summary>
     /// Error message to display on failure.

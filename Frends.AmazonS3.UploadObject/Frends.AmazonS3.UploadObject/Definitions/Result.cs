@@ -28,6 +28,7 @@ public class Result
     /// <summary>
     /// Error information if upload failed.
     /// </summary>
+    /// <example>null</example>
     public Error Error { get; internal set; }
 
     internal Result(bool success, List<string> uploadedObjects, string debugLog, Error error = null)

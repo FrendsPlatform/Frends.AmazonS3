@@ -18,7 +18,7 @@ namespace Frends.AmazonS3.UploadObject;
 /// <summary>
 /// Amazon S3 Task.
 /// </summary>
-public class AmazonS3
+public static class AmazonS3
 {
     /// <summary>
     /// Upload objects to AWS S3 Bucket.

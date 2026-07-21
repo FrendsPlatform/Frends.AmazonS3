@@ -1,5 +1,11 @@
 ﻿# Changelog
 
+## [4.0.0] - 2026-07-21
+### Changed
+- [Breaking] The default value of `ThrowErrorOnFailure` in Options is now `true` (was `false`). The task will now throw an exception on failure by default. To restore previous behavior, explicitly set `ThrowErrorOnFailure` to `false`.
+### Fixed
+- Improved internal documentation for better discoverability in the Frends task catalog.
+
 ## [3.3.0] - 2026-04-21
 ### Fixed
 - Fixed missing BucketName/Key in abort cleanup, simplified loop to a single abort call, added throw to stop swallowing exceptions and set default multipart part size to 10 MB.
