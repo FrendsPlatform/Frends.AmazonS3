@@ -1,8 +1,8 @@
 ﻿# Changelog
 
-## [4.0.0] - 2026-07-21
+## [3.4.0] - 2026-07-21
 ### Changed
-- [Breaking] The default value of `ThrowErrorOnFailure` in Options is now `true` (was `false`). The task will now throw an exception on failure by default. To restore previous behavior, explicitly set `ThrowErrorOnFailure` to `false`.
+- The default value of `ThrowErrorOnFailure` in Options is now `true` (was `false`). When adding this task to a new integration, it will throw an exception on failure by default. Existing integrations are not affected since the value is stored per-configuration.
 ### Fixed
 - Improved internal documentation for better discoverability in the Frends task catalog.
 
