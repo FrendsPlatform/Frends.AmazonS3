@@ -8,10 +8,13 @@ internal class StringWriterLogger(TextWriter writer, string category) : ILogger
 {
     private readonly object _syncRoot = new();
 
+    /// <summary>Begins a logical operation scope.</summary>
     public IDisposable BeginScope<TState>(TState state) => null;
 
+    /// <summary>Checks if the given log level is enabled.</summary>
     public bool IsEnabled(LogLevel logLevel) => true;
 
+    /// <summary>Writes a log entry to the underlying TextWriter.</summary>
     public void Log<TState>(
         LogLevel logLevel,
         EventId eventId,
