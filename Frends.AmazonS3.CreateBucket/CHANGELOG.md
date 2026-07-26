@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.1.0] - 2026-02-23
+### Fixed
+- Ensure FrendsTaskMetadata.json is included in NuGet package
+
 ## [2.0.0] - 2025-06-24
 ### Changed
 - [Breaking] Created Input tab and moved Connection.BucketName to Input
