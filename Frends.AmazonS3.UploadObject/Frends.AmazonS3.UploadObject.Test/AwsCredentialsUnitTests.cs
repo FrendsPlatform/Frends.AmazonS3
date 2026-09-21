@@ -13,11 +13,8 @@ using System.Threading.Tasks;
 namespace Frends.AmazonS3.UploadObject.Tests;
 
 [TestClass]
-public class AwsCredentialsUnitTests
+public class AwsCredentialsUnitTests : AwsS3TestBase
 {
-    private readonly string? accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
-    private readonly string? secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
-    private readonly string? bucketName = Environment.GetEnvironmentVariable("HiQ_AwsS3Test_BucketName");
     private readonly string dir = Path.Combine(Environment.CurrentDirectory);
     private Connection? connection;
     private Input? input;
@@ -43,11 +40,11 @@ public class AwsCredentialsUnitTests
         if (Directory.Exists(Path.Combine(dir, "AWS")))
             Directory.Delete(Path.Combine(dir, "AWS"), true);
 
-        using var client = new AmazonS3Client(accessKey, secretAccessKey, RegionEndpoint.EUCentral1);
+        using var client = new AmazonS3Client(AccessKey, SecretAccessKey, RegionEndpoint.EUCentral1);
 
         var listObjectRequest = new ListObjectsRequest
         {
-            BucketName = bucketName,
+            BucketName = BucketName,
         };
 
         var response = await client.ListObjectsAsync(listObjectRequest);
@@ -75,7 +72,7 @@ public class AwsCredentialsUnitTests
             SourceDirectory = Path.Combine(dir, "AWS"),
             FileMask = null,
             TargetDirectory = targetDirectory,
-            BucketName = bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
             DeleteSource = false,
@@ -84,8 +81,8 @@ public class AwsCredentialsUnitTests
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
-            AwsAccessKeyId = accessKey,
-            AwsSecretAccessKey = secretAccessKey,
+            AwsAccessKeyId = AccessKey,
+            AwsSecretAccessKey = SecretAccessKey,
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
@@ -117,7 +114,7 @@ public class AwsCredentialsUnitTests
             SourceDirectory = Path.Combine(dir, "AWS"),
             FileMask = null,
             TargetDirectory = "Upload2023/",
-            BucketName = bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
             DeleteSource = false,
@@ -126,8 +123,8 @@ public class AwsCredentialsUnitTests
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
-            AwsAccessKeyId = accessKey,
-            AwsSecretAccessKey = secretAccessKey,
+            AwsAccessKeyId = AccessKey,
+            AwsSecretAccessKey = SecretAccessKey,
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
@@ -159,7 +156,7 @@ public class AwsCredentialsUnitTests
             SourceDirectory = Path.Combine(dir, "AWS"),
             FileMask = null,
             TargetDirectory = "Upload2023/",
-            BucketName = bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
             DeleteSource = false,
@@ -200,7 +197,7 @@ public class AwsCredentialsUnitTests
             SourceDirectory = Path.Combine(dir, "AWS"),
             FileMask = null,
             TargetDirectory = "Upload2023/",
-            BucketName = bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
             DeleteSource = false,
@@ -239,7 +236,7 @@ public class AwsCredentialsUnitTests
             SourceDirectory = Path.Combine(dir, "AWS"),
             FileMask = null,
             TargetDirectory = "Upload2023/",
-            BucketName = bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = true,
             PreserveFolderStructure = false,
             DeleteSource = false,
@@ -248,8 +245,8 @@ public class AwsCredentialsUnitTests
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
-            AwsAccessKeyId = accessKey,
-            AwsSecretAccessKey = secretAccessKey,
+            AwsAccessKeyId = AccessKey,
+            AwsSecretAccessKey = SecretAccessKey,
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
@@ -281,7 +278,7 @@ public class AwsCredentialsUnitTests
             SourceDirectory = Path.Combine(dir, "AWS"),
             FileMask = null,
             TargetDirectory = "Upload2023/",
-            BucketName = bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
             DeleteSource = false,
@@ -290,8 +287,8 @@ public class AwsCredentialsUnitTests
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
-            AwsAccessKeyId = accessKey,
-            AwsSecretAccessKey = secretAccessKey,
+            AwsAccessKeyId = AccessKey,
+            AwsSecretAccessKey = SecretAccessKey,
             Region = Region.EuCentral1,
             Overwrite = true,
             ReturnListOfObjectKeys = false,
@@ -323,7 +320,7 @@ public class AwsCredentialsUnitTests
             SourceDirectory = Path.Combine(dir, "AWS"),
             FileMask = null,
             TargetDirectory = "Upload2023/",
-            BucketName = bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = true,
             DeleteSource = false,
@@ -332,8 +329,8 @@ public class AwsCredentialsUnitTests
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
-            AwsAccessKeyId = accessKey,
-            AwsSecretAccessKey = secretAccessKey,
+            AwsAccessKeyId = AccessKey,
+            AwsSecretAccessKey = SecretAccessKey,
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
@@ -365,7 +362,7 @@ public class AwsCredentialsUnitTests
             SourceDirectory = Path.Combine(dir, "AWS"),
             FileMask = null,
             TargetDirectory = "Upload2023/",
-            BucketName = bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
             DeleteSource = false,
@@ -374,8 +371,8 @@ public class AwsCredentialsUnitTests
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
-            AwsAccessKeyId = accessKey,
-            AwsSecretAccessKey = secretAccessKey,
+            AwsAccessKeyId = AccessKey,
+            AwsSecretAccessKey = SecretAccessKey,
             Region = Region.EuCentral1,
             ReturnListOfObjectKeys = true,
             Overwrite = true,
@@ -409,7 +406,7 @@ public class AwsCredentialsUnitTests
             SourceDirectory = Path.Combine(dir, "AWS"),
             FileMask = fileName,
             TargetDirectory = "Upload2023/",
-            BucketName = bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
             DeleteSource = true,
@@ -418,8 +415,8 @@ public class AwsCredentialsUnitTests
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
-            AwsAccessKeyId = accessKey,
-            AwsSecretAccessKey = secretAccessKey,
+            AwsAccessKeyId = AccessKey,
+            AwsSecretAccessKey = SecretAccessKey,
             Region = Region.EuCentral1,
             ReturnListOfObjectKeys = false,
             Overwrite = false,
@@ -452,7 +449,7 @@ public class AwsCredentialsUnitTests
             SourceDirectory = Path.Combine(dir, "AWS"),
             FileMask = "notafile*",
             TargetDirectory = "Upload2023/",
-            BucketName = bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
             DeleteSource = false,
@@ -461,8 +458,8 @@ public class AwsCredentialsUnitTests
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
-            AwsAccessKeyId = accessKey,
-            AwsSecretAccessKey = secretAccessKey,
+            AwsAccessKeyId = AccessKey,
+            AwsSecretAccessKey = SecretAccessKey,
             Region = Region.EuCentral1,
             ReturnListOfObjectKeys = false,
             Overwrite = false,
@@ -505,7 +502,7 @@ public class AwsCredentialsUnitTests
                 SourceDirectory = Path.Combine(dir, "AWS"),
                 FileMask = null,
                 TargetDirectory = "Upload2023/",
-                BucketName = bucketName,
+                BucketName = BucketName,
                 UploadFromCurrentDirectoryOnly = false,
                 PreserveFolderStructure = false,
                 DeleteSource = false,
@@ -515,8 +512,8 @@ public class AwsCredentialsUnitTests
             {
                 AuthenticationMethod = AuthenticationMethod.AwsCredentials,
                 PreSignedUrl = null,
-                AwsAccessKeyId = accessKey,
-                AwsSecretAccessKey = secretAccessKey,
+                AwsAccessKeyId = AccessKey,
+                AwsSecretAccessKey = SecretAccessKey,
                 Region = Region.EuCentral1,
                 Overwrite = false,
                 ReturnListOfObjectKeys = false,
@@ -545,7 +542,7 @@ public class AwsCredentialsUnitTests
             SourceDirectory = Path.Combine(dir, "AWS", "EmptyFolder"),
             FileMask = null,
             TargetDirectory = "Upload2023/",
-            BucketName = bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
             DeleteSource = false,
@@ -554,8 +551,8 @@ public class AwsCredentialsUnitTests
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
-            AwsAccessKeyId = accessKey,
-            AwsSecretAccessKey = secretAccessKey,
+            AwsAccessKeyId = AccessKey,
+            AwsSecretAccessKey = SecretAccessKey,
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
@@ -586,7 +583,7 @@ public class AwsCredentialsUnitTests
             SourceDirectory = Path.Combine(dir, "AWS", "EmptyFolder"),
             FileMask = null,
             TargetDirectory = "Upload2023/",
-            BucketName = bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
             DeleteSource = false,
@@ -595,8 +592,8 @@ public class AwsCredentialsUnitTests
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
-            AwsAccessKeyId = accessKey,
-            AwsSecretAccessKey = secretAccessKey,
+            AwsAccessKeyId = AccessKey,
+            AwsSecretAccessKey = SecretAccessKey,
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,

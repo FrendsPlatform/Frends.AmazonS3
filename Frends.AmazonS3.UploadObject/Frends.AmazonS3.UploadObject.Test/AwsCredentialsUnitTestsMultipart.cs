@@ -13,11 +13,8 @@ using System.Threading.Tasks;
 namespace Frends.AmazonS3.UploadObject.Tests;
 
 [TestClass]
-public class AwsCredentialsUnitTestsMultipart
+public class AwsCredentialsUnitTestsMultipart : AwsS3TestBase
 {
-    private readonly string? accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
-    private readonly string? secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
-    private readonly string? bucketName = Environment.GetEnvironmentVariable("HiQ_AwsS3Test_BucketName");
     private readonly string dir = Path.Combine(Environment.CurrentDirectory);
     private Connection connection = new();
     private Input input = new();
@@ -31,7 +28,7 @@ public class AwsCredentialsUnitTestsMultipart
             SourceDirectory = Path.Combine(dir, "AWS"),
             FileMask = null,
             TargetDirectory = "Upload2023/",
-            BucketName = bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
             DeleteSource = false,
@@ -41,8 +38,8 @@ public class AwsCredentialsUnitTestsMultipart
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
-            AwsAccessKeyId = accessKey,
-            AwsSecretAccessKey = secretAccessKey,
+            AwsAccessKeyId = AccessKey,
+            AwsSecretAccessKey = SecretAccessKey,
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
@@ -80,10 +77,10 @@ public class AwsCredentialsUnitTestsMultipart
         if (Directory.Exists($@"{dir}\AWS"))
             Directory.Delete($@"{dir}\AWS", true);
 
-        using var client = new AmazonS3Client(accessKey, secretAccessKey, RegionEndpoint.EUCentral1);
+        using var client = new AmazonS3Client(AccessKey, SecretAccessKey, RegionEndpoint.EUCentral1);
         var listObjectRequest = new ListObjectsRequest
         {
-            BucketName = bucketName
+            BucketName = BucketName
         };
         var response = await client.ListObjectsAsync(listObjectRequest);
         var objects = response.S3Objects;

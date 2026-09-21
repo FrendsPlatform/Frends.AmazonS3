@@ -12,11 +12,8 @@ using System.Threading.Tasks;
 namespace Frends.AmazonS3.UploadObject.Tests;
 
 [TestClass]
-public class PreSignedUnitTests
+public class PreSignedUnitTests : AwsS3TestBase
 {
-    private readonly string? accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
-    private readonly string? secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
-    private readonly string? bucketName = Environment.GetEnvironmentVariable("HiQ_AwsS3Test_BucketName");
     private readonly string dir = Path.Combine(Environment.CurrentDirectory);
 
     private Connection? connection;
@@ -37,11 +34,11 @@ public class PreSignedUnitTests
             Directory.Delete(Path.Combine(dir, "AWS"), true);
 
         using var sw = new StringWriter();
-        using var client = new AmazonS3Client(accessKey, secretAccessKey, RegionEndpoint.EUCentral1);
+        using var client = new AmazonS3Client(AccessKey, SecretAccessKey, RegionEndpoint.EUCentral1);
 
         var deleteObjectRequest = new DeleteObjectRequest
         {
-            BucketName = bucketName,
+            BucketName = BucketName,
             Key = "Upload2023/PreSigned/UploadTest.txt"
         };
         client.DeleteObjectAsync(deleteObjectRequest);
@@ -171,10 +168,10 @@ public class PreSignedUnitTests
     private Uri CreatePresignedUrl(string key)
     {
         var region = RegionEndpoint.EUCentral1;
-        var client = new AmazonS3Client(accessKey, secretAccessKey, region);
+        var client = new AmazonS3Client(AccessKey, SecretAccessKey, region);
         GetPreSignedUrlRequest request = new()
         {
-            BucketName = bucketName,
+            BucketName = BucketName,
             Key = key,
             Verb = HttpVerb.PUT,
             Expires = DateTime.UtcNow.AddMinutes(15),

@@ -1,7 +1,6 @@
 using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
-using dotenv.net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -10,27 +9,19 @@ using System.Threading.Tasks;
 namespace Frends.AmazonS3.UploadObject.Tests;
 
 [TestClass]
-public static class TestAssemblySetup
+public class TestAssemblySetup : AwsS3TestBase
 {
-    private const string BucketPrefix = "frends-upload-object-tests-";
     private static AmazonS3Client? s3Client;
-    private static readonly string BucketName = $"{BucketPrefix}{Guid.NewGuid():N}";
 
     [AssemblyInitialize]
     public static async Task Initialize(TestContext _)
     {
-        DotEnv.Load();
 
-        var accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
-        var secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
-
-        if (string.IsNullOrWhiteSpace(accessKey) || string.IsNullOrWhiteSpace(secretAccessKey))
+        if (string.IsNullOrWhiteSpace(AccessKey) || string.IsNullOrWhiteSpace(SecretAccessKey))
             throw new InvalidOperationException("AWS test credentials are required to run UploadObject tests.");
 
-        s3Client = new AmazonS3Client(accessKey, secretAccessKey, RegionEndpoint.EUCentral1);
+        s3Client = new AmazonS3Client(AccessKey, SecretAccessKey, RegionEndpoint.EUCentral1);
         await CleanupStaleBucketsAsync();
-
-        Environment.SetEnvironmentVariable("HiQ_AwsS3Test_BucketName", BucketName);
 
         await s3Client.PutBucketAsync(new PutBucketRequest
         {
