@@ -36,6 +36,7 @@ public static class AmazonS3
         StringWriter sw = null;
         ILoggerFactory lf = null;
         var currentLoggingOption = AWSConfigs.LoggingConfig.LogTo;
+
         if (connection.GatherDebugLog)
         {
             sw = new StringWriter();
@@ -113,7 +114,7 @@ public static class AmazonS3
                     result.Add(connection.ReturnListOfObjectKeys ? targetDirectory + file.Name : file.FullName);
                 }
 
-                if (input.DeleteSource) DeleteSourceFile(file.FullName);
+                if (input.DeleteSource) await DeleteSourceFile(file.FullName, cancellationToken);
 
                 // Each file requires their own presigned URL so no point to loop more than the first file.
                 if (connection.AuthenticationMethod == AuthenticationMethod.PreSignedUrl) break;
@@ -128,6 +129,7 @@ public static class AmazonS3
                 ? sw.ToString()
                 : $"Exception: {ex.Message}, InnerException: {ex.InnerException}";
             errorHandlerResult.Objects = result;
+
             return errorHandlerResult;
         }
         catch (Exception ex)
@@ -137,6 +139,7 @@ public static class AmazonS3
                 ? sw.ToString()
                 : $"Exception: {ex.Message}, InnerException: {ex.InnerException}";
             errorHandlerResult.Objects = result;
+
             return errorHandlerResult;
         }
         finally
@@ -157,6 +160,7 @@ public static class AmazonS3
     {
         var lf = LoggerFactory.Create(builder => { builder.AddProvider(new StringWriterLoggerProvider(sw)); });
         lf.ConfigureAWSSDKLogging();
+
         return lf;
     }
 
@@ -179,6 +183,7 @@ public static class AmazonS3
     {
         using var client = new AmazonS3Client(connection.AwsAccessKeyId, connection.AwsSecretAccessKey,
             RegionSelection(connection.Region));
+
         if (!connection.Overwrite)
         {
             try
@@ -189,6 +194,7 @@ public static class AmazonS3
                     Key = path,
                 };
                 await client.GetObjectAsync(request, cancellationToken);
+
                 throw new ArgumentException(
                     $"Object {file.Name} already exists in S3 at {request.Key}. Set Overwrite-option to true to overwrite the existing file.");
             }
@@ -226,9 +232,11 @@ public static class AmazonS3
 
         long partSizeInBytes = connection.PartSize * (long)Math.Pow(2, 20);
         UploadPartRequest uploadRequest = null;
+
         try
         {
             long filePosition = 0;
+
             for (int i = 1; filePosition < file.Length; i++)
             {
                 uploadRequest = new()
@@ -274,17 +282,35 @@ public static class AmazonS3
             {
                 // Swallow abort errors so the original exception is rethrown below.
             }
+
             throw;
         }
     }
 
-    private static void DeleteSourceFile(string filePath)
+    private static async Task DeleteSourceFile(string filePath, CancellationToken cancellationToken)
     {
         try
         {
             var file = new FileInfo(filePath);
-            while (IsFileLocked(file)) Thread.Sleep(1000);
+            const int maxDeleteSourceFileLockCheckAttempts = 5;
+            var attempts = 0;
+
+            while (IsFileLocked(file))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                attempts++;
+
+                if (attempts >= maxDeleteSourceFileLockCheckAttempts)
+                    throw new IOException(
+                        $"Source file '{filePath}' is still locked after {maxDeleteSourceFileLockCheckAttempts} attempts.");
+                await Task.Delay(1000, cancellationToken);
+            }
+
             File.Delete(filePath);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
         }
         catch (Exception ex)
         {
