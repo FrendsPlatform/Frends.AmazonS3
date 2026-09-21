@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using dotenv.net;
 
 namespace Frends.AmazonS3.UploadObject.Tests;
 
@@ -26,7 +25,6 @@ public class AwsCredentialsUnitTestsMultipart
 
     public AwsCredentialsUnitTestsMultipart()
     {
-        DotEnv.Load();
         _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
         _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
         _bucketName = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_BucketName");
