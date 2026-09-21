@@ -169,20 +169,43 @@ public static class AmazonS3
         Amazon.Runtime.Logging.AdaptorLoggerFactoryRegistry.DeregisterAdaptorLoggerFactory("ILogger");
     }
 
+    private static readonly HttpClient HttpClient = new()
+    {
+        Timeout = Timeout.InfiniteTimeSpan,
+    };
+
+    private static AmazonS3Config CreateS3Config(Connection connection) => new()
+    {
+        RegionEndpoint = RegionSelection(connection.Region),
+        Timeout = TimeSpan.FromSeconds(connection.NetworkTimeoutInSeconds),
+    };
+
     private static async Task UploadFilePreSignedUrl(Connection connection, string path,
         CancellationToken cancellationToken)
     {
         await using var fileStream = File.OpenRead(path);
-        var fileStreamResponse = await new HttpClient().PutAsync(new Uri(connection.PreSignedUrl),
-            new StreamContent(fileStream), cancellationToken);
-        fileStreamResponse.EnsureSuccessStatusCode();
+
+        using var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(connection.NetworkTimeoutInSeconds));
+        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
+
+        try
+        {
+            var fileStreamResponse = await HttpClient.PutAsync(new Uri(connection.PreSignedUrl),
+                new StreamContent(fileStream), linkedCts.Token);
+            fileStreamResponse.EnsureSuccessStatusCode();
+        }
+        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+        {
+            throw new TimeoutException(
+                $"Uploading '{path}' via pre-signed URL timed out after {connection.NetworkTimeoutInSeconds} seconds.");
+        }
     }
 
     private static async Task UploadFileToS3(FileInfo file, Connection connection, Input input,
         string path, CancellationToken cancellationToken)
     {
         using var client = new AmazonS3Client(connection.AwsAccessKeyId, connection.AwsSecretAccessKey,
-            RegionSelection(connection.Region));
+            CreateS3Config(connection));
 
         if (!connection.Overwrite)
         {
@@ -227,7 +250,7 @@ public static class AmazonS3
         };
 
         using var client = new AmazonS3Client(connection.AwsAccessKeyId, connection.AwsSecretAccessKey,
-            RegionSelection(connection.Region));
+            CreateS3Config(connection));
         var initResponse = await client.InitiateMultipartUploadAsync(initiateRequest, cancellationToken);
 
         long partSizeInBytes = connection.PartSize * (long)Math.Pow(2, 20);
@@ -239,6 +262,7 @@ public static class AmazonS3
 
             for (int i = 1; filePosition < file.Length; i++)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 uploadRequest = new()
                 {
                     BucketName = input.BucketName,

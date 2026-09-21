@@ -114,5 +114,17 @@ public class Connection
     [UIHint(nameof(UseAcl), "", true)]
     public ACLs Acl { get; set; }
 
+    /// <summary>
+    /// Maximum time (in seconds) to wait for a single network operation (connecting, sending, or
+    /// receiving data) before it is aborted. Applies to the AWS S3 client requests as well as
+    /// pre-signed URL uploads. Without a bound, a stalled connection (e.g. dropped packets, a
+    /// network partition, or an unresponsive endpoint) can hang indefinitely instead of failing
+    /// with a clear error.
+    /// </summary>
+    /// <example>100</example>
+    [DefaultValue(100)]
+    public int NetworkTimeoutInSeconds { get; set; } = 100;
+
     #endregion options
+
 }
