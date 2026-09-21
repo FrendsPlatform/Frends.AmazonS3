@@ -14,7 +14,7 @@ public static class TestAssemblySetup
 {
     private const string BucketPrefix = "frends-upload-object-tests-";
     private static AmazonS3Client? s3Client;
-    private static string? bucketName;
+    private static readonly string BucketName = $"{BucketPrefix}{Guid.NewGuid():N}";
 
     [AssemblyInitialize]
     public static async Task Initialize(TestContext _)
@@ -30,28 +30,27 @@ public static class TestAssemblySetup
         s3Client = new AmazonS3Client(accessKey, secretAccessKey, RegionEndpoint.EUCentral1);
         await CleanupStaleBucketsAsync();
 
-        bucketName = $"{BucketPrefix}{Guid.NewGuid():N}";
-        Environment.SetEnvironmentVariable("HiQ_AWSS3Test_BucketName", bucketName);
+        Environment.SetEnvironmentVariable("HiQ_AwsS3Test_BucketName", BucketName);
 
         await s3Client.PutBucketAsync(new PutBucketRequest
         {
-            BucketName = bucketName,
+            BucketName = BucketName,
             ObjectOwnership = ObjectOwnership.ObjectWriter,
-            UseClientRegion = true
+            UseClientRegion = true,
         });
     }
 
     [AssemblyCleanup]
     public static async Task Cleanup()
     {
-        if (s3Client is null || string.IsNullOrWhiteSpace(bucketName))
+        if (s3Client is null || string.IsNullOrWhiteSpace(BucketName))
             return;
 
         try
         {
-            await AbortMultipartUploadsAsync(bucketName);
-            await DeleteObjectsAsync(bucketName);
-            await s3Client.DeleteBucketAsync(bucketName);
+            await AbortMultipartUploadsAsync(BucketName);
+            await DeleteObjectsAsync(BucketName);
+            await s3Client.DeleteBucketAsync(BucketName);
         }
         finally
         {
@@ -59,7 +58,7 @@ public static class TestAssemblySetup
         }
     }
 
-    private static async Task DeleteObjectsAsync(string bucketName)
+    private static async Task DeleteObjectsAsync(string bucket)
     {
         string? continuationToken = null;
 
@@ -67,29 +66,31 @@ public static class TestAssemblySetup
         {
             var response = await s3Client!.ListObjectsV2Async(new ListObjectsV2Request
             {
-                BucketName = bucketName,
-                ContinuationToken = continuationToken
+                BucketName = bucket,
+                ContinuationToken = continuationToken,
             });
 
             if (response.S3Objects is not null && response.S3Objects.Count > 0)
             {
                 var objects = new List<KeyVersion>(response.S3Objects.Count);
                 foreach (var item in response.S3Objects)
-                    objects.Add(new KeyVersion { Key = item.Key });
+                    objects.Add(new KeyVersion
+                    {
+                        Key = item.Key,
+                    });
 
                 await s3Client.DeleteObjectsAsync(new DeleteObjectsRequest
                 {
-                    BucketName = bucketName,
-                    Objects = objects
+                    BucketName = bucket,
+                    Objects = objects,
                 });
             }
 
             continuationToken = response.IsTruncated == true ? response.NextContinuationToken : null;
-        }
-        while (continuationToken is not null);
+        } while (continuationToken is not null);
     }
 
-    private static async Task AbortMultipartUploadsAsync(string bucketName)
+    private static async Task AbortMultipartUploadsAsync(string bucket)
     {
         string? keyMarker = null;
         string? uploadIdMarker = null;
@@ -98,9 +99,9 @@ public static class TestAssemblySetup
         {
             var response = await s3Client!.ListMultipartUploadsAsync(new ListMultipartUploadsRequest
             {
-                BucketName = bucketName,
+                BucketName = bucket,
                 KeyMarker = keyMarker,
-                UploadIdMarker = uploadIdMarker
+                UploadIdMarker = uploadIdMarker,
             });
 
             if (response.MultipartUploads is not null)
@@ -109,22 +110,22 @@ public static class TestAssemblySetup
                 {
                     await s3Client.AbortMultipartUploadAsync(new AbortMultipartUploadRequest
                     {
-                        BucketName = bucketName,
+                        BucketName = bucket,
                         Key = upload.Key,
-                        UploadId = upload.UploadId
+                        UploadId = upload.UploadId,
                     });
                 }
             }
 
             keyMarker = response.IsTruncated == true ? response.NextKeyMarker : null;
             uploadIdMarker = response.IsTruncated == true ? response.NextUploadIdMarker : null;
-        }
-        while (keyMarker is not null || uploadIdMarker is not null);
+        } while (keyMarker is not null || uploadIdMarker is not null);
     }
 
     private static async Task CleanupStaleBucketsAsync()
     {
         var response = await s3Client!.ListBucketsAsync();
+
         foreach (var bucket in response.Buckets)
         {
             if (!bucket.BucketName.StartsWith(BucketPrefix, StringComparison.Ordinal))

@@ -17,7 +17,7 @@ public class AwsCredentialsUnitTestsMultipart
 {
     private readonly string? accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
     private readonly string? secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
-    private readonly string? bucketName = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_BucketName");
+    private readonly string? bucketName = Environment.GetEnvironmentVariable("HiQ_AwsS3Test_BucketName");
     private readonly string dir = Path.Combine(Environment.CurrentDirectory);
     private Connection connection = new();
     private Input input = new();

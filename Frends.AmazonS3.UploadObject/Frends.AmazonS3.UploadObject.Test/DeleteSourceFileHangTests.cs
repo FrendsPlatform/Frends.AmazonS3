@@ -8,12 +8,9 @@ using System.Threading.Tasks;
 namespace Frends.AmazonS3.UploadObject.Tests;
 
 /// <summary>
-/// Guards against the "task stuck forever" bug: when the source file
-/// stays locked (e.g. held open by another process/AV scan), the private DeleteSourceFile /
-/// IsFileLocked retry loop in UploadObject.cs used to have no timeout, no max attempt count and
-/// did not observe a CancellationToken, so it spun on Thread.Sleep(1000) indefinitely.
-/// This test does not touch S3 at all - it calls the private method directly via reflection
-/// so it can prove the fix (or reproduce the bug, if regressed) in seconds instead of 11 hours.
+/// Guards against the "task stuck forever" bug when the source file
+/// stays locked (e.g. held open by another process/AV scan).
+/// This test does not touch S3 at all - it calls the private method directly via reflection.
 /// </summary>
 [TestClass]
 public class DeleteSourceFileHangTests
