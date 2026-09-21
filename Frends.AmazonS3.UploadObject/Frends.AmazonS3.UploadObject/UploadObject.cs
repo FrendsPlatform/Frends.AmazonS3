@@ -149,7 +149,11 @@ public static class AmazonS3
                 UnconfigureAwsSdkLogging();
             }
 
-            sw?.Dispose();
+            if (sw is not null)
+            {
+                await sw.DisposeAsync();
+            }
+
             lf?.Dispose();
 
             AWSConfigs.LoggingConfig.LogTo = currentLoggingOption;
@@ -232,7 +236,7 @@ public static class AmazonS3
             BucketName = input.BucketName,
             Key = path,
             FilePath = file.FullName,
-            CannedACL = (connection.UseAcl) ? GetS3CannedACL(connection.Acl) : S3CannedACL.NoACL,
+            CannedACL = (connection.UseAcl) ? GetS3CannedAcl(connection.Acl) : S3CannedACL.NoACL,
         };
 
         await client.PutObjectAsync(putObjectRequest, cancellationToken);
@@ -254,7 +258,6 @@ public static class AmazonS3
         var initResponse = await client.InitiateMultipartUploadAsync(initiateRequest, cancellationToken);
 
         long partSizeInBytes = connection.PartSize * (long)Math.Pow(2, 20);
-        UploadPartRequest uploadRequest = null;
 
         try
         {
@@ -263,7 +266,7 @@ public static class AmazonS3
             for (int i = 1; filePosition < file.Length; i++)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                uploadRequest = new()
+                UploadPartRequest uploadRequest = new()
                 {
                     BucketName = input.BucketName,
                     Key = path,
@@ -367,7 +370,7 @@ public static class AmazonS3
         return false;
     }
 
-    private static S3CannedACL GetS3CannedACL(ACLs acl)
+    private static S3CannedACL GetS3CannedAcl(ACLs acl)
     {
         return acl switch
         {

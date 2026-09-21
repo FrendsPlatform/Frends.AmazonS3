@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Frends.AmazonS3.UploadObject.Tests;
@@ -14,42 +15,34 @@ namespace Frends.AmazonS3.UploadObject.Tests;
 [TestClass]
 public class AwsCredentialsUnitTestsMultipart
 {
-    public TestContext? TestContext { get; set; }
-    private readonly string? _accessKey;
-    private readonly string? _secretAccessKey;
-    private readonly string? _bucketName;
-    private readonly string _dir = Path.Combine(Environment.CurrentDirectory);
-    private Connection _connection = new();
-    private Input _input = new();
-    private Options _options = new();
-
-    public AwsCredentialsUnitTestsMultipart()
-    {
-        _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
-        _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
-        _bucketName = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_BucketName");
-    }
+    private readonly string? accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
+    private readonly string? secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
+    private readonly string? bucketName = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_BucketName");
+    private readonly string dir = Path.Combine(Environment.CurrentDirectory);
+    private Connection connection = new();
+    private Input input = new();
+    private Options options = new();
 
     [TestInitialize]
     public void Initialize()
     {
-        _input = new Input
+        input = new Input
         {
-            SourceDirectory = Path.Combine(_dir, "AWS"),
+            SourceDirectory = Path.Combine(dir, "AWS"),
             FileMask = null,
             TargetDirectory = "Upload2023/",
-            BucketName = _bucketName,
+            BucketName = bucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
             DeleteSource = false,
         };
 
-        _connection = new Connection
+        connection = new Connection
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
-            AwsAccessKeyId = _accessKey,
-            AwsSecretAccessKey = _secretAccessKey,
+            AwsAccessKeyId = accessKey,
+            AwsSecretAccessKey = secretAccessKey,
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
@@ -60,19 +53,19 @@ public class AwsCredentialsUnitTestsMultipart
             PartSize = 100,
         };
 
-        _options = new Options
+        options = new Options
         {
             ThrowErrorIfNoMatch = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
 
-        Directory.CreateDirectory(Path.Combine(_dir, "AWS"));
+        Directory.CreateDirectory(Path.Combine(dir, "AWS"));
 
         var fileList = new List<string>
         {
-            Path.Combine(_dir, "AWS", "test1.txt"),
-            Path.Combine(_dir, "AWS", "test2")
+            Path.Combine(dir, "AWS", "test1.txt"),
+            Path.Combine(dir, "AWS", "test2")
         };
         long targetSizeInBytes = 6L * 1024L * 1024L; // 6 GB in bytes
 
@@ -84,15 +77,19 @@ public class AwsCredentialsUnitTestsMultipart
     [TestCleanup]
     public async Task CleanUp()
     {
-        if (Directory.Exists($@"{_dir}\AWS"))
-            Directory.Delete($@"{_dir}\AWS", true);
+        if (Directory.Exists($@"{dir}\AWS"))
+            Directory.Delete($@"{dir}\AWS", true);
 
-        using var client = new AmazonS3Client(_accessKey, _secretAccessKey, RegionEndpoint.EUCentral1);
-        var listObjectRequest = new ListObjectsRequest { BucketName = _bucketName };
+        using var client = new AmazonS3Client(accessKey, secretAccessKey, RegionEndpoint.EUCentral1);
+        var listObjectRequest = new ListObjectsRequest
+        {
+            BucketName = bucketName
+        };
         var response = await client.ListObjectsAsync(listObjectRequest);
         var objects = response.S3Objects;
 
         if (objects == null) return;
+
         foreach (var obj in objects)
         {
             var deleteObjectRequest = new DeleteObjectRequest
@@ -107,7 +104,7 @@ public class AwsCredentialsUnitTestsMultipart
     [TestMethod]
     public async Task AwsCredentials_Upload()
     {
-        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
+        var result = await AmazonS3.UploadObject(input, connection, options, CancellationToken.None);
         Assert.AreEqual(2, result.Objects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
@@ -117,18 +114,17 @@ public class AwsCredentialsUnitTestsMultipart
     [TestMethod]
     public async Task AwsCredentials_Missing_FailOnErrorResponse_False()
     {
-        var connection = _connection;
         connection.AwsAccessKeyId = null;
         connection.AwsSecretAccessKey = "";
 
-        var options = new Options
+        options = new Options
         {
             ThrowErrorIfNoMatch = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
 
-        var result = await AmazonS3.UploadObject(_input, connection, options, default);
+        var result = await AmazonS3.UploadObject(input, connection, options, CancellationToken.None);
         Assert.AreEqual(0, result.Objects.Count);
         Assert.IsFalse(result.Success);
         Assert.IsTrue(result.DebugLog.Contains("Please authenticate"));
@@ -137,21 +133,21 @@ public class AwsCredentialsUnitTestsMultipart
     [TestMethod]
     public async Task AwsCredentials_Missing_ThrowErrorOnFailure_True()
     {
-        var connection = _connection;
         connection.AwsAccessKeyId = null;
         connection.AwsSecretAccessKey = "";
-        var options = new Options
+        options = new Options
         {
             ThrowErrorIfNoMatch = false,
             ThrowErrorOnFailure = true,
             ErrorMessageOnFailure = ""
         };
 
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () => await AmazonS3.UploadObject(_input, connection, options, default));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(async () =>
+            await AmazonS3.UploadObject(input, connection, options, CancellationToken.None));
         Assert.IsTrue(ex.Message.Contains("Please authenticate"));
     }
 
-    static void CreateDummyFile(string filePath, long targetSizeInBytes)
+    private static void CreateDummyFile(string filePath, long targetSizeInBytes)
     {
         const int bufferSize = 1024 * 1024; // 1 MB buffer size
         byte[] buffer = new byte[bufferSize];

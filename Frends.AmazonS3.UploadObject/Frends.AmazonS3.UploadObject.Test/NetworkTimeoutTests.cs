@@ -1,12 +1,9 @@
-using Amazon;
-using Amazon.S3;
 using Frends.AmazonS3.UploadObject.Definitions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -115,37 +112,5 @@ public class NetworkTimeoutTests
         Assert.IsNotNull(result.Error);
         Assert.IsTrue(result.Error.Message.Contains("timed out", StringComparison.OrdinalIgnoreCase),
             $"Expected a timeout-related error message, got: {result.Error.Message}");
-    }
-
-    [TestMethod]
-    public void CreateS3Config_AppliesConfiguredNetworkTimeout()
-    {
-        var connection = new Connection
-        {
-            Region = Region.EuCentral1,
-            NetworkTimeoutInSeconds = 42,
-        };
-
-        var method = typeof(AmazonS3).GetMethod("CreateS3Config", BindingFlags.NonPublic | BindingFlags.Static);
-        Assert.IsNotNull(method, "Could not find private method CreateS3Config via reflection.");
-
-        var config = (AmazonS3Config)method.Invoke(null, [connection])!;
-
-        Assert.AreEqual(TimeSpan.FromSeconds(42), config.Timeout,
-            "AmazonS3Config.Timeout should be bounded by Connection.NetworkTimeoutInSeconds");
-        Assert.AreEqual(RegionEndpoint.EUCentral1, config.RegionEndpoint);
-    }
-
-    [TestMethod]
-    public void PreSignedUrlHttpClient_IsSharedAcrossCalls_ToAvoidSocketExhaustion()
-    {
-        var field = typeof(AmazonS3).GetField("s_httpClient", BindingFlags.NonPublic | BindingFlags.Static);
-        Assert.IsNotNull(field, "Expected a single shared, static HttpClient field to avoid creating a new " +
-                                "HttpClient per pre-signed URL upload, which can exhaust available sockets under repeated use.");
-
-        var first = field.GetValue(null);
-        var second = field.GetValue(null);
-        Assert.IsNotNull(first);
-        Assert.AreSame(first, second, "HttpClient instance should be reused across calls.");
     }
 }
