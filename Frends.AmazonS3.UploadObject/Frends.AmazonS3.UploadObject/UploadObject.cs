@@ -49,6 +49,7 @@ public static class AmazonS3
 
         try
         {
+            ValidationHandler.Run(connection);
             if (!Directory.Exists(input.SourceDirectory))
                 throw new ArgumentException(@"Source directory not found. ", input.SourceDirectory);
 

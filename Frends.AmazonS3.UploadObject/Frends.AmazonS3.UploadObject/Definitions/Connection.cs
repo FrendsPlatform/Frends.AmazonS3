@@ -123,6 +123,7 @@ public class Connection
     /// </summary>
     /// <example>100</example>
     [DefaultValue(100)]
+    [Range(1, int.MaxValue)]
     public int NetworkTimeoutInSeconds { get; set; } = 100;
 
     #endregion options
