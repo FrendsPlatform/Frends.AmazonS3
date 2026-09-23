@@ -46,7 +46,7 @@ public class DeleteSourceFileHangTests
 
     [TestMethod]
     [Timeout(15000)]
-    public async Task DeleteSourceFile_DoesNotHangForever_WhenFileStaysLocked()
+    public async Task DeleteSourceFileDoesNotHangForeverWhenFileStaysLocked()
     {
         await using var lockingStream = new FileStream(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
         var deleteTask = (Task)GetDeleteSourceFileMethod().Invoke(null, [filePath, CancellationToken.None])!;
@@ -70,7 +70,7 @@ public class DeleteSourceFileHangTests
 
     [TestMethod]
     [Timeout(15000)]
-    public async Task DeleteSourceFile_ObservesCancellationToken_WhenFileStaysLocked()
+    public async Task DeleteSourceFileObservesCancellationTokenWhenFileStaysLocked()
     {
         await using var lockingStream = new FileStream(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
         using var cts = new CancellationTokenSource();
@@ -90,7 +90,7 @@ public class DeleteSourceFileHangTests
     }
 
     [TestMethod]
-    public async Task DeleteSourceFile_DeletesFile_WhenNotLocked()
+    public async Task DeleteSourceFileDeletesFileWhenNotLocked()
     {
         var deleteTask = (Task)GetDeleteSourceFileMethod()
             .Invoke(null, [filePath, CancellationToken.None])!;

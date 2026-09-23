@@ -50,6 +50,7 @@ public static class AmazonS3
         try
         {
             ValidationHandler.Run(connection);
+
             if (!Directory.Exists(input.SourceDirectory))
                 throw new ArgumentException(@"Source directory not found. ", input.SourceDirectory);
 
@@ -221,7 +222,8 @@ public static class AmazonS3
                     BucketName = input.BucketName,
                     Key = path,
                 };
-                await client.GetObjectAsync(request, cancellationToken);
+                using var requestTimeout = CreateRequestTimeoutSource(connection, cancellationToken);
+                await client.GetObjectAsync(request, requestTimeout.Token);
 
                 throw new ArgumentException(
                     $"Object {file.Name} already exists in S3 at {request.Key}. Set Overwrite-option to true to overwrite the existing file.");
@@ -240,7 +242,8 @@ public static class AmazonS3
             CannedACL = (connection.UseAcl) ? GetS3CannedAcl(connection.Acl) : S3CannedACL.NoACL,
         };
 
-        await client.PutObjectAsync(putObjectRequest, cancellationToken);
+        using var putTimeout = CreateRequestTimeoutSource(connection, cancellationToken);
+        await client.PutObjectAsync(putObjectRequest, putTimeout.Token);
     }
 
     private static async Task UploadMultipart(FileInfo file, Connection connection, Input input, string path,
@@ -256,12 +259,16 @@ public static class AmazonS3
 
         using var client = new AmazonS3Client(connection.AwsAccessKeyId, connection.AwsSecretAccessKey,
             CreateS3Config(connection));
-        var initResponse = await client.InitiateMultipartUploadAsync(initiateRequest, cancellationToken);
-
-        long partSizeInBytes = connection.PartSize * (long)Math.Pow(2, 20);
+        InitiateMultipartUploadResponse initResponse = null;
 
         try
         {
+            using (var initiateTimeout = CreateRequestTimeoutSource(connection, cancellationToken))
+            {
+                initResponse = await client.InitiateMultipartUploadAsync(initiateRequest, initiateTimeout.Token);
+            }
+
+            long partSizeInBytes = connection.PartSize * (long)Math.Pow(2, 20);
             long filePosition = 0;
 
             for (int i = 1; filePosition < file.Length; i++)
@@ -278,7 +285,8 @@ public static class AmazonS3
                     FilePath = file.FullName,
                 };
 
-                uploadResponses.Add(await client.UploadPartAsync(uploadRequest, cancellationToken));
+                using var uploadPartTimeout = CreateRequestTimeoutSource(connection, cancellationToken);
+                uploadResponses.Add(await client.UploadPartAsync(uploadRequest, uploadPartTimeout.Token));
 
                 filePosition += partSizeInBytes;
             }
@@ -291,10 +299,13 @@ public static class AmazonS3
             };
             completeRequest.AddPartETags(uploadResponses);
 
-            await client.CompleteMultipartUploadAsync(completeRequest, cancellationToken);
+            using var completeTimeout = CreateRequestTimeoutSource(connection, cancellationToken);
+            await client.CompleteMultipartUploadAsync(completeRequest, completeTimeout.Token);
         }
         catch (Exception)
         {
+            if (initResponse is null) throw;
+
             try
             {
                 var abortMpuRequest = new AbortMultipartUploadRequest
@@ -304,7 +315,9 @@ public static class AmazonS3
                     UploadId = initResponse.UploadId
                 };
 
-                await client.AbortMultipartUploadAsync(abortMpuRequest, cancellationToken);
+                using var abortTimeout = new CancellationTokenSource(
+                    TimeSpan.FromSeconds(connection.NetworkTimeoutInSeconds));
+                await client.AbortMultipartUploadAsync(abortMpuRequest, abortTimeout.Token);
             }
             catch
             {
@@ -315,6 +328,15 @@ public static class AmazonS3
         }
     }
 
+    private static CancellationTokenSource CreateRequestTimeoutSource(Connection connection,
+        CancellationToken cancellationToken)
+    {
+        var requestTimeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        requestTimeout.CancelAfter(TimeSpan.FromSeconds(connection.NetworkTimeoutInSeconds));
+
+        return requestTimeout;
+    }
+
     private static async Task DeleteSourceFile(string filePath, CancellationToken cancellationToken)
     {
         try
@@ -322,6 +344,8 @@ public static class AmazonS3
             var file = new FileInfo(filePath);
             const int maxDeleteSourceFileLockCheckAttempts = 5;
             var attempts = 0;
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             while (IsFileLocked(file))
             {
@@ -334,6 +358,7 @@ public static class AmazonS3
                 await Task.Delay(1000, cancellationToken);
             }
 
+            cancellationToken.ThrowIfCancellationRequested();
             File.Delete(filePath);
         }
         catch (OperationCanceledException)

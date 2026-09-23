@@ -68,7 +68,7 @@ public class NetworkTimeoutTests
 
     [TestMethod]
     [Timeout(15000)]
-    public async Task UploadFilePreSignedUrl_TimesOut_WhenEndpointIsUnresponsive()
+    public async Task UploadFilePreSignedUrlTimesOutWhenEndpointIsUnresponsive()
     {
         var port = StartUnresponsiveServer();
 

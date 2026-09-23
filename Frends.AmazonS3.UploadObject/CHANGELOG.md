@@ -1,5 +1,11 @@
 ﻿# Changelog
 
+## [3.5.0] - 2026-09-23
+### Fixed
+- Resolved issue with task hanging infinitely cause of file locks.
+- Added bounded cancellation to AWS S3 upload requests and multipart cleanup.
+- Improved source-file deletion cancellation and cross-platform test cleanup.
+
 ## [3.4.0] - 2026-07-21
 ### Changed
 - The default value of `ThrowErrorOnFailure` in Options is now `true` (was `false`). When adding this task to a new integration, it will throw an exception on failure by default. Existing integrations are not affected since the value is stored per-configuration.

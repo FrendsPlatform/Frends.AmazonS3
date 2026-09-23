@@ -74,8 +74,9 @@ public class AwsCredentialsUnitTestsMultipart : AwsS3TestBase
     [TestCleanup]
     public async Task CleanUp()
     {
-        if (Directory.Exists($@"{dir}\AWS"))
-            Directory.Delete($@"{dir}\AWS", true);
+        var awsDirectory = Path.Combine(dir, "AWS");
+        if (Directory.Exists(awsDirectory))
+            Directory.Delete(awsDirectory, true);
 
         using var client = new AmazonS3Client(AccessKey, SecretAccessKey, RegionEndpoint.EUCentral1);
         var listObjectRequest = new ListObjectsRequest
