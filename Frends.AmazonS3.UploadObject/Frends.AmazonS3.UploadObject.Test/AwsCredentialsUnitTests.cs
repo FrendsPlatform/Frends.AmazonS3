@@ -7,55 +7,44 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using dotenv.net;
 
 namespace Frends.AmazonS3.UploadObject.Tests;
 
 [TestClass]
-public class AwsCredentialsUnitTests
+public class AwsCredentialsUnitTests : AwsS3TestBase
 {
-    private readonly string? _accessKey;
-    private readonly string? _secretAccessKey;
-    private readonly string? _bucketName;
-    private readonly string _dir = Path.Combine(Environment.CurrentDirectory);
-    Connection? _connection;
-    Input? _input;
-    Options? _options;
-
-    public AwsCredentialsUnitTests()
-    {
-        DotEnv.Load();
-        _accessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_AccessKey");
-        _secretAccessKey = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_SecretAccessKey");
-        _bucketName = Environment.GetEnvironmentVariable("HiQ_AWSS3Test_BucketName");
-    }
+    private readonly string dir = Path.Combine(Environment.CurrentDirectory);
+    private Connection? connection;
+    private Input? input;
+    private Options? options;
 
     [TestInitialize]
     public void Initialize()
     {
-        Directory.CreateDirectory(Path.Combine(_dir, "AWS"));
-        Directory.CreateDirectory(Path.Combine(_dir, "AWS", "Subfolder"));
-        Directory.CreateDirectory(Path.Combine(_dir, "AWS", "EmptyFolder"));
+        Directory.CreateDirectory(Path.Combine(dir, "AWS"));
+        Directory.CreateDirectory(Path.Combine(dir, "AWS", "Subfolder"));
+        Directory.CreateDirectory(Path.Combine(dir, "AWS", "EmptyFolder"));
 
-        File.AppendAllText(Path.Combine(_dir, "AWS", "test1.txt"), "test1");
-        File.AppendAllText(Path.Combine(_dir, "AWS", "Subfolder", "subfile.txt"), "From subfolder.");
-        File.AppendAllText(Path.Combine(_dir, "AWS", "deletethis_awscreds.txt"), "Resource file deleted. (AWS Creds)");
-        File.AppendAllText(Path.Combine(_dir, "AWS", "overwrite_presign.txt"), "Not overwriten. (Presign)");
-        File.AppendAllText(Path.Combine(_dir, "AWS", "overwrite_awscreds.txt"), "Not overwriten. (AWS creds)");
+        File.AppendAllText(Path.Combine(dir, "AWS", "test1.txt"), "test1");
+        File.AppendAllText(Path.Combine(dir, "AWS", "Subfolder", "subfile.txt"), "From subfolder.");
+        File.AppendAllText(Path.Combine(dir, "AWS", "deletethis_awscreds.txt"), "Resource file deleted. (AWS Creds)");
+        File.AppendAllText(Path.Combine(dir, "AWS", "overwrite_presign.txt"), "Not overwriten. (Presign)");
+        File.AppendAllText(Path.Combine(dir, "AWS", "overwrite_awscreds.txt"), "Not overwriten. (AWS creds)");
     }
 
     [TestCleanup]
     public async Task CleanUp()
     {
-        if (Directory.Exists(Path.Combine(_dir, "AWS")))
-            Directory.Delete(Path.Combine(_dir, "AWS"), true);
+        if (Directory.Exists(Path.Combine(dir, "AWS")))
+            Directory.Delete(Path.Combine(dir, "AWS"), true);
 
-        using var client = new AmazonS3Client(_accessKey, _secretAccessKey, RegionEndpoint.EUCentral1);
+        using var client = new AmazonS3Client(AccessKey, SecretAccessKey, RegionEndpoint.EUCentral1);
 
         var listObjectRequest = new ListObjectsRequest
         {
-            BucketName = _bucketName,
+            BucketName = BucketName,
         };
 
         var response = await client.ListObjectsAsync(listObjectRequest);
@@ -78,22 +67,22 @@ public class AwsCredentialsUnitTests
     [DataRow("Upload2023/")]
     public async Task AWSCreds_Upload(string targetDirectory)
     {
-        _input = new Input
+        input = new Input
         {
-            SourceDirectory = Path.Combine(_dir, "AWS"),
+            SourceDirectory = Path.Combine(dir, "AWS"),
             FileMask = null,
             TargetDirectory = targetDirectory,
-            BucketName = _bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
             DeleteSource = false,
         };
-        _connection = new Connection
+        connection = new Connection
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
-            AwsAccessKeyId = _accessKey,
-            AwsSecretAccessKey = _secretAccessKey,
+            AwsAccessKeyId = AccessKey,
+            AwsSecretAccessKey = SecretAccessKey,
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
@@ -103,14 +92,14 @@ public class AwsCredentialsUnitTests
             UseAcl = false,
         };
 
-        _options = new Options
+        options = new Options
         {
             ThrowErrorIfNoMatch = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
 
-        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
+        var result = await AmazonS3.UploadObject(input, connection, options, CancellationToken.None);
         Assert.AreEqual(5, result.Objects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
@@ -120,22 +109,22 @@ public class AwsCredentialsUnitTests
     [TestMethod]
     public async Task AWSCreds_Upload_GatherDebugLog_False()
     {
-        _input = new Input
+        input = new Input
         {
-            SourceDirectory = Path.Combine(_dir, "AWS"),
+            SourceDirectory = Path.Combine(dir, "AWS"),
             FileMask = null,
             TargetDirectory = "Upload2023/",
-            BucketName = _bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
             DeleteSource = false,
         };
-        _connection = new Connection
+        connection = new Connection
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
-            AwsAccessKeyId = _accessKey,
-            AwsSecretAccessKey = _secretAccessKey,
+            AwsAccessKeyId = AccessKey,
+            AwsSecretAccessKey = SecretAccessKey,
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
@@ -145,14 +134,14 @@ public class AwsCredentialsUnitTests
             UseAcl = false,
         };
 
-        _options = new Options
+        options = new Options
         {
             ThrowErrorIfNoMatch = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
 
-        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
+        var result = await AmazonS3.UploadObject(input, connection, options, CancellationToken.None);
         Assert.AreEqual(5, result.Objects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNull(result.DebugLog);
@@ -162,17 +151,17 @@ public class AwsCredentialsUnitTests
     [TestMethod]
     public async Task AWSCreds_Missing_ThrowErrorOnFailure_False()
     {
-        _input = new Input
+        input = new Input
         {
-            SourceDirectory = Path.Combine(_dir, "AWS"),
+            SourceDirectory = Path.Combine(dir, "AWS"),
             FileMask = null,
             TargetDirectory = "Upload2023/",
-            BucketName = _bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
             DeleteSource = false,
         };
-        _connection = new Connection
+        connection = new Connection
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
@@ -187,14 +176,14 @@ public class AwsCredentialsUnitTests
             UseAcl = false,
         };
 
-        _options = new Options
+        options = new Options
         {
             ThrowErrorIfNoMatch = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
 
-        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
+        var result = await AmazonS3.UploadObject(input, connection, options, CancellationToken.None);
         Assert.AreEqual(0, result.Objects.Count);
         Assert.IsFalse(result.Success);
         Assert.IsTrue(result.DebugLog.Contains("Access Denied"));
@@ -203,17 +192,17 @@ public class AwsCredentialsUnitTests
     [TestMethod]
     public async Task AWSCreds_Missing_ThrowErrorOnFailure_True()
     {
-        _input = new Input
+        input = new Input
         {
-            SourceDirectory = Path.Combine(_dir, "AWS"),
+            SourceDirectory = Path.Combine(dir, "AWS"),
             FileMask = null,
             TargetDirectory = "Upload2023/",
-            BucketName = _bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
             DeleteSource = false,
         };
-        _connection = new Connection
+        connection = new Connection
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
@@ -228,7 +217,7 @@ public class AwsCredentialsUnitTests
             UseAcl = false,
         };
 
-        _options = new Options
+        options = new Options
         {
             ThrowErrorIfNoMatch = false,
             ThrowErrorOnFailure = true,
@@ -236,28 +225,28 @@ public class AwsCredentialsUnitTests
         };
 
         await Assert.ThrowsExceptionAsync<Exception>(async () =>
-            await AmazonS3.UploadObject(_input, _connection, _options, default));
+            await AmazonS3.UploadObject(input, connection, options, CancellationToken.None));
     }
 
     [TestMethod]
     public async Task AWSCreds_UploadFromCurrentDirectoryOnly()
     {
-        _input = new Input
+        input = new Input
         {
-            SourceDirectory = Path.Combine(_dir, "AWS"),
+            SourceDirectory = Path.Combine(dir, "AWS"),
             FileMask = null,
             TargetDirectory = "Upload2023/",
-            BucketName = _bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = true,
             PreserveFolderStructure = false,
             DeleteSource = false,
         };
-        _connection = new Connection
+        connection = new Connection
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
-            AwsAccessKeyId = _accessKey,
-            AwsSecretAccessKey = _secretAccessKey,
+            AwsAccessKeyId = AccessKey,
+            AwsSecretAccessKey = SecretAccessKey,
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
@@ -267,14 +256,14 @@ public class AwsCredentialsUnitTests
             UseAcl = false,
         };
 
-        _options = new Options
+        options = new Options
         {
             ThrowErrorIfNoMatch = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
 
-        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
+        var result = await AmazonS3.UploadObject(input, connection, options, CancellationToken.None);
         Assert.AreEqual(4, result.Objects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
@@ -284,22 +273,22 @@ public class AwsCredentialsUnitTests
     [TestMethod]
     public async Task AWSCreds_Overwrite()
     {
-        _input = new Input
+        input = new Input
         {
-            SourceDirectory = Path.Combine(_dir, "AWS"),
+            SourceDirectory = Path.Combine(dir, "AWS"),
             FileMask = null,
             TargetDirectory = "Upload2023/",
-            BucketName = _bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
             DeleteSource = false,
         };
-        _connection = new Connection
+        connection = new Connection
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
-            AwsAccessKeyId = _accessKey,
-            AwsSecretAccessKey = _secretAccessKey,
+            AwsAccessKeyId = AccessKey,
+            AwsSecretAccessKey = SecretAccessKey,
             Region = Region.EuCentral1,
             Overwrite = true,
             ReturnListOfObjectKeys = false,
@@ -309,14 +298,14 @@ public class AwsCredentialsUnitTests
             UseAcl = false,
         };
 
-        _options = new Options
+        options = new Options
         {
             ThrowErrorIfNoMatch = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
 
-        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
+        var result = await AmazonS3.UploadObject(input, connection, options, CancellationToken.None);
         Assert.AreEqual(5, result.Objects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
@@ -326,22 +315,22 @@ public class AwsCredentialsUnitTests
     [TestMethod]
     public async Task AWSCreds_PreserveFolderStructure()
     {
-        _input = new Input
+        input = new Input
         {
-            SourceDirectory = Path.Combine(_dir, "AWS"),
+            SourceDirectory = Path.Combine(dir, "AWS"),
             FileMask = null,
             TargetDirectory = "Upload2023/",
-            BucketName = _bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = true,
             DeleteSource = false,
         };
-        _connection = new Connection
+        connection = new Connection
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
-            AwsAccessKeyId = _accessKey,
-            AwsSecretAccessKey = _secretAccessKey,
+            AwsAccessKeyId = AccessKey,
+            AwsSecretAccessKey = SecretAccessKey,
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
@@ -351,14 +340,14 @@ public class AwsCredentialsUnitTests
             UseAcl = false,
         };
 
-        _options = new Options
+        options = new Options
         {
             ThrowErrorIfNoMatch = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
 
-        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
+        var result = await AmazonS3.UploadObject(input, connection, options, CancellationToken.None);
         Assert.AreEqual(5, result.Objects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
@@ -368,22 +357,22 @@ public class AwsCredentialsUnitTests
     [TestMethod]
     public async Task AWSCreds_ReturnListOfObjectKeys()
     {
-        _input = new Input
+        input = new Input
         {
-            SourceDirectory = Path.Combine(_dir, "AWS"),
+            SourceDirectory = Path.Combine(dir, "AWS"),
             FileMask = null,
             TargetDirectory = "Upload2023/",
-            BucketName = _bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
             DeleteSource = false,
         };
-        _connection = new Connection
+        connection = new Connection
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
-            AwsAccessKeyId = _accessKey,
-            AwsSecretAccessKey = _secretAccessKey,
+            AwsAccessKeyId = AccessKey,
+            AwsSecretAccessKey = SecretAccessKey,
             Region = Region.EuCentral1,
             ReturnListOfObjectKeys = true,
             Overwrite = true,
@@ -393,14 +382,14 @@ public class AwsCredentialsUnitTests
             UseAcl = false,
         };
 
-        _options = new Options
+        options = new Options
         {
             ThrowErrorIfNoMatch = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
 
-        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
+        var result = await AmazonS3.UploadObject(input, connection, options, CancellationToken.None);
         Assert.AreEqual(5, result.Objects.Count);
         Assert.IsFalse(result.Objects.Any(x => x.Contains("C:")));
         Assert.IsTrue(result.Success);
@@ -412,22 +401,22 @@ public class AwsCredentialsUnitTests
     public async Task AWSCreds_DeleteSourceFile_Mask()
     {
         var fileName = "deletethis_awscreds.txt";
-        _input = new Input
+        input = new Input
         {
-            SourceDirectory = Path.Combine(_dir, "AWS"),
+            SourceDirectory = Path.Combine(dir, "AWS"),
             FileMask = fileName,
             TargetDirectory = "Upload2023/",
-            BucketName = _bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
             DeleteSource = true,
         };
-        _connection = new Connection
+        connection = new Connection
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
-            AwsAccessKeyId = _accessKey,
-            AwsSecretAccessKey = _secretAccessKey,
+            AwsAccessKeyId = AccessKey,
+            AwsSecretAccessKey = SecretAccessKey,
             Region = Region.EuCentral1,
             ReturnListOfObjectKeys = false,
             Overwrite = false,
@@ -437,40 +426,40 @@ public class AwsCredentialsUnitTests
             UseAcl = false,
         };
 
-        _options = new Options
+        options = new Options
         {
             ThrowErrorIfNoMatch = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
 
-        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
+        var result = await AmazonS3.UploadObject(input, connection, options, CancellationToken.None);
         Assert.AreEqual(1, result.Objects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
         Assert.IsTrue(result.Objects.Any(x => x.Contains("deletethis_awscreds.txt")));
-        Assert.IsFalse(File.Exists(Path.Combine(_dir, "AWS", fileName)));
+        Assert.IsFalse(File.Exists(Path.Combine(dir, "AWS", fileName)));
     }
 
     [TestMethod]
     public async Task AWSCreds_ThrowErrorIfNoMatch()
     {
-        _input = new Input
+        input = new Input
         {
-            SourceDirectory = Path.Combine(_dir, "AWS"),
+            SourceDirectory = Path.Combine(dir, "AWS"),
             FileMask = "notafile*",
             TargetDirectory = "Upload2023/",
-            BucketName = _bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
             DeleteSource = false,
         };
-        _connection = new Connection
+        connection = new Connection
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
-            AwsAccessKeyId = _accessKey,
-            AwsSecretAccessKey = _secretAccessKey,
+            AwsAccessKeyId = AccessKey,
+            AwsSecretAccessKey = SecretAccessKey,
             Region = Region.EuCentral1,
             ReturnListOfObjectKeys = false,
             Overwrite = false,
@@ -479,7 +468,7 @@ public class AwsCredentialsUnitTests
             UseAcl = false,
         };
 
-        _options = new Options
+        options = new Options
         {
             ThrowErrorIfNoMatch = true,
             ThrowErrorOnFailure = true,
@@ -487,8 +476,8 @@ public class AwsCredentialsUnitTests
         };
 
         var ex = await Assert.ThrowsExceptionAsync<Exception>(async () =>
-            await AmazonS3.UploadObject(_input, _connection, _options, default));
-        Assert.IsTrue(ex.Message.Contains($"No files match the filemask '{_input.FileMask}' within supplied path."));
+            await AmazonS3.UploadObject(input, connection, options, CancellationToken.None));
+        Assert.IsTrue(ex.Message.Contains($"No files match the filemask '{input.FileMask}' within supplied path."));
     }
 
     [TestMethod]
@@ -499,7 +488,7 @@ public class AwsCredentialsUnitTests
         var acls = new List<ACLs>
             { ACLs.Private, ACLs.BucketOwnerRead, ACLs.BucketOwnerFullControl, ACLs.LogDeliveryWrite };
 
-        _options = new Options
+        options = new Options
         {
             ThrowErrorIfNoMatch = false,
             ThrowErrorOnFailure = false,
@@ -508,23 +497,23 @@ public class AwsCredentialsUnitTests
 
         foreach (var acl in acls)
         {
-            _input = new Input
+            input = new Input
             {
-                SourceDirectory = Path.Combine(_dir, "AWS"),
+                SourceDirectory = Path.Combine(dir, "AWS"),
                 FileMask = null,
                 TargetDirectory = "Upload2023/",
-                BucketName = _bucketName,
+                BucketName = BucketName,
                 UploadFromCurrentDirectoryOnly = false,
                 PreserveFolderStructure = false,
                 DeleteSource = false,
             };
 
-            _connection = new Connection
+            connection = new Connection
             {
                 AuthenticationMethod = AuthenticationMethod.AwsCredentials,
                 PreSignedUrl = null,
-                AwsAccessKeyId = _accessKey,
-                AwsSecretAccessKey = _secretAccessKey,
+                AwsAccessKeyId = AccessKey,
+                AwsSecretAccessKey = SecretAccessKey,
                 Region = Region.EuCentral1,
                 Overwrite = false,
                 ReturnListOfObjectKeys = false,
@@ -534,7 +523,7 @@ public class AwsCredentialsUnitTests
                 UseAcl = true,
             };
 
-            var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
+            var result = await AmazonS3.UploadObject(input, connection, options, CancellationToken.None);
             Assert.AreEqual(5, result.Objects.Count, acl + Environment.NewLine + result.DebugLog);
             Assert.IsTrue(result.Success);
             Assert.IsNotNull(result.DebugLog);
@@ -548,22 +537,22 @@ public class AwsCredentialsUnitTests
     [TestMethod]
     public async Task AWSCreds_Upload_ShouldNotThrow_IfEmptyFolder_AndThrowErrorIfNoMatchIsFalse()
     {
-        _input = new Input
+        input = new Input
         {
-            SourceDirectory = Path.Combine(_dir, "AWS", "EmptyFolder"),
+            SourceDirectory = Path.Combine(dir, "AWS", "EmptyFolder"),
             FileMask = null,
             TargetDirectory = "Upload2023/",
-            BucketName = _bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
             DeleteSource = false,
         };
-        _connection = new Connection
+        connection = new Connection
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
-            AwsAccessKeyId = _accessKey,
-            AwsSecretAccessKey = _secretAccessKey,
+            AwsAccessKeyId = AccessKey,
+            AwsSecretAccessKey = SecretAccessKey,
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
@@ -573,14 +562,14 @@ public class AwsCredentialsUnitTests
             UseAcl = false,
         };
 
-        _options = new Options
+        options = new Options
         {
             ThrowErrorIfNoMatch = false,
             ThrowErrorOnFailure = false,
             ErrorMessageOnFailure = ""
         };
 
-        var result = await AmazonS3.UploadObject(_input, _connection, _options, default);
+        var result = await AmazonS3.UploadObject(input, connection, options, CancellationToken.None);
         Assert.AreEqual(0, result.Objects.Count);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.DebugLog);
@@ -589,22 +578,22 @@ public class AwsCredentialsUnitTests
     [TestMethod]
     public async Task AWSCreds_Upload_ShouldThrow_IfEmptyFolder_AndThrowErrorIfNoMatchIsTrue()
     {
-        _input = new Input
+        input = new Input
         {
-            SourceDirectory = Path.Combine(_dir, "AWS", "EmptyFolder"),
+            SourceDirectory = Path.Combine(dir, "AWS", "EmptyFolder"),
             FileMask = null,
             TargetDirectory = "Upload2023/",
-            BucketName = _bucketName,
+            BucketName = BucketName,
             UploadFromCurrentDirectoryOnly = false,
             PreserveFolderStructure = false,
             DeleteSource = false,
         };
-        _connection = new Connection
+        connection = new Connection
         {
             AuthenticationMethod = AuthenticationMethod.AwsCredentials,
             PreSignedUrl = null,
-            AwsAccessKeyId = _accessKey,
-            AwsSecretAccessKey = _secretAccessKey,
+            AwsAccessKeyId = AccessKey,
+            AwsSecretAccessKey = SecretAccessKey,
             Region = Region.EuCentral1,
             Overwrite = false,
             ReturnListOfObjectKeys = false,
@@ -613,7 +602,7 @@ public class AwsCredentialsUnitTests
             UseAcl = false,
         };
 
-        _options = new Options
+        options = new Options
         {
             ThrowErrorIfNoMatch = true,
             ThrowErrorOnFailure = true,
@@ -621,7 +610,7 @@ public class AwsCredentialsUnitTests
         };
 
         var ex = await Assert.ThrowsExceptionAsync<Exception>(async () =>
-            await AmazonS3.UploadObject(_input, _connection, _options, default));
+            await AmazonS3.UploadObject(input, connection, options, CancellationToken.None));
         Assert.IsTrue(ex.Message.Contains($"No files match the filemask '*' within supplied path."));
     }
 }
