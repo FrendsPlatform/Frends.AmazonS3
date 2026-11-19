@@ -14,7 +14,7 @@
           {
             "Type": "Copy",
             "Source": "Connection.S3Directory",
-            "Target": "Input.SourceDirectory"
+            "Target": "Input.Prefix"
           },
           {
             "Type": "Copy",

@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.0.0] - 2026-11-19
+### Changed
+- **[Breaking Change]** Renamed the object version entity tag result from `ETag` to `Etag` and expanded error additional information to support diagnostic details beyond exceptions.
+
 ## [1.2.0] - 2026-07-17
 
 ### Fixed

@@ -10,8 +10,9 @@ public class Options
     /// <summary>
     /// Throw error if there are no object(s) in the path matching the filemask.
     /// </summary>
-    /// <example>false</example>
-    public bool ThrowErrorIfNoMatch { get; set; }
+    /// <example>true</example>
+    [DefaultValue(true)]
+    public bool ThrowErrorIfNoMatch { get; set; } = true;
 
     /// <summary>
     /// Throw error on failure.

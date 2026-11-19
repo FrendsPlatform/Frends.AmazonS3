@@ -1,5 +1,9 @@
 ﻿# Changelog
 
+## [2.3.0] - 2026-11-19
+### Changed
+- `ThrowErrorOnFailure` is now enabled by default for new task configurations.
+
 ## [2.2.0] - 2026-07-16
 ### Changed
 - Made the task class static to comply with Frends task analyzer requirements (FT0004).

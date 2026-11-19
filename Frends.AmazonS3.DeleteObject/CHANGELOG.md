@@ -1,5 +1,9 @@
 ﻿# Changelog
 
+## [2.1.0] - 2026-11-19
+### Changed
+- The Region connection no longer preselects a default AWS region.
+
 ## [2.0.0] - 2026-01-07
 
 ### Added

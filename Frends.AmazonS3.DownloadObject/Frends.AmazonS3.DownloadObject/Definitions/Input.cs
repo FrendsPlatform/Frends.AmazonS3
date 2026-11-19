@@ -19,7 +19,7 @@ public class Input
     /// </summary>
     /// <example>directory/</example>
     [DisplayFormat(DataFormatString = "Text")]
-    public string SourceDirectory { get; set; }
+    public string Prefix { get; set; }
 
     /// <summary>
     /// String pattern to search objects.

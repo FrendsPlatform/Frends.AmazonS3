@@ -14,7 +14,7 @@ namespace Frends.AmazonS3.ListObjects.Definitions
         /// <summary>
         /// Additional error information such as stack traces, error codes, or other diagnostic data.
         /// </summary>
-        /// <example>object { Exception AdditionalInfo }</example>
+        /// <example>object { dynamic AdditionalInfo }</example>
         public dynamic AdditionalInfo { get; set; }
 
         /// <summary>

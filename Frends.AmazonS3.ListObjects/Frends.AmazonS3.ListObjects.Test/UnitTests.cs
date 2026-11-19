@@ -320,7 +320,7 @@ namespace Frends.AmazonS3.ListObjects.Test
 
             var result = await AmazonS3.ListObjects(_input, _connection, _options, default);
             Assert.IsFalse(result.Success);
-            Assert.IsTrue(result.ErrorMessage.Contains("AWS credentials missing."));
+            Assert.IsTrue(result.Error.Message.Contains("AWS credentials missing."));
             Assert.IsNotNull(result.Objects);
             Assert.AreEqual(0, result.Objects.Count);
             Assert.IsNotNull(result.Error);
@@ -357,7 +357,7 @@ namespace Frends.AmazonS3.ListObjects.Test
 
             var result = await AmazonS3.ListObjects(_input, _connection, _options, default);
             Assert.IsFalse(result.Success);
-            StringAssert.Contains(result.ErrorMessage, "Custom authentication error occurred");
+            StringAssert.Contains(result.Error.Message, "Custom authentication error occurred");
             Assert.IsNotNull(result.Objects);
             Assert.AreEqual(0, result.Objects.Count);
             Assert.IsNotNull(result.Error);
@@ -486,7 +486,6 @@ namespace Frends.AmazonS3.ListObjects.Test
             Assert.IsNotNull(result.Objects);
             Assert.AreEqual(1, result.Objects.Count);
             Assert.IsNull(result.Error);
-            Assert.AreEqual(string.Empty, result.ErrorMessage);
         }
 
         /// <summary>
@@ -502,7 +501,7 @@ namespace Frends.AmazonS3.ListObjects.Test
             Assert.AreEqual(0, result.Objects.Count);
             Assert.IsNotNull(result.Error);
             Assert.AreEqual("Test error message", result.Error.Message);
-            Assert.AreEqual("Test error message", result.ErrorMessage);
+            Assert.AreEqual("Test error message", result.Error.Message);
         }
 
         /// <summary>
@@ -519,7 +518,7 @@ namespace Frends.AmazonS3.ListObjects.Test
             Assert.AreEqual(0, result.Objects.Count);
             Assert.IsNotNull(result.Error);
             Assert.AreEqual("Test error message", result.Error.Message);
-            Assert.AreEqual("Test error message", result.ErrorMessage);
+            Assert.AreEqual("Test error message", result.Error.Message);
             Assert.AreEqual(404, result.Error.AdditionalInfo.Code);
         }
 
@@ -551,7 +550,7 @@ namespace Frends.AmazonS3.ListObjects.Test
             var result = ErrorHandler.Handle(exception, options);
 
             Assert.IsFalse(result.Success);
-            Assert.AreEqual("Test exception", result.ErrorMessage);
+            Assert.AreEqual("Test exception", result.Error.Message);
             Assert.IsNotNull(result.Error);
             Assert.IsNotNull(result.Error.AdditionalInfo);
         }
@@ -572,7 +571,7 @@ namespace Frends.AmazonS3.ListObjects.Test
             var result = ErrorHandler.Handle(exception, options);
 
             Assert.IsFalse(result.Success);
-            StringAssert.Contains(result.ErrorMessage, "Custom error occurred");
+            StringAssert.Contains(result.Error.Message, "Custom error occurred");
             Assert.IsNotNull(result.Error);
             StringAssert.Contains(result.Error.Message, "Custom error occurred");
         }
@@ -600,7 +599,7 @@ namespace Frends.AmazonS3.ListObjects.Test
             var result = ErrorHandler.HandleCredentialsError("Credentials missing", options);
 
             Assert.IsFalse(result.Success);
-            Assert.AreEqual("Credentials missing", result.ErrorMessage);
+            Assert.AreEqual("Credentials missing", result.Error.Message);
             Assert.IsNotNull(result.Error);
             Assert.AreEqual("Credentials missing", result.Error.Message);
         }
@@ -620,7 +619,7 @@ namespace Frends.AmazonS3.ListObjects.Test
             var result = ErrorHandler.HandleCredentialsError("Credentials missing", options);
 
             Assert.IsFalse(result.Success);
-            StringAssert.Contains(result.ErrorMessage, "Authentication failed");
+            StringAssert.Contains(result.Error.Message, "Authentication failed");
             Assert.IsNotNull(result.Error);
             StringAssert.Contains(result.Error.Message, "Authentication failed");
 

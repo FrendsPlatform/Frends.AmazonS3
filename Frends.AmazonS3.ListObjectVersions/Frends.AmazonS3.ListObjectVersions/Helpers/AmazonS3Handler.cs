@@ -32,7 +32,7 @@ internal static class AmazonS3Handler
             result.Objects.AddRange(response.Versions.Select(entry => new BucketObjectVersions
             {
                 BucketName = entry.BucketName,
-                ETag = entry.ETag,
+                Etag = entry.ETag,
                 Key = entry.Key,
                 Version = entry.VersionId,
             }));

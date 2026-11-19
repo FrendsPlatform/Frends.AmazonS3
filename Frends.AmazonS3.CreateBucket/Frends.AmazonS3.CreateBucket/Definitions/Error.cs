@@ -1,5 +1,3 @@
-using System;
-
 namespace Frends.AmazonS3.CreateBucket.Definitions;
 
 /// <summary>
@@ -16,6 +14,6 @@ public class Error
     /// <summary>
     /// Additional information about the error.
     /// </summary>
-    /// <example>object { Exception AdditionalInfo }</example>
-    public Exception AdditionalInfo { get; set; }
+    /// <example>object { dynamic AdditionalInfo }</example>
+    public dynamic AdditionalInfo { get; set; }
 }

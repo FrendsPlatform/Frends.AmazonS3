@@ -1,5 +1,9 @@
 ﻿# Changelog
 
+## [4.0.0] - 2026-11-19
+### Changed
+- **[Breaking Change]** Renamed the S3 object-key prefix input from `SourceDirectory` to `Prefix`.
+
 ## [3.0.0] - 2025-07-17
 
 ## [Breaking] Major refactoring - restructured parameters into Input, Connection, and Options classes with improved error handling

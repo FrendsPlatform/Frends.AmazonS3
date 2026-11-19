@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.0.0] - 2026-11-19
+### Changed
+- **[Breaking Change]** Error additional information can now contain diagnostic details beyond exceptions.
+
 ## [2.0.0] - 2025-06-24
 ### Changed
 - [Breaking] Created Input tab and moved Connection.BucketName to Input

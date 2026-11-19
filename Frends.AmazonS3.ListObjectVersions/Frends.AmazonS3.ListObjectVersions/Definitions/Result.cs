@@ -22,6 +22,6 @@ public class Result
     /// <summary>
     /// Error that occurred during task execution.
     /// </summary>
-    /// <example>object { string Message, Exception AdditionalInfo }</example>
+    /// <example>object { string Message, dynamic AdditionalInfo }</example>
     public Error Error { get; set; }
 }

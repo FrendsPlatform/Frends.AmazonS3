@@ -1,5 +1,9 @@
 ﻿# Changelog
 
+## [4.0.0] - 2026-11-19
+### Changed
+- **[Breaking Change]** Removed the redundant `ErrorMessage` result property; use `Error.Message` instead.
+
 ## [3.0.0] - 2026-07-18
 ### Changed
 - **[Breaking]** The parameter order of the ListObjects task has been updated to follow the standard Frends parameter order: Input, Connection, Options. This may require reconfiguring the task in existing processes.
