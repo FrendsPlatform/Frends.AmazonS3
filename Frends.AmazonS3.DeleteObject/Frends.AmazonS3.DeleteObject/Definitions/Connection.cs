@@ -27,6 +27,5 @@ public class Connection
     /// The AWS region where the S3 bucket is located.
     /// </summary>
     /// <example>Region.EuCentral1</example>
-    [DefaultValue(Region.EuWest1)]
     public Region Region { get; set; }
 }

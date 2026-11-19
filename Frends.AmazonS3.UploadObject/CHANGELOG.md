@@ -1,5 +1,9 @@
 ﻿# Changelog
 
+## [3.6.0] - 2026-11-19
+### Changed
+- `ThrowErrorIfNoMatch` is now enabled by default, matching the DownloadObject task.
+
 ## [3.5.0] - 2026-09-23
 ### Fixed
 - Resolved issue with task hanging infinitely cause of file locks.

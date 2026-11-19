@@ -50,7 +50,7 @@ public class UnitTests
         defaultInput = new Input()
         {
             BucketName = bucketName,
-            SourceDirectory = "DownloadTest/",
+            Prefix = "DownloadTest/",
             SearchPattern = "*",
             DownloadFromCurrentDirectoryOnly = true,
             TargetDirectory = @$"{dir}\Download",
@@ -234,7 +234,7 @@ public class UnitTests
         var input = new Input
         {
             BucketName = defaultInput.BucketName,
-            SourceDirectory = defaultInput.SourceDirectory,
+            Prefix = defaultInput.Prefix,
             SearchPattern = defaultInput.SearchPattern,
             DownloadFromCurrentDirectoryOnly = defaultInput.DownloadFromCurrentDirectoryOnly,
             TargetDirectory = string.Empty,
@@ -277,7 +277,7 @@ public class UnitTests
             var input = new Input
             {
                 BucketName = defaultInput.BucketName,
-                SourceDirectory = defaultInput.SourceDirectory,
+                Prefix = defaultInput.Prefix,
                 SearchPattern = defaultInput.SearchPattern,
                 DownloadFromCurrentDirectoryOnly = false,
                 TargetDirectory = defaultInput.TargetDirectory,
@@ -317,7 +317,7 @@ public class UnitTests
         var input = new Input
         {
             BucketName = defaultInput.BucketName,
-            SourceDirectory = defaultInput.SourceDirectory,
+            Prefix = defaultInput.Prefix,
             SearchPattern = defaultInput.SearchPattern,
             DownloadFromCurrentDirectoryOnly = false,
             TargetDirectory = defaultInput.TargetDirectory,
@@ -412,7 +412,7 @@ public class UnitTests
         var input = new Input
         {
             BucketName = defaultInput.BucketName,
-            SourceDirectory = defaultInput.SourceDirectory,
+            Prefix = defaultInput.Prefix,
             SearchPattern = "Testfi*",
             DownloadFromCurrentDirectoryOnly = defaultInput.DownloadFromCurrentDirectoryOnly,
             TargetDirectory = defaultInput.TargetDirectory,
@@ -444,7 +444,7 @@ public class UnitTests
         var input = new Input
         {
             BucketName = defaultInput.BucketName,
-            SourceDirectory = defaultInput.SourceDirectory,
+            Prefix = defaultInput.Prefix,
             SearchPattern = defaultInput.SearchPattern,
             DownloadFromCurrentDirectoryOnly = true,
             TargetDirectory = defaultInput.TargetDirectory,
@@ -475,7 +475,7 @@ public class UnitTests
         var input = new Input
         {
             BucketName = defaultInput.BucketName,
-            SourceDirectory = defaultInput.SourceDirectory,
+            Prefix = defaultInput.Prefix,
             SearchPattern = "nofile",
             DownloadFromCurrentDirectoryOnly = defaultInput.DownloadFromCurrentDirectoryOnly,
             TargetDirectory = defaultInput.TargetDirectory,

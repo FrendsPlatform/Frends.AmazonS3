@@ -41,7 +41,7 @@ public static partial class AmazonS3
             if (connection.AuthenticationMethod is AuthenticationMethods.AwsCredentials)
             {
                 var mask = new Regex(input.SearchPattern.Replace(".", "[.]").Replace("*", ".*").Replace("?", "."));
-                var targetPath = input.SourceDirectory + input.SearchPattern;
+                var targetPath = input.Prefix + input.SearchPattern;
 
                 using AmazonS3Client client = new(connection.AwsAccessKeyId, connection.AwsSecretAccessKey, RegionSelection(connection.Region));
 
@@ -52,7 +52,7 @@ public static partial class AmazonS3
                     Encoding = null,
                     FetchOwner = false,
                     MaxKeys = 1000,
-                    Prefix = string.IsNullOrWhiteSpace(input.SourceDirectory) ? null : input.SourceDirectory,
+                    Prefix = string.IsNullOrWhiteSpace(input.Prefix) ? null : input.Prefix,
                     StartAfter = null,
                 };
 
@@ -62,7 +62,7 @@ public static partial class AmazonS3
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    if (mask.IsMatch(fileObject.Key.Split('/').Last()) && (targetPath.Split('/').Length == fileObject.Key.Split('/').Length || !input.DownloadFromCurrentDirectoryOnly) && !fileObject.Key.EndsWith('/') && fileObject.Key.StartsWith(input.SourceDirectory))
+                    if (mask.IsMatch(fileObject.Key.Split('/').Last()) && (targetPath.Split('/').Length == fileObject.Key.Split('/').Length || !input.DownloadFromCurrentDirectoryOnly) && !fileObject.Key.EndsWith('/') && fileObject.Key.StartsWith(input.Prefix))
                     {
                         var path = Path.Combine(input.TargetDirectory, fileObject.Key.Split('/').Last());
 

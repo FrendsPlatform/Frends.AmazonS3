@@ -11,9 +11,9 @@ public class Options
     /// Determines whether to throw an exception when the operation fails.
     /// If false, errors will be returned in the Result object instead of throwing exceptions.
     /// </summary>
-    /// <example>false</example>
+    /// <example>true</example>
     [DefaultValue(true)]
-    public bool ThrowErrorOnFailure { get; set; }
+    public bool ThrowErrorOnFailure { get; set; } = true;
 
     /// <summary>
     /// Custom error message to use when an error occurs.
